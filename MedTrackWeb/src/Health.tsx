@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import { RecordProps } from './interface';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import HealthDashboard from './components/HealthDashboard';
 export default function Health() {
     const [loading, setLoading] = useState(true);
     // 🩺 Dynamic badge generator
@@ -225,6 +226,10 @@ export default function Health() {
                     </div>
                 </div>
             </div>
+            {allRecords.length > 0 && (
+                <HealthDashboard records={allRecords} />
+            )}
+
         </>
     )
 }

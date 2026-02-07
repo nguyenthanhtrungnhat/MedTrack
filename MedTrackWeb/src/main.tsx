@@ -30,8 +30,6 @@ import Services from "./Services";
 import AllAppointment from './Doctor/AllAppointment';
 import AllShiftRequest from './Doctor/AllShiftRequest';
 
-
-
 const Layout = () => (
   <>
     <Header />
@@ -110,6 +108,7 @@ const router = createBrowserRouter([
           { path: "register", element: <Register /> },
           { path: "services", element: <Services /> },
           { path: "hservices", element: <HospitalServices /> },
+          // { path: "dashboard", element: <Dashboard /> },
         ]
       },
     ],

@@ -594,3 +594,11 @@
         text-align: center;
     }
 }
+@media print {
+  button {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}
