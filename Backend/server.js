@@ -1232,6 +1232,23 @@ app.put("/schedule-request/:id", (req, res) => {
   });
 });
 
+app.get("/api/dicom/list", (req, res) => {
+  const fs = require("fs");
+  const path = require("path");
+
+  const dirPath = path.join(__dirname, "uploads/dicom");
+
+  if (!fs.existsSync(dirPath)) {
+    return res.json([]);
+  }
+
+  const files = fs
+    .readdirSync(dirPath)
+    .filter((file) => file.endsWith(".dcm"));
+
+  res.json(files);
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -29,6 +29,7 @@ import Schedule from "./Schedule";
 import Services from "./Services";
 import AllAppointment from './Doctor/AllAppointment';
 import AllShiftRequest from './Doctor/AllShiftRequest';
+import ImagingDashboard from './ImagingDashboard';
 
 const Layout = () => (
   <>
@@ -108,7 +109,7 @@ const router = createBrowserRouter([
           { path: "register", element: <Register /> },
           { path: "services", element: <Services /> },
           { path: "hservices", element: <HospitalServices /> },
-          // { path: "dashboard", element: <Dashboard /> },
+          { path: "imaging", element: <ImagingDashboard /> },
         ]
       },
     ],
