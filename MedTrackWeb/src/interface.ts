@@ -102,3 +102,14 @@ export interface AppointmentProps {
     doctorName?: string;          // optional if returned from join
     patientName?: string;         // optional if you want to show patient
 }
+
+export interface TestResultProps {
+  testResultID: number;
+  userID: number;
+  title: string;
+  datetime: string;
+  testResultCode: string;
+  status: "Completed" | "Pending" | "Failed";
+  type: string;
+  username: string;
+}

@@ -115,6 +115,7 @@ app.get('/user-roles', (req, res) => getAllRecords('userrole', res));
 app.get('/feedback', (req, res) => getAllRecords('feedback', res));
 app.get('/nursepatient', (req, res) => getAllRecords('nursepatient', res));
 app.get('/schedulerequest', (req, res) => getAllRecords('schedulerequest', res));
+// app.get('/testresult', (req, res) => getAllRecords('testresult', res));
 // app.get('/news', (req, res) => getAllRecords('news', res));
 
 // ================= ADMIN: NEWS MANAGEMENT =================
@@ -1230,6 +1231,32 @@ app.put("/schedule-request/:id", (req, res) => {
 
     res.json({ message: "Status updated successfully" });
   });
+});
+
+//list all test result
+app.get("/testresult", (req, res) => {
+  db.query(
+    `
+    SELECT 
+      tr.testResultID,
+      tr.userID,        -- 👈 ADD THIS
+      tr.title,
+      tr.datetime,
+      tr.testResultCode,
+      tr.status,
+      tr.type,
+      u.username
+    FROM testresult tr
+    JOIN user u ON tr.userID = u.userID
+    `,
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      res.json(results);
+    }
+  );
 });
 
 // Start the server

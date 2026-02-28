@@ -29,6 +29,7 @@ import Schedule from "./Schedule";
 import Services from "./Services";
 import AllAppointment from './Doctor/AllAppointment';
 import AllShiftRequest from './Doctor/AllShiftRequest';
+import TestResult from './components/charts/TestResult';
 
 
 const Layout = () => (
@@ -109,6 +110,7 @@ const router = createBrowserRouter([
           { path: "register", element: <Register /> },
           { path: "services", element: <Services /> },
           { path: "hservices", element: <HospitalServices /> },
+           { path: "testresultlist", element: <TestResult /> },
          
         ]
       },

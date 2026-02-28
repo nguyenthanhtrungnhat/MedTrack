@@ -232,12 +232,12 @@ export default function NurseScreen() {
                                                     <i className="fa fa-caret-right" aria-hidden="true"></i> Schedule
                                                 </Link>
                                             </li>
-                                           
-                                            {/* <li>
-                                                <Link to="/home/dashboard" className="text-decoration-none">
-                                                    <i className="fa fa-caret-right" aria-hidden="true"></i> DashBoard
+                                            <li>
+                                                <Link to="/home/testresultlist" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
                                                 </Link>
-                                            </li> */}
+                                            </li>
+
                                         </ul>
                                     </div>
 

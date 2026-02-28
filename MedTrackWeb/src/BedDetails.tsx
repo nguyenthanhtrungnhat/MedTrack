@@ -161,6 +161,11 @@ export default function BedDetails() {
                                             <i className="fa fa-caret-right" aria-hidden="true"></i> Schedule
                                         </Link>
                                     </li>
+                                    <li>
+                                        <Link to="/home/testresultlist" className="text-decoration-none">
+                                            <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
+                                        </Link>
+                                    </li>
                                 </ul>
                             )}
                         </div>

@@ -188,8 +188,33 @@ CREATE TABLE `scheduleRequest` (
     PRIMARY KEY (`requestID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 17. TESTRESULT table
+CREATE TABLE `testresult` (
+  `testResultID` INT NOT NULL AUTO_INCREMENT,
+  `userID` INT NOT NULL,
 
+  `title` VARCHAR(255) NOT NULL,
+  `datetime` DATETIME NOT NULL,
+  `testResultCode` VARCHAR(50) NOT NULL UNIQUE,
+  `status` ENUM('Completed', 'Pending', 'Failed') 
+      NOT NULL DEFAULT 'Pending',
+  `type` VARCHAR(100) NOT NULL,
 
+  `bloodGlucose` DECIMAL(5,2) NULL,
+  `HbA1c` DECIMAL(4,2) NULL,
+  `totalCholesterol` DECIMAL(5,2) NULL,
+  `hdlCholesterol` DECIMAL(5,2) NULL,
+  `ldlCholesterol` DECIMAL(5,2) NULL,
+
+  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+      ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`testResultID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE INDEX `idx_testresult_userID`
+ON `testresult` (`userID`);
 -- ===================== ADD FOREIGN KEYS =====================
 
 ALTER TABLE `userrole`
@@ -236,6 +261,13 @@ ALTER TABLE `scheduleRequest`
   ADD CONSTRAINT `fk_schedule_request`
   FOREIGN KEY (`scheduleID`) REFERENCES `schedules` (`scheduleID`)
   ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `testresult`
+ADD CONSTRAINT `fk_testresult_user`
+FOREIGN KEY (`userID`)
+REFERENCES `user`(`userID`) 
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 -- ===================== INSERT DATA =====================
 
 -- 1. USER table
@@ -313,3 +345,23 @@ INSERT INTO `news` (`newID`, `title`, `body`, `date`, `author`, `image`) VALUES
 (2, 'Spreading Knowledge – Celebrating Vietnamese Women''s Day 20/10', NULL, '2025-10-20', NULL, './images/banner4.webp'),
 (3, 'Signing ceremony of cooperation with Ho Chi Minh City Oncology Hospital', NULL, '2025-09-11', NULL, './images/banner3.webp'),
 (4, 'Health Club No. 4 – 2025: When Breath is Short – How to Live Longer?', NULL, '2025-10-28', NULL, './images/banner1.webp');
+
+-- 15. NEWS table
+INSERT INTO `testresult`
+(`userID`, `title`, `datetime`, `testResultCode`, `status`, `type`,
+ `bloodGlucose`, `HbA1c`, `totalCholesterol`, `hdlCholesterol`, `ldlCholesterol`)
+VALUES
+(2, 'Annual Health Check', '2026-02-28 08:30:00', 'TR-1001', 'Completed', 'Laboratory',
+ 95.50, 5.40, 180.00, 50.00, 95.00),
+
+(2, 'Diabetes Screening', '2026-01-10 09:15:00', 'TR-1002', 'Completed', 'Laboratory',
+ 110.20, 6.10, 195.00, 45.00, 120.00),
+
+(2, 'Cardiac Risk Test', '2026-02-15 14:00:00', 'TR-2001', 'Completed', 'Laboratory',
+ 89.00, 5.20, 210.00, 38.00, 140.00),
+
+(3, 'Routine Blood Test', '2026-02-25 11:45:00', 'TR-2002', 'Pending', 'Laboratory',
+ NULL, NULL, NULL, NULL, NULL),
+
+(3, 'Cholesterol Follow-up', '2026-02-05 10:30:00', 'TR-3001', 'Failed', 'Laboratory',
+ 100.00, 5.80, 205.00, 42.00, 130.00);
