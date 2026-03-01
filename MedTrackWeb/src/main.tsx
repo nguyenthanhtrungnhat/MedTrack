@@ -29,8 +29,8 @@ import Schedule from "./Schedule";
 import Services from "./Services";
 import AllAppointment from './Doctor/AllAppointment';
 import AllShiftRequest from './Doctor/AllShiftRequest';
-import TestResult from './components/charts/TestResult';
-
+import TestResult from './components/TestResult';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Layout = () => (
   <>
