@@ -39,16 +39,21 @@ export default function TestResult() {
   const [nurseID, setNurseID] = useState<number | null>(null);
 
   const userID = getUserIDFromToken();
+  const url = `http://localhost:3000/nurses/by-user/${userID}`;
 
   // 🔹 Get nurseID
   useEffect(() => {
     if (!userID) return;
 
     axios
-      .get(`http://localhost:3000/nurses/by-user/${userID}`)
-      .then((res) => {
-        setNurseID(res.data.nurseID);
-      });
+      .get(url)
+      .then((response) => {
+        setNurseID(response.data.nurseID);
+        console.log("Nurse ID:", response.data.nurseID);
+      })
+      .catch((error) =>
+        console.error("Error fetching nurseID:", error)
+      );
   }, [userID]);
 
   // 🔹 Get nurse info
@@ -59,9 +64,13 @@ export default function TestResult() {
 
     axios
       .get(`http://localhost:3000/nurses/${nurseID}`)
-      .then((res) => {
-        setUser(res.data);
+      .then((response) => {
+        setUser(response.data);
+        console.log("Nurse Data:", response.data);
       })
+      .catch((error) =>
+        console.error("Error fetching nurse:", error)
+      )
       .finally(() => {
         setLoadingNurse(false);
       });
@@ -72,9 +81,11 @@ export default function TestResult() {
     setLoadingTest(true);
 
     axios
-      .get<TestResultProps[]>("http://localhost:3000/testresult")
-      .then((res) => {
-        setData(res.data);
+      .get<TestResultProps[]>(
+        "http://localhost:3000/testresult"
+      )
+      .then((response) => {
+        setData(response.data);
       })
       .catch(() => {
         setError("Failed to fetch test results");
@@ -83,6 +94,10 @@ export default function TestResult() {
         setLoadingTest(false);
       });
   }, []);
+
+  if (!userID) {
+    return <p>Please log in to view your nurse profile.</p>;
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -160,16 +175,53 @@ export default function TestResult() {
     }));
   };
 
-  if (!userID) {
-    return <p>Please log in to view your nurse profile.</p>;
-  }
-
   return (
     <div className="row padding pt-5 mt-5 mainBg">
       <div className="col-lg-9 order-2 order-lg-1">
         <div className="card shadow-sm">
           <div className="card-header blueBg text-white">
             <h5 className="mb-0">Test Result List</h5>
+          </div>
+
+          {/* Search + Dropdown */}
+          <div className="p-3 border-bottom bg-light">
+            <div className="row g-2">
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search by username..."
+                  value={searchTerm}
+                  onChange={(e) =>
+                    setSearchTerm(e.target.value)
+                  }
+                />
+              </div>
+
+              <div className="col-md-4">
+                <select
+                  className="form-select"
+                  value={selectedUserID}
+                  onChange={(e) =>
+                    setSelectedUserID(
+                      e.target.value === "all"
+                        ? "all"
+                        : Number(e.target.value)
+                    )
+                  }
+                >
+                  <option value="all">All Users</option>
+                  {uniqueUsers.map((user) => (
+                    <option
+                      key={user.userID}
+                      value={user.userID}
+                    >
+                      {user.username}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
 
           <div className="table-responsive">
@@ -228,7 +280,9 @@ export default function TestResult() {
                       <td>{item.username}</td>
                       <td>{item.title}</td>
                       <td>
-                        {new Date(item.datetime).toLocaleString()}
+                        {new Date(
+                          item.datetime
+                        ).toLocaleString()}
                       </td>
                       <td>{item.testResultCode}</td>
                       <td>
@@ -250,11 +304,64 @@ export default function TestResult() {
         </div>
       </div>
 
+      {/* Sidebar */}
       <div className="col-lg-3 order-1 order-lg-2">
-        <SidebarLogin
-          phone={user?.phone}
-          fullName={user?.fullName}
-        />
+        <div className="leftBody border whiteBg marginBottom dropShadow">
+          <div className="row">
+            <div className="col-12 login">
+              <SidebarLogin
+                phone={user?.phone}
+                fullName={user?.fullName}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="leftBody border whiteBg dropShadow marginBottom">
+          <div className="row">
+            <div className="col-12">
+              <h6 className="whiteText blueBg featureHead">
+                Feature
+              </h6>
+              <div className="padding">
+                <ul className="list-unstyled">
+                  <li>
+                    <Link
+                      to="/home/shift-change"
+                      className="text-decoration-none"
+                    >
+                      Shift change registration
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/home/daily-checking"
+                      className="text-decoration-none"
+                    >
+                      Daily checking health
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/home/schedule"
+                      className="text-decoration-none"
+                    >
+                      Schedule
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/home/testresultlist"
+                      className="text-decoration-none"
+                    >
+                      Test Result
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
