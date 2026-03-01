@@ -4,7 +4,7 @@ export default function BloodPressureChart({ data }: { data: any[] }) {
     return (
         <div className="border whiteBg dropShadow padding mb-3">
             <h5 className="blueText mb-3">Blood Pressure</h5>
-            <ResponsiveContainer width="100%" height={250}>
+            <div className="container"><ResponsiveContainer width="100%" height={250}>
                 <BarChart data={data}>
                     <XAxis dataKey="time" />
                     <YAxis />
@@ -17,6 +17,7 @@ export default function BloodPressureChart({ data }: { data: any[] }) {
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
+            </div>
         </div>
     );
 }
