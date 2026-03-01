@@ -7,15 +7,19 @@ import { jwtDecode } from "jwt-decode";
 import SidebarLogin from '../SidebarLogin';
 import { toast } from 'react-toastify';
 import PatientInformation from '../PatientInformation';
-import patientImg from './../images/human-body-vector-healthy-body-sleeve-clothing-apparel-back-transparent-png-999585.webp';
-import pluseImg from './../images/pulseReal.webp';
-import tempImg from './../images/nhietdo.webp';
-import heightImg from './../images/pulseReal.webp';
-import weightImg from './../images/pulseReal.webp';
-import urineImg from './../images/pulseReal.webp';
-import spo2Img from './../images/pulseReal.webp';
-import bpImg from './../images/bloodPressure.webp';
-import ntImg from './../images/nhiptho.webp';
+import patientImg from '../images/human-body-vector-healthy-body-sleeve-clothing-apparel-back-transparent-png-999585.webp';
+import pluseImg from '../images/pulse.webp';
+import tempImg from '../images/thermometer.webp';
+import bpImg from '../images/blood-pressure.webp';
+import ntImg from '../images/respiratory-system.webp';
+import urineImg from '../images/dark-urine.webp';
+import spo2Img from '../images/oxygen-saturation.webp';
+import weight from '../images/scale.webp';
+import height from '../images/height.webp';
+import oxygenTherapy from '../images/oxygen.webp';
+import painscale from '../images/gauge.webp';
+import sensorium from '../images/sensory.webp';
+import heartRate from '../images/heart-rate.webp';
 
 const getUserIDFromToken = () => {
     const token = sessionStorage.getItem("token");
@@ -156,7 +160,11 @@ export default function PatientScreen() {
                 setAllRecords(sorted);
                 setRecord(sorted[0]);
             })
-            .catch(error => console.error('Error fetching records:', error))
+            .catch(error => {
+                console.error("Error fetching records:", error);
+                setAllRecords([]);
+                setRecord(null);
+            })
             .finally(() => setLoading(false)); // stop loading
     }, [patients]);
 
@@ -366,114 +374,116 @@ export default function PatientScreen() {
                     </div>
                 </div>
             </div>
+              {record != null && (
+                <div className="row ">
+                    <div className="col-12 padding pt-0">
+                        <div className="hasRoomList border padding whiteBg dropShadow">
+                            <div className="row">
+                                <div className="col-12">
+                                    <div className="dropdown">
+                                        <button
+                                            type="button"
+                                            className={`btn btn-primary ${showMore ? 'active' : ''}`}
+                                            data-bs-toggle="button"
+                                            onClick={() => setShowMore(!showMore)}
+                                        >
+                                            {showMore ? 'Hide' : 'Show more'}
+                                        </button>
+                                        <button
+                                            className="btn border btn-secondary dropdown-toggle"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            Record Date
+                                        </button>
 
-            <div className="row ">
-                <div className="col-12 padding pt-0">
-                    <div className="hasRoomList border padding whiteBg dropShadow">
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="dropdown">
-                                    <button
-                                        type="button"
-                                        className={`btn btn-primary ${showMore ? 'active' : ''}`}
-                                        data-bs-toggle="button"
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Hide' : 'Show more'}
-                                    </button>
-                                    <button
-                                        className="btn border btn-secondary dropdown-toggle"
-                                        type="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        Record Date
-                                    </button>
+                                        <ul className="dropdown-menu">
 
-                                    <ul className="dropdown-menu">
+                                            {allRecords.map((rec) => (
+                                                <li key={rec.recordID}>
+                                                    <button
+                                                        className="dropdown-item"
+                                                        type="button"
+                                                        onClick={() => handleRecordSelect(Number(rec.recordID))}
+                                                    >
+                                                        {new Date(rec.timeCreate).toLocaleString()}
 
-                                        {allRecords.map((rec) => (
-                                            <li key={rec.recordID}>
-                                                <button
-                                                    className="dropdown-item"
-                                                    type="button"
-                                                    onClick={() => handleRecordSelect(Number(rec.recordID))}
-                                                >
-                                                    {new Date(rec.timeCreate).toLocaleString()}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
 
-                                                </button>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    </div>
 
                                 </div>
-
                             </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-5">
-                                <div className="row">
-                                    <div className="col-lg-6 col-sm-12 padding">
-                                        {renderVital("Pulse", pluseImg, "L/ph", "pulse", record?.pulse)}
+                            <div className="row">
+                                <div className="col-5">
+                                    <div className="row">
+                                        <div className="col-lg-6 col-sm-12 padding">
+                                            {renderVital("Pulse", pluseImg, "L/ph", "pulse", record?.pulse)}
+                                        </div>
+                                        <div className="col-lg-6 col-sm-12 padding">
+                                            {renderVital("Temperature", tempImg, "°C", "temperature", record?.temperature)}
+                                        </div>
+                                        {/* --- Show More Section --- */}
+                                        {showMore && (
+                                            <>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("Height", weight, "cm", "other", record?.height)}
+                                                </div>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("Weight", height, "kg", "other", record?.weight)}
+                                                </div>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("Sensorium", sensorium, "", "sensorium", record?.sensorium)}
+                                                </div>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("Pain Scale", painscale, "/10", "painScale", record?.hurtScale)}
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
-                                    <div className="col-lg-6 col-sm-12 padding">
-                                        {renderVital("Temperature", tempImg, "°C", "temperature", record?.temperature)}
-                                    </div>
-                                    {/* --- Show More Section --- */}
-                                    {showMore && (
-                                        <>
-                                            <div className="col-lg-6 col-sm-12 padding">
-                                                {renderVital("Height", heightImg, "cm", "other", record?.height)}
-                                            </div>
-                                            <div className="col-lg-6 col-sm-12 padding">
-                                                {renderVital("Weight", weightImg, "kg", "other", record?.weight)}
-                                            </div>
-                                            <div className="col-lg-6 col-sm-12 padding">
-                                                {renderVital("Sensorium", tempImg, "", "sensorium", record?.sensorium)}
-                                            </div>
-                                            <div className="col-lg-6 col-sm-12 padding">
-                                                {renderVital("Pain Scale", bpImg, "/10", "painScale", record?.hurtScale)}
-                                            </div>
-                                        </>
-                                    )}
                                 </div>
-                            </div>
 
-                            <div className="col-2 d-flex justify-content-center align-items-center">
-                                <img src={patientImg} className="patientImg" alt="Good Health" />
-                            </div>
+                                <div className="col-2 d-flex justify-content-center align-items-center">
+                                    <img src={patientImg} className="patientImg" alt="Good Health" />
+                                </div>
 
-                            <div className="col-5">
-                                <div className="row">
-                                    <div className="col-lg-6 col-sm-12 padding">
-                                        {renderVital("Respiratory Rate", ntImg, "times/min", "respiratory", record?.respiratoryRate)}
+                                <div className="col-5">
+                                    <div className="row">
+                                        <div className="col-lg-6 col-sm-12 padding">
+                                            {renderVital("Respiratory Rate", ntImg, "times/min", "respiratory", record?.respiratoryRate)}
+                                        </div>
+                                        <div className="col-lg-6 col-sm-12 padding">
+                                            {renderVital("Blood Pressure", bpImg, "mmHg", "bloodPressure", record?.bloodPressure)}
+                                        </div>
+                                        {/* --- Show More Section --- */}
+                                        {showMore && (
+                                            <>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("Urine", urineImg, "ml", "other", record?.urine)}
+                                                </div>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("SpO₂", spo2Img, "%", "spO2", record?.SP02)}
+                                                </div>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("Heart Rate", heartRate, "bpm", "heartRate", record?.heartRate)}
+                                                </div>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("Oxygen Therapy", oxygenTherapy, "", "oxygenTherapy", record?.oxygenTherapy)}
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
-                                    <div className="col-lg-6 col-sm-12 padding">
-                                        {renderVital("Blood Pressure", bpImg, "mmHg", "bloodPressure", record?.bloodPressure)}
-                                    </div>
-                                    {/* --- Show More Section --- */}
-                                    {showMore && (
-                                        <>
-                                            <div className="col-lg-6 col-sm-12 padding">
-                                                {renderVital("Urine", urineImg, "ml", "other", record?.urine)}
-                                            </div>
-                                            <div className="col-lg-6 col-sm-12 padding">
-                                                {renderVital("SpO₂", spo2Img, "%", "spO2", record?.SP02)}
-                                            </div>
-                                            <div className="col-lg-6 col-sm-12 padding">
-                                                {renderVital("Heart Rate", pluseImg, "bpm", "heartRate", record?.heartRate)}
-                                            </div>
-                                            <div className="col-lg-6 col-sm-12 padding">
-                                                {renderVital("Oxygen Therapy", spo2Img, "", "oxygenTherapy", record?.oxygenTherapy)}
-                                            </div>
-                                        </>
-                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
+
         </div>
     );
 }
