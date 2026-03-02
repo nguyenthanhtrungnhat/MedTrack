@@ -1,14 +1,29 @@
 import { useState, useEffect } from "react";
-import { Calendar, dateFnsLocalizer, Event, View } from "react-big-calendar";
+import {
+  Calendar,
+  dateFnsLocalizer,
+  Event,
+  View,
+} from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale";
 import axios from "axios";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./Schedule.css"; // ✅ import custom css
 import { Modal, Button } from "react-bootstrap";
 import ErrorPage from "./ErrorPage";
 
-const locales = { "en-US": enUS };
-const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
+const locales = {
+  "en-US": enUS,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 interface ScheduleEvent extends Event {
   id: number;
@@ -20,11 +35,13 @@ interface ScheduleEvent extends Event {
 
 export default function Schedule() {
   const nurseID = sessionStorage.getItem("nurseID");
+
   const [events, setEvents] = useState<ScheduleEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] =
+    useState<ScheduleEvent | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<View>("week"); // ✅ track current view
+  const [view, setView] = useState<View>("week");
 
   const parseEventDate = (dateStr: string, timeStr: string) =>
     new Date(`${dateStr}T${timeStr}`);
@@ -36,12 +53,16 @@ export default function Schedule() {
     }
 
     try {
-      const res = await axios.get(`http://localhost:3000/api/schedules/${nurseID}`);
+      const res = await axios.get(
+        `http://localhost:3000/api/schedules/${nurseID}`
+      );
       const data = res.data;
 
       const mapped: ScheduleEvent[] = data.flatMap((item: any) => {
         const start = parseEventDate(item.date, item.start_at);
-        const end = new Date(start.getTime() + item.working_hours * 60 * 60 * 1000);
+        const end = new Date(
+          start.getTime() + item.working_hours * 60 * 60 * 1000
+        );
 
         if (start.getDate() !== end.getDate()) {
           const endOfDay = new Date(start);
@@ -100,7 +121,9 @@ export default function Schedule() {
     fetchSchedules();
   }, [nurseID]);
 
-  const handleSelectEvent = (event: ScheduleEvent) => setSelectedEvent(event);
+  const handleSelectEvent = (event: ScheduleEvent) =>
+    setSelectedEvent(event);
+
   const handleCloseModal = () => setSelectedEvent(null);
 
   const eventStyleGetter = (event: ScheduleEvent) => ({
@@ -115,54 +138,72 @@ export default function Schedule() {
 
   return (
     <div className="container">
-      <div className="row">
+      <div className="row padding pt-5 mt-5">
         <div className="col-12">
-          <div className="p-3 pt-5 mt-5">
-            {error ?
-              <ErrorPage /> :
-              <>
-                <Calendar
-                  localizer={localizer}
-                  events={events}
-                  startAccessor="start"
-                  endAccessor="end"
-                  titleAccessor={(event: ScheduleEvent) => `${event.subject} - ${event.room}`}
-                  onSelectEvent={handleSelectEvent}
-                  date={currentDate}
-                  onNavigate={setCurrentDate}
-                  view={view}                    // ✅ controlled view
-                  onView={(newView) => setView(newView)} // ✅ switch view
-                  views={["day", "week", "month"]}
-                  defaultView="week"
-                  step={30}
-                  timeslots={2}
-                  style={{ height: "80vh" }}
-                  eventPropGetter={eventStyleGetter}
-                  toolbar={true}
-                />
-
-                <Modal show={!!selectedEvent} onHide={handleCloseModal}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Task Detail</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    {selectedEvent && (
-                      <div>
-                        <p><strong>Subject:</strong> {selectedEvent.subject}</p>
-                        <p><strong>Room:</strong> {selectedEvent.room}</p>
-                        <p><strong>Start:</strong> {selectedEvent.start?.toLocaleString()}</p>
-                        <p><strong>End:</strong> {selectedEvent.end?.toLocaleString()}</p>
-                        {/* <p><strong>Color:</strong> {selectedEvent.color}</p> */}
-                      </div>
-                    )}
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-                  </Modal.Footer>
-                </Modal>
-              </>
-            }
+          <div className="card shadow-sm mb-2">
+            <div className="card-header blueBg text-white">
+              <h5 className="mb-0">Schedule</h5>
+            </div>
           </div>
+
+          {error ? (
+            <ErrorPage />
+          ) : (
+            <>
+              <Calendar
+                localizer={localizer}
+                events={events}
+                startAccessor="start"
+                endAccessor="end"
+                titleAccessor={(event: ScheduleEvent) =>
+                  `${event.subject} - ${event.room}`
+                }
+                onSelectEvent={handleSelectEvent}
+                date={currentDate}
+                onNavigate={setCurrentDate}
+                view={view}
+                onView={(newView) => setView(newView)}
+                views={["day", "week", "month"]}
+                defaultView="week"
+                step={30}
+                timeslots={2}
+                style={{ height: "80vh" }}
+                eventPropGetter={eventStyleGetter}
+                toolbar={true}
+              />
+
+              <Modal show={!!selectedEvent} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Task Detail</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  {selectedEvent && (
+                    <div>
+                      <p>
+                        <strong>Subject:</strong> {selectedEvent.subject}
+                      </p>
+                      <p>
+                        <strong>Room:</strong> {selectedEvent.room}
+                      </p>
+                      <p>
+                        <strong>Start:</strong>{" "}
+                        {selectedEvent.start?.toLocaleString()}
+                      </p>
+                      <p>
+                        <strong>End:</strong>{" "}
+                        {selectedEvent.end?.toLocaleString()}
+                      </p>
+                    </div>
+                  )}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleCloseModal}>
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </>
+          )}
         </div>
       </div>
     </div>
