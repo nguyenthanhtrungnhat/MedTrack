@@ -10,6 +10,7 @@ interface Patient {
 }
 
 interface Medicine {
+  dosageForm: string
   medicineID: number
   medicineName: string
 }
@@ -22,6 +23,7 @@ interface PrescriptionItem {
   durationDays: number
   quantity: number
   instructions: string
+  dosageForm: string
 }
 
 export default function PrescriptionForm() {
@@ -123,7 +125,8 @@ export default function PrescriptionForm() {
         frequency: 1,
         durationDays: 1,
         quantity: 1,
-        instructions: ""
+        instructions: "",
+        dosageForm: medicine.dosageForm
       }
     ])
 
@@ -399,6 +402,7 @@ export default function PrescriptionForm() {
                     onChange={(e) =>
                       updateItem(index, "dosage", e.target.value)
                     }
+                    placeholder={`${item.dosageForm || "unit"} number `}
                   />
                 </td>
 
