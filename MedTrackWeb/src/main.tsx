@@ -36,6 +36,7 @@ import PrescriptionForm from './Doctor/Prescription/PrescriptionForm';
 import SideBarLayout from './Layout/SideBarLayout';
 import PrescriptionList from './Doctor/Prescription/PrescriptionList';
 import PrescriptionDetail from './Doctor/Prescription/PrescriptionDetail';
+import SideBarLayoutV2 from './Layout/SideBarLayoutV2';
 
 const Layout = () => (
   <>
@@ -112,7 +113,7 @@ const router = createBrowserRouter([
   //     },
   //   ],
   // },
-   {
+  {
     path: "/home",
     element: <ProtectedRoute />,
     children: [
@@ -134,10 +135,16 @@ const router = createBrowserRouter([
         children: [
           { path: "nurse-profile", element: <NurseScreen /> },
           { path: "beds-in-room/:roomID", element: <BedsInRoom /> },
-          { path: "bed-details/:patientID", element: <BedDetails /> },
           { path: "shift-change", element: <ShiftChange /> },
           { path: "daily-checking", element: <DailyCheckingForm /> },
           { path: "schedule", element: <Schedule /> }
+        ]
+      },
+      // Pages using SidebarLayoutV2
+      {
+        element: <SideBarLayoutV2 />,
+        children: [
+          { path: "bed-details/:patientID", element: <BedDetails /> }
         ]
       }
 
