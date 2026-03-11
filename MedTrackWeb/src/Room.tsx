@@ -1,16 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { RoomProps } from "./interface";
 import "./css/Room.css";
-export default function Room({department,roomID}:RoomProps) {
-    const navigate = useNavigate();
 
+export default function Room({ department, roomID }: RoomProps) {
+    const navigate = useNavigate();
+    const roleID = sessionStorage.getItem("roleID");
     const handleClick = () => {
-        navigate(`/home/beds-in-room/${roomID}`); // ✅ Pass roomID in the URL
+        { roleID == '1' ? (navigate(`/doctor/beds-in-room/${roomID}`)) : (navigate(`/home/beds-in-room/${roomID}`)) }
     };
     return (
         <>
             <div className="col-lg-4 col-sm-12 marginBottom">
-                <button className="roomBtn"onClick={handleClick}>
+                <button className="roomBtn" onClick={handleClick}>
                     <div className="card room">
                         <div className="card-body">
                             <h5 className="card-title">Room {roomID}</h5>
