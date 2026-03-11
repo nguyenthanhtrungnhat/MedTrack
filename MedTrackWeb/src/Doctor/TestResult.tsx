@@ -1,8 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { NurseProps, TestResultProps } from "../interface";
-import { Link } from "react-router-dom";
-import SidebarLogin from "../SidebarLogin";
 import { jwtDecode } from "jwt-decode";
 
 const getUserIDFromToken = () => {
