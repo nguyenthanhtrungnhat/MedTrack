@@ -53,7 +53,6 @@ FOREIGN KEY (`medicineID`)
 REFERENCES `medicines`(`medicineID`)
 ON DELETE CASCADE ON UPDATE CASCADE;
 
-//example data
 INSERT INTO prescriptions (patientID, doctorID, diagnosis, notes)
 VALUES (1, 2, 'Flu', 'Drink more water and rest');
 INSERT INTO prescription_items
@@ -62,7 +61,6 @@ VALUES
 (1, 1, '1 tablet', '3 times/day', 5, 15, 'After meals'),
 (1, 5, '1 capsule', '2 times/day', 7, 14, 'After meals');
 
-//insert 100 popular medicines
 INSERT INTO medicines (medicineName, genericName, dosageForm, strength, description, isActive) VALUES
 ('Paracetamol','Acetaminophen','Tablet','500mg','Pain reliever and fever reducer',1),
 ('Ibuprofen','Ibuprofen','Tablet','400mg','Anti inflammatory pain relief',1),
