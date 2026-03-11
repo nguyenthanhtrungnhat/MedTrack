@@ -92,25 +92,56 @@ const router = createBrowserRouter([
       ],
     },],
   },
-  {
+  // {
+  //   path: "/home",
+  //   element: <ProtectedRoute />, // Wrap in ProtectedRoute
+  //   children: [
+  //     {
+  //       path: "/home", element: <Layout />, children: [
+  //         { index: true, element: <HomePage /> },
+  //         { path: "nurse-profile", element: <NurseScreen /> },
+  //         { path: "beds-in-room/:roomID", element: <BedsInRoom /> },
+  //         { path: "bed-details/:patientID", element: <BedDetails /> },
+  //         { path: "shift-change", element: <ShiftChange /> },
+  //         { path: "daily-checking", element: <DailyCheckingForm /> },
+  //         { path: "schedule", element: <Schedule /> },
+  //         { path: "register", element: <Register /> },
+  //         { path: "services", element: <Services /> },
+  //         { path: "hservices", element: <HospitalServices /> },
+  //       ]
+  //     },
+  //   ],
+  // },
+   {
     path: "/home",
-    element: <ProtectedRoute />, // Wrap in ProtectedRoute
+    element: <ProtectedRoute />,
     children: [
+
+      // Pages using normal Layout
       {
-        path: "/home", element: <Layout />, children: [
+        element: <Layout />,
+        children: [
           { index: true, element: <HomePage /> },
+
+          { path: "services", element: <Services /> },
+          { path: "hservices", element: <HospitalServices /> }
+        ]
+      },
+
+      // Pages using SidebarLayout
+      {
+        element: <SideBarLayout />,
+        children: [
           { path: "nurse-profile", element: <NurseScreen /> },
           { path: "beds-in-room/:roomID", element: <BedsInRoom /> },
           { path: "bed-details/:patientID", element: <BedDetails /> },
           { path: "shift-change", element: <ShiftChange /> },
           { path: "daily-checking", element: <DailyCheckingForm /> },
-          { path: "schedule", element: <Schedule /> },
-          { path: "register", element: <Register /> },
-          { path: "services", element: <Services /> },
-          { path: "hservices", element: <HospitalServices /> },
+          { path: "schedule", element: <Schedule /> }
         ]
-      },
-    ],
+      }
+
+    ]
   },
   {
     path: "/doctor",
