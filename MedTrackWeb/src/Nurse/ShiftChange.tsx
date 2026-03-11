@@ -60,8 +60,6 @@ export default function ShiftChange() {
 
 
     return (
-
-
         <div className=" radius10 shadow-sm mb-3">
             <div className="p-3 radius10b0 blueBg text-white">
                 <h5 className="mb-0">Your schedule</h5>
