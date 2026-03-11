@@ -1,13 +1,19 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import SidebarLogin from "../SidebarLogin";
 import Header from "./Header";
 import Footer from "./Footer";
-
+import { useEffect } from "react";
 
 export default function SideBarLayout() {
     const storedInfo = sessionStorage.getItem("info");
     const info = storedInfo ? JSON.parse(storedInfo) : null;
     const roleID = sessionStorage.getItem("roleID");
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
     return (
         <>
             <Header />

@@ -1,14 +1,19 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import SidebarLogin from "../SidebarLogin";
 import Header from "./Header";
 import Footer from "./Footer";
 import Health from "../Health";
-
+import { useEffect } from "react";
 
 export default function SideBarLayoutV2() {
     const storedInfo = sessionStorage.getItem("info");
     const info = storedInfo ? JSON.parse(storedInfo) : null;
     const roleID = sessionStorage.getItem("roleID");
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
     return (
         <>
             <Header />
@@ -79,7 +84,7 @@ export default function SideBarLayoutV2() {
                             </div>
                         </div>
                         <div className="col-lg-12 order-3 order-lg-3"> <Health /></div>
-                        
+
 
                     </div>
                 </div>
