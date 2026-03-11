@@ -37,7 +37,10 @@ import SideBarLayout from './Layout/SideBarLayout';
 import PrescriptionList from './Doctor/Prescription/PrescriptionList';
 import PrescriptionDetail from './Doctor/Prescription/PrescriptionDetail';
 import SideBarLayoutV2 from './Layout/SideBarLayoutV2';
-
+import DoctorRoute from './routes/DoctorRoute';
+import NurseRoute from './routes/NurseRoute';
+import PatientRoute from './routes/PatientRoute';
+import AdminRoute from './routes/AdminRoute';
 const Layout = () => (
   <>
     <Header />
@@ -46,96 +49,6 @@ const Layout = () => (
   </>
 );
 
-const ProtectedRoute = () => {
-  const token = sessionStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
-};
-
-const AdminRoute = () => {
-  const token = sessionStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" replace />; // bắt login trước
-  }
-
-  try {
-    const decoded: any = jwtDecode(token);
-    if (decoded.roleID !== 666) {
-      // không phải admin thì đá về home
-      return <Navigate to="/" replace />;
-    }
-  } catch (e) {
-    console.error("Invalid token:", e);
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
-};
-const NurseRoute = () => {
-  const token = sessionStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" replace />; // bắt login trước
-  }
-
-  try {
-    const decoded: any = jwtDecode(token);
-    if (decoded.roleID !== 2) {
-      // không phải admin thì đá về home
-      return <Navigate to="/" replace />;
-    }
-  } catch (e) {
-    console.error("Invalid token:", e);
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
-};
-const DoctorRoute = () => {
-  const token = sessionStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" replace />; // bắt login trước
-  }
-
-  try {
-    const decoded: any = jwtDecode(token);
-    if (decoded.roleID !== 1) {
-      // không phải admin thì đá về home
-      return <Navigate to="/" replace />;
-    }
-  } catch (e) {
-    console.error("Invalid token:", e);
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
-};
-const PatientRoute = () => {
-  const token = sessionStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" replace />; // bắt login trước
-  }
-
-  try {
-    const decoded: any = jwtDecode(token);
-    if (decoded.roleID !== 3) {
-      // không phải admin thì đá về home
-      return <Navigate to="/" replace />;
-    }
-  } catch (e) {
-    console.error("Invalid token:", e);
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
-};
 const router = createBrowserRouter([
   {
     path: "/",
