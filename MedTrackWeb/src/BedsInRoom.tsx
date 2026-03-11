@@ -1,4 +1,4 @@
-import './AllDesign.css';
+import './css/AllDesign.css';
 import Bed from './Bed';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -50,14 +50,10 @@ export default function BedsInRoom() {
                     </div>
                     <div className="col-lg-3 order-1 order-lg-2">
                         <div className="leftBody border whiteBg marginBottom dropShadow">
-                            <div className="row">
-                                <div className="col-12 login ">
-                                    <SidebarLogin
-                                        phone={info?.phone || ""}
-                                        fullName={info?.fullName || ""}
-                                    />
-                                </div>
-                            </div>
+                            <SidebarLogin
+                                phone={info?.phone || ""}
+                                fullName={info?.fullName || ""}
+                            />
                         </div>
                         <div className="leftBody  border whiteBg dropShadow marginBottom">
                             <div className="row">
@@ -74,6 +70,26 @@ export default function BedsInRoom() {
                                                 <li>
                                                     <Link to="/doctor/allshiftrequest" className="text-decoration-none">
                                                         <i className="fa fa-caret-right" aria-hidden="true"></i> Shift Request
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <Link to="/doctor/testresultlist" className="text-decoration-none">
+                                                        <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <Link to="/doctor/testresultlist" className="text-decoration-none">
+                                                        <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <Link to="/doctor/prescription-form" className="text-decoration-none">
+                                                        <i className="fa fa-caret-right" aria-hidden="true"></i> Make prescription
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <Link to="/doctor/prescriptions" className="text-decoration-none">
+                                                        <i className="fa fa-caret-right" aria-hidden="true"></i> Prescription List
                                                     </Link>
                                                 </li>
                                             </ul>
@@ -94,11 +110,6 @@ export default function BedsInRoom() {
                                                 <li>
                                                     <Link to="/home/schedule" className="text-decoration-none">
                                                         <i className="fa fa-caret-right" aria-hidden="true"></i> Schedule
-                                                    </Link>
-                                                </li>
-                                                <li>
-                                                    <Link to="/home/testresultlist" className="text-decoration-none">
-                                                        <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
                                                     </Link>
                                                 </li>
                                             </ul>

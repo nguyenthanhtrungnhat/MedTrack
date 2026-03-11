@@ -115,7 +115,8 @@ app.get('/user-roles', (req, res) => getAllRecords('userrole', res));
 app.get('/feedback', (req, res) => getAllRecords('feedback', res));
 app.get('/nursepatient', (req, res) => getAllRecords('nursepatient', res));
 app.get('/schedulerequest', (req, res) => getAllRecords('schedulerequest', res));
-// app.get('/testresult', (req, res) => getAllRecords('testresult', res));
+app.get('/medicines', (req, res) => getAllRecords('medicines', res));
+app.get('/prescriptions', (req, res) => getAllRecords('prescriptions', res));
 // app.get('/news', (req, res) => getAllRecords('news', res));
 
 // ================= ADMIN: NEWS MANAGEMENT =================
@@ -1258,6 +1259,203 @@ app.get("/testresult", (req, res) => {
     }
   );
 });
+
+//medicines by id
+app.get("/medicines/:id", (req, res) => {
+
+  const id = req.params.id;
+  const sql = "SELECT * FROM medicines WHERE medicineID = ?";
+
+  db.query(sql, [id], (err, result) => {
+
+    if (err) {
+      return res.status(500).json({
+        message: "Error retrieving medicine",
+        error: err
+      });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({
+        message: "Medicine not found"
+      });
+    }
+
+    res.json(result[0]);
+  });
+
+});
+
+//make prescription
+app.post("/make-prescriptions", (req, res) => {
+  const { patientID, doctorID, diagnosis, notes, medicines } = req.body;
+
+  const sqlPrescription = `
+    INSERT INTO prescriptions (patientID, doctorID, diagnosis, notes)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  db.query(
+    sqlPrescription,
+    [patientID, doctorID, diagnosis, notes],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Error creating prescription" });
+      }
+
+      const prescriptionID = result.insertId;
+
+      if (!medicines || medicines.length === 0) {
+        return res.json({
+          message: "Prescription created without medicines",
+          prescriptionID,
+        });
+      }
+
+      const sqlItems = `
+        INSERT INTO prescription_items
+        (prescriptionID, medicineID, dosage, frequency, durationDays, quantity, instructions)
+        VALUES ?
+      `;
+
+      const values = medicines.map((m) => [
+        prescriptionID,
+        m.medicineID,
+        m.dosage,
+        m.frequency,
+        m.durationDays,
+        m.quantity,
+        m.instructions,
+      ]);
+
+      db.query(sqlItems, [values], (err2) => {
+        if (err2) {
+          console.error(err2);
+          return res.status(500).json({ message: "Error adding medicines" });
+        }
+
+        res.json({
+          message: "Prescription created successfully",
+          prescriptionID,
+        });
+      });
+    }
+  );
+});
+
+// GET all prescriptions with patient + doctor name
+app.get("/api/prescriptions", (req, res) => {
+
+  const sql = `
+    SELECT 
+      p.prescriptionID,
+      p.diagnosis,
+      p.notes,
+      p.createdAt,
+
+      pt.patientID,
+      pu.fullName AS patientName,
+
+      d.doctorID,
+      du.fullName AS doctorName
+
+    FROM prescriptions p
+
+    LEFT JOIN patient pt 
+      ON p.patientID = pt.patientID
+
+    LEFT JOIN user pu 
+      ON pt.userID = pu.userID
+
+    LEFT JOIN doctor d 
+      ON p.doctorID = d.doctorID
+
+    LEFT JOIN user du 
+      ON d.userID = du.userID
+
+    ORDER BY p.createdAt DESC
+  `;
+
+  db.query(sql, (err, result) => {
+
+    if (err) {
+      console.error(err);
+      return res.status(500).json({
+        message: "Error fetching prescriptions"
+      });
+    }
+
+    res.json(result);
+
+  });
+
+});
+
+// GET prescription detail
+app.get("/api/prescriptions/:id", (req, res) => {
+
+  const prescriptionID = req.params.id
+
+  const sql = `
+    SELECT 
+      p.prescriptionID,
+      p.diagnosis,
+      p.notes,
+      p.createdAt,
+
+      pu.fullName AS patientName,
+      du.fullName AS doctorName,
+
+      m.medicineID,
+      m.medicineName,
+      m.genericName,
+      m.dosageForm,
+      m.strength,
+
+      pi.dosage,
+      pi.frequency,
+      pi.durationDays,
+      pi.quantity,
+      pi.instructions
+
+    FROM prescriptions p
+
+    LEFT JOIN patient pt
+      ON p.patientID = pt.patientID
+
+    LEFT JOIN user pu
+      ON pt.userID = pu.userID
+
+    LEFT JOIN doctor d
+      ON p.doctorID = d.doctorID
+
+    LEFT JOIN user du
+      ON d.userID = du.userID
+
+    LEFT JOIN prescription_items pi
+      ON p.prescriptionID = pi.prescriptionID
+
+    LEFT JOIN medicines m
+      ON pi.medicineID = m.medicineID
+
+    WHERE p.prescriptionID = ?
+  `
+
+  db.query(sql, [prescriptionID], (err, result) => {
+
+    if (err) {
+      console.error(err)
+      return res.status(500).json({
+        message: "Database error"
+      })
+    }
+
+    res.json(result)
+
+  })
+
+})
 
 // Start the server
 const PORT = process.env.PORT || 3000;

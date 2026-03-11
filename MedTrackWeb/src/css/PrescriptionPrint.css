@@ -1,0 +1,21 @@
+@media print {
+
+@page {
+    margin-top: -500px;
+   
+}
+
+body {
+    margin: 0;
+}
+
+body * {
+    visibility: hidden;
+}
+
+.prescription-print,
+.prescription-print * {
+    visibility: visible;
+}
+
+}

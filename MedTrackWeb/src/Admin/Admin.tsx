@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../AllDesign.css";
+import "../css/AllDesign.css";
 import DoctorTable from "./DoctorTable";
 import NurseTable from "./NurseTable";
 import PatientTable from "./PatientTable";

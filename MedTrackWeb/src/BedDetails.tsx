@@ -1,5 +1,5 @@
 import axios from 'axios';
-import './AllDesign.css';
+import './css/AllDesign.css';
 import PatientInformation from './PatientInformation';
 import { useEffect, useState } from 'react';
 import { PatientProps } from './interface';
@@ -141,6 +141,26 @@ export default function BedDetails() {
                                             <i className="fa fa-caret-right" aria-hidden="true"></i> Shift Request
                                         </Link>
                                     </li>
+                                    <li>
+                                        <Link to="/doctor/testresultlist" className="text-decoration-none">
+                                            <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/doctor/testresultlist" className="text-decoration-none">
+                                            <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/doctor/prescription-form" className="text-decoration-none">
+                                            <i className="fa fa-caret-right" aria-hidden="true"></i> Make prescription
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/doctor/prescriptions" className="text-decoration-none">
+                                            <i className="fa fa-caret-right" aria-hidden="true"></i> Prescription List
+                                        </Link>
+                                    </li>
                                 </ul>
                             )}
                             {roleID == "2" && (
@@ -161,11 +181,7 @@ export default function BedDetails() {
                                             <i className="fa fa-caret-right" aria-hidden="true"></i> Schedule
                                         </Link>
                                     </li>
-                                    <li>
-                                        <Link to="/home/testresultlist" className="text-decoration-none">
-                                            <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
-                                        </Link>
-                                    </li>
+
                                 </ul>
                             )}
                         </div>

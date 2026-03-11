@@ -9,7 +9,7 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale";
 import axios from "axios";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./Schedule.css"; // ✅ import custom css
+import "./css/Schedule.css";
 import { Modal, Button } from "react-bootstrap";
 import ErrorPage from "./ErrorPage";
 

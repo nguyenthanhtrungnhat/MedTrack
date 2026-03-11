@@ -1,5 +1,5 @@
 import axios from 'axios';
-import './../AllDesign.css';
+import './../css/AllDesign.css';
 import { useEffect, useState } from 'react';
 import { PatientProps, RecordProps } from '../interface';
 import { Link } from 'react-router-dom';

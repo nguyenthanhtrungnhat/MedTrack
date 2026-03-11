@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode"; // fixed import syntax
-import logo from "./images/logo.webp";
+import logo from "../images/logo.webp";
 import { Link } from "react-router-dom";
-import PatientSearch from "./Nurse/PatientSearch";
-import Noti from "./Noti";
+import PatientSearch from "../components/search/PatientSearch";
+import Noti from "../Noti";
 
 const getUserRoleFromToken = () => {
     const token = sessionStorage.getItem("token");
@@ -24,7 +24,7 @@ export default function Header() {
     useEffect(() => {
         const role = getUserRoleFromToken();
         setRoleID(role);
-        sessionStorage.setItem("roleID",role)
+        sessionStorage.setItem("roleID", role)
     }, []);
 
     return (
@@ -55,6 +55,12 @@ export default function Header() {
                                         </Link>
                                     </li>
                                     <Noti />
+                                    <li className="nav-item">
+                                        <Link className="nav-link whiteText" to={"/doctor/medicine-list"}>
+                                            <h5 className="whiteText m-0">Medicine List</h5>
+                                        </Link>
+                                    </li>
+
                                 </ul>
                                 <form className="d-flex" role="search">
                                     <PatientSearch />
@@ -96,7 +102,7 @@ export default function Header() {
                                         <h5 className="whiteText hasFeeIcon m-0">Medical Service fee</h5>
                                     </Link>
                                 </li>
-                                 <li className="nav-item">
+                                <li className="nav-item">
                                     <Link className="nav-link whiteText" to={"/hservices"}>
                                         <h5 className="whiteText hasServiceIcon m-0">Service</h5>
                                     </Link>
@@ -132,7 +138,6 @@ export default function Header() {
                                         <h5 className="whiteText hasProfileIcon m-0">Login</h5>
                                     </Link>
                                 </li>
-
                             </ul>
                         )}
                     </div>

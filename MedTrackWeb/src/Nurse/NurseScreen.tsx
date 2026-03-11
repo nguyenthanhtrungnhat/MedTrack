@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Room from '../Room';
-import './../AllDesign.css';
+import '../css/AllDesign.css'
 import NurseInformation from '../NurseInformation';
 import { useEffect, useState } from 'react';
 import { NurseProps, RoomProps } from '../interface';
@@ -232,12 +232,6 @@ export default function NurseScreen() {
                                                     <i className="fa fa-caret-right" aria-hidden="true"></i> Schedule
                                                 </Link>
                                             </li>
-                                            <li>
-                                                <Link to="/home/testresultlist" className="text-decoration-none">
-                                                    <i className="fa fa-caret-right" aria-hidden="true"></i> Test Result
-                                                </Link>
-                                            </li>
-
                                         </ul>
                                     </div>
 

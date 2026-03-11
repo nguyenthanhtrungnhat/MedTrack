@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { RoomProps } from "./interface";
-import "./Room.css";
+import "./css/Room.css";
 export default function Room({department,roomID}:RoomProps) {
     const navigate = useNavigate();
 

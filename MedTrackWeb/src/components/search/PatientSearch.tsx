@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { PatientProps } from "../interface";
+import { PatientProps } from "../../interface";
 
 export default function PatientSearch() {
   const [patients, setPatients] = useState<PatientProps[]>([]);

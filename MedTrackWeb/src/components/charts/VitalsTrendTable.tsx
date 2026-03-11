@@ -10,7 +10,7 @@ export default function VitalsTrendTable({
       <h5 className="blueText mb-3">Vitals History</h5>
       <div className="container">
         <table className="table table-bordered table-sm">
-          <thead>
+          <thead className="table-dark">
             <tr>
               <th>Date</th>
               <th>Pulse</th>

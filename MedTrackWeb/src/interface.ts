@@ -113,3 +113,12 @@ export interface TestResultProps {
   type: string;
   username: string;
 }
+// export interface Medicine {
+//   medicineID: number
+//   medicineName: string
+//   genericName: string
+//   dosageForm: string
+//   strength: string
+//   description: string
+//   isActive: number
+// }

@@ -13,8 +13,8 @@ import AdminScreen from "./Admin/Admin";
 import BedDetails from "./BedDetails";
 import BedsInRoom from "./BedsInRoom";
 import DoctorScreen from "./Doctor/DoctorScreen";
-import Footer from "./Footer";
-import Header from "./Header";
+import Footer from "./Layout/Footer";
+import Header from "./Layout/Header";
 import HomePage from "./HomePage";
 import HospitalServices from "./HospitalServices";
 import LoginScreen from "./Login/Login";
@@ -29,8 +29,13 @@ import Schedule from "./Schedule";
 import Services from "./Services";
 import AllAppointment from './Doctor/AllAppointment';
 import AllShiftRequest from './Doctor/AllShiftRequest';
-import TestResult from './components/TestResult';
+import TestResult from './Doctor/TestResult';
 import "bootstrap/dist/css/bootstrap.min.css";
+import MedicinesList from './Medicine/MedicineList';
+import PrescriptionForm from './Doctor/Prescription/PrescriptionForm';
+import SideBarLayout from './Layout/SideBarLayout';
+import PrescriptionList from './Doctor/Prescription/PrescriptionList';
+import PrescriptionDetail from './Doctor/Prescription/PrescriptionDetail';
 
 const Layout = () => (
   <>
@@ -39,20 +44,12 @@ const Layout = () => (
     <Footer />
   </>
 );
-// const ProtectedRoute = () => {
-//   const token = sessionStorage.getItem("token");
 
-//   if (!token) {
-//     return <Navigate to="/" replace />; // Redirect to login if no token
-//   }
-
-//   return <Outlet />; // Render the requested page if authenticated
-// };
 const ProtectedRoute = () => {
   const token = sessionStorage.getItem("token");
 
   if (!token) {
-    return <Navigate to="/login" replace />; // trước đây là "/"
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;
@@ -91,6 +88,7 @@ const router = createBrowserRouter([
         { path: "register", element: <Register /> },
         { path: "services", element: <Services /> },
         { path: "hservices", element: <HospitalServices /> },
+
       ],
     },],
   },
@@ -110,27 +108,42 @@ const router = createBrowserRouter([
           { path: "register", element: <Register /> },
           { path: "services", element: <Services /> },
           { path: "hservices", element: <HospitalServices /> },
-           { path: "testresultlist", element: <TestResult /> },
-         
         ]
       },
     ],
   },
   {
     path: "/doctor",
-    element: <ProtectedRoute />, // Wrap in ProtectedRoute
+    element: <ProtectedRoute />,
     children: [
+
+      // Pages using normal Layout
       {
-        path: "/doctor", element: <Layout />, children: [
+        element: <Layout />,
+        children: [
           { index: true, element: <HomePage /> },
-          { path: "doctor-profile", element: <DoctorScreen /> },
+
           { path: "services", element: <Services /> },
-          { path: "hservices", element: <HospitalServices /> },
-          { path: "allappointment", element: <AllAppointment /> },
-           { path: "allshiftrequest", element: <AllShiftRequest /> },
+          { path: "hservices", element: <HospitalServices /> }
         ]
       },
-    ],
+
+      // Pages using SidebarLayout
+      {
+        element: <SideBarLayout />,
+        children: [
+          { path: "doctor-profile", element: <DoctorScreen /> },
+          { path: "allappointment", element: <AllAppointment /> },
+          { path: "allshiftrequest", element: <AllShiftRequest /> },
+          { path: "medicine-list", element: <MedicinesList /> },
+          { path: "testresultlist", element: <TestResult /> },
+          { path: "prescription-form", element: <PrescriptionForm /> },
+          { path: "prescriptions", element: <PrescriptionList /> },
+          { path: "prescriptions/:id", element: <PrescriptionDetail /> }
+        ]
+      }
+
+    ]
   },
   {
     path: "/patient",

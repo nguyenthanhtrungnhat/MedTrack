@@ -1,10 +1,10 @@
-import { parseBloodPressure, average } from "../utils/healthStats";
-import { NORMAL_RANGES } from "../utils/normalRanges";
-import { RecordProps } from "../interface";
+import { parseBloodPressure, average } from "../../utils/healthStats";
+import { NORMAL_RANGES } from "../../utils/normalRanges";
+import { RecordProps } from "../../interface";
 
-import { AverageSummaryChart } from "./charts/AverageSummaryChart";
-import VitalsTrendTable from "./charts/VitalsTrendTable";
-import BloodPressureChart from "./charts/BloodPressureChart";
+import { AverageSummaryChart } from "../charts/AverageSummaryChart";
+import VitalsTrendTable from "../charts/VitalsTrendTable";
+import BloodPressureChart from "../charts/BloodPressureChart";
 
 type Props = {
   records: RecordProps[];
