@@ -76,7 +76,66 @@ const AdminRoute = () => {
 
   return <Outlet />;
 };
+const NurseRoute = () => {
+  const token = sessionStorage.getItem("token");
 
+  if (!token) {
+    return <Navigate to="/login" replace />; // bắt login trước
+  }
+
+  try {
+    const decoded: any = jwtDecode(token);
+    if (decoded.roleID !== 2) {
+      // không phải admin thì đá về home
+      return <Navigate to="/" replace />;
+    }
+  } catch (e) {
+    console.error("Invalid token:", e);
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
+const DoctorRoute = () => {
+  const token = sessionStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />; // bắt login trước
+  }
+
+  try {
+    const decoded: any = jwtDecode(token);
+    if (decoded.roleID !== 1) {
+      // không phải admin thì đá về home
+      return <Navigate to="/" replace />;
+    }
+  } catch (e) {
+    console.error("Invalid token:", e);
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
+const PatientRoute = () => {
+  const token = sessionStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />; // bắt login trước
+  }
+
+  try {
+    const decoded: any = jwtDecode(token);
+    if (decoded.roleID !== 3) {
+      // không phải admin thì đá về home
+      return <Navigate to="/" replace />;
+    }
+  } catch (e) {
+    console.error("Invalid token:", e);
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
 const router = createBrowserRouter([
   {
     path: "/",
@@ -93,29 +152,9 @@ const router = createBrowserRouter([
       ],
     },],
   },
-  // {
-  //   path: "/home",
-  //   element: <ProtectedRoute />, // Wrap in ProtectedRoute
-  //   children: [
-  //     {
-  //       path: "/home", element: <Layout />, children: [
-  //         { index: true, element: <HomePage /> },
-  //         { path: "nurse-profile", element: <NurseScreen /> },
-  //         { path: "beds-in-room/:roomID", element: <BedsInRoom /> },
-  //         { path: "bed-details/:patientID", element: <BedDetails /> },
-  //         { path: "shift-change", element: <ShiftChange /> },
-  //         { path: "daily-checking", element: <DailyCheckingForm /> },
-  //         { path: "schedule", element: <Schedule /> },
-  //         { path: "register", element: <Register /> },
-  //         { path: "services", element: <Services /> },
-  //         { path: "hservices", element: <HospitalServices /> },
-  //       ]
-  //     },
-  //   ],
-  // },
   {
     path: "/home",
-    element: <ProtectedRoute />,
+    element: <NurseRoute />,
     children: [
 
       // Pages using normal Layout
@@ -152,7 +191,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/doctor",
-    element: <ProtectedRoute />,
+    element: <DoctorRoute />,
     children: [
 
       // Pages using normal Layout
@@ -171,6 +210,7 @@ const router = createBrowserRouter([
         element: <SideBarLayout />,
         children: [
           { path: "doctor-profile", element: <DoctorScreen /> },
+          { path: "beds-in-room/:roomID", element: <BedsInRoom /> },
           { path: "allappointment", element: <AllAppointment /> },
           { path: "allshiftrequest", element: <AllShiftRequest /> },
           { path: "medicine-list", element: <MedicinesList /> },
@@ -179,13 +219,19 @@ const router = createBrowserRouter([
           { path: "prescriptions", element: <PrescriptionList /> },
           { path: "prescriptions/:id", element: <PrescriptionDetail /> }
         ]
+      },
+      // Pages using SidebarLayoutV2
+      {
+        element: <SideBarLayoutV2 />,
+        children: [
+          { path: "bed-details/:patientID", element: <BedDetails /> }
+        ]
       }
-
     ]
   },
   {
     path: "/patient",
-    element: <ProtectedRoute />, // Wrap in ProtectedRoute
+    element: <PatientRoute />, // Wrap in ProtectedRoute
     children: [
       {
         path: "/patient", element: <Layout />, children: [
