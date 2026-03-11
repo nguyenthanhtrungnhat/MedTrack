@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { PatientProps } from "./interface";
-export default function Bed({fullName,patientID}:PatientProps) {
+export default function Bed({ fullName, patientID }: PatientProps) {
     const navigate = useNavigate();
-
+    const roleID = sessionStorage.getItem("roleID");
     const handleClick = () => {
-        navigate(`/home/bed-details/${patientID}`); // Change to the actual route
+        { roleID == '1' ? (navigate(`/doctor/bed-details/${patientID}`)) : (navigate(`/home/bed-details/${patientID}`)) }
     };
     return (
         <>
             <div className="col-lg-4 marginBottom">
-                <button className="roomBtn"onClick={handleClick}>
+                <button className="roomBtn" onClick={handleClick}>
                     <div className="card room">
                         <div className="card-body">
                             <h5 className="card-title">Bed {patientID}</h5>
