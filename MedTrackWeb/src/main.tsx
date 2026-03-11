@@ -41,13 +41,7 @@ import DoctorRoute from './routes/DoctorRoute';
 import NurseRoute from './routes/NurseRoute';
 import PatientRoute from './routes/PatientRoute';
 import AdminRoute from './routes/AdminRoute';
-const Layout = () => (
-  <>
-    <Header />
-    <Outlet />
-    <Footer />
-  </>
-);
+import Layout from './Layout/Layout';
 
 const router = createBrowserRouter([
   {
