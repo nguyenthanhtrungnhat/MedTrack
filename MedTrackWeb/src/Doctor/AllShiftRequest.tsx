@@ -5,8 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ScheduleRequest } from "../interface";
 
 export default function AllShiftRequest() {
-    const storedInfo = sessionStorage.getItem("info");
-    const info = storedInfo ? JSON.parse(storedInfo) : null;
     const doctorID = Number(sessionStorage.getItem("doctorID"));
 
     const [requests, setRequests] = useState<ScheduleRequest[]>([]);
