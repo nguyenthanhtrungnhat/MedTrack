@@ -57,7 +57,7 @@ export default function Header() {
                                     <Noti />
                                     <li className="nav-item">
                                         <Link className="nav-link whiteText" to={"/doctor/medicine-list"}>
-                                            <h5 className="whiteText m-0">Medicine List</h5>
+                                            <h5 className="whiteText capsuleIcon m-0">Medicine List</h5>
                                         </Link>
                                     </li>
 

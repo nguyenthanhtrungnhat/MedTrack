@@ -186,6 +186,7 @@
 }
 
 /* FontAwesome Icons */
+.capsuleIcon::before,
 .hasServiceIcon::before,
 .date-with-icon::before,
 .hasFeeIcon::before,
@@ -198,6 +199,10 @@
     font-family: "FontAwesome";
     margin-right: 8px;
     color: white;
+}
+
+.capsuleIcon::before {
+    content: '\f484';
 }
 
 .hasFeeIcon::before {
@@ -475,9 +480,10 @@
 }
 
 @media (min-width: 992px) {
-  .carousel-item img {
-    max-height: 660px; /* smaller banner on desktop */
-  }
+    .carousel-item img {
+        max-height: 660px;
+        /* smaller banner on desktop */
+    }
 }
 
 /* Fixed Size Box */
@@ -594,11 +600,13 @@
         text-align: center;
     }
 }
+
 @media print {
-  button {
-    display: none !important;
-  }
-  body {
-    background: white;
-  }
+    button {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+    }
 }

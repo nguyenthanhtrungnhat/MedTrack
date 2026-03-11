@@ -35,7 +35,7 @@ export default function MedicinesList() {
   };
 
   return (
-     <div className="card shadow-sm">
+     <div className="card shadow-sm mb-3">
             <div className="card-header blueBg text-white">
                 <h5 className="mb-0">Medicine List</h5>
             </div>

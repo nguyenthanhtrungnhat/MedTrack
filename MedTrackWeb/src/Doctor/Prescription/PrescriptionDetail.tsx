@@ -128,7 +128,7 @@ export default function PrescriptionDetail() {
             <div className="card-header blueBg text-white d-flex justify-content-between">
 
                 <h5 className="mb-0">Prescription Detail</h5>
-                
+
                 <div>
 
                     <button
@@ -139,7 +139,7 @@ export default function PrescriptionDetail() {
                     </button>
 
                     <button
-                        className="btn btn-light btn-sm"
+                        className="btn btn-primary btn-sm"
                         onClick={() => navigate("/doctor/prescriptions")}
                     >
                         Back
@@ -179,24 +179,35 @@ export default function PrescriptionDetail() {
 
                     {/* Diagnosis */}
 
-                    <div className="mb-4">
+                    <table className="table table-bordered mb-4">
 
-                        <h5>Diagnosis</h5>
+                        <thead className="table-secondary">
+                            <tr>
+                                <th>Diagnosis</th>
+                            </tr>
+                        </thead>
 
-                        <div className="border rounded p-3 bg-light">
-                            {prescription.diagnosis || "N/A"}
-                        </div>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    {prescription.diagnosis || "N/A"}
+                                </td>
+                            </tr>
+                        </tbody>
 
-                    </div>
+                    </table>
+
 
 
                     {/* Medicines */}
 
-                    <h5 className="mb-3">Medicines</h5>
+                    <table className="table table-bordered prescription-table mb-4">
 
-                    <table className="table table-bordered prescription-table">
+                        <thead className="table-secondary">
 
-                        <thead className="table-dark">
+                            <tr>
+                                <th colSpan={7}>Medicines</th>
+                            </tr>
 
                             <tr>
                                 <th>#</th>
@@ -257,26 +268,35 @@ export default function PrescriptionDetail() {
                     </table>
 
 
-                    {/* Notes */}
+
+                    {/* Doctor Notes */}
 
                     {prescription.notes && (
 
-                        <div className="mt-4">
+                        <table className="table table-bordered">
 
-                            <h5>Doctor Notes</h5>
+                            <thead className="table-secondary">
+                                <tr>
+                                    <th>Doctor Notes</th>
+                                </tr>
+                            </thead>
 
-                            <div className="border rounded p-3">
-                                {prescription.notes}
-                            </div>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {prescription.notes}
+                                    </td>
+                                </tr>
+                            </tbody>
 
-                        </div>
+                        </table>
 
                     )}
-                    <div className="signature-section">
+                    <div className="signature-section mt-3">
 
                         <div className="signature-box">
 
-                            <div>Doctor Signature</div>
+                            <h5>Doctor Signature</h5>
 
                             <div className="signature-line"></div>
 
