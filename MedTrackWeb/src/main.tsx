@@ -1,20 +1,15 @@
 import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap CSS
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Bootstrap JS with Popper
-import { jwtDecode } from "jwt-decode";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   createBrowserRouter,
-  Navigate,
-  Outlet,
   RouterProvider
 } from "react-router-dom";
 import AdminScreen from "./Admin/Admin";
 import BedDetails from "./BedDetails";
 import BedsInRoom from "./BedsInRoom";
 import DoctorScreen from "./Doctor/DoctorScreen";
-import Footer from "./Layout/Footer";
-import Header from "./Layout/Header";
 import HomePage from "./HomePage";
 import HospitalServices from "./HospitalServices";
 import LoginScreen from "./Login/Login";
