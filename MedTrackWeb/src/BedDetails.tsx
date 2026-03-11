@@ -114,10 +114,6 @@ export default function BedDetails() {
                     )}
                 </div>
             </div>
-
-
-
-            {/* <Health /> */}
         </div>
     );
 }
