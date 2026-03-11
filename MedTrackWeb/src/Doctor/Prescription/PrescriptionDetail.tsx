@@ -123,7 +123,7 @@ export default function PrescriptionDetail() {
 
     return (
 
-        <div className="card shadow-sm">
+        <div className="card shadow-sm mb-3">
 
             <div className="card-header blueBg text-white d-flex justify-content-between">
 
