@@ -181,6 +181,14 @@
     border-radius: 10px 10px 0 0;
 }
 
+.radius10{
+    border-radius: 10px;
+}
+
+.radius10b0{
+      border-radius: 10px 10px 0 0;
+}
+
 .announceHead {
     padding: 10px;
 }
