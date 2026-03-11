@@ -25,7 +25,7 @@ import ShiftChange from "./Nurse/ShiftChange";
 import CompletePatientForm from "./Patient/CompletePatientForm";
 import MakeAppointment from "./Patient/MakeAppointment";
 import PatientScreen from "./Patient/PatientScreen";
-import Schedule from "./Schedule";
+import Schedule from "./Nurse/Schedule";
 import Services from "./Services";
 import AllAppointment from './Doctor/AllAppointment';
 import AllShiftRequest from './Doctor/AllShiftRequest';
