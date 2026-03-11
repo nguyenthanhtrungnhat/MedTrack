@@ -355,11 +355,7 @@ export default function PatientScreen() {
                                                     <i className="fa fa-caret-right" /> Update personal data
                                                 </Link>
                                             </li> */}
-                                            <li>
-                                                <Link to="#" className="text-decoration-none">
-                                                    <i className="fa fa-caret-right" /> Developing ...
-                                                </Link>
-                                            </li>
+                                           
                                             <li>
                                                 <Link to="/patient/make-appointment" className="text-decoration-none">
                                                     <i className="fa fa-caret-right" /> Make Appointment
