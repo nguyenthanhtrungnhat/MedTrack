@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { NurseProps, RoomProps } from '../interface';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
-import SidebarLogin from '../SidebarLogin';
 
 const getUserIDFromToken = () => {
     const token = sessionStorage.getItem("token");
