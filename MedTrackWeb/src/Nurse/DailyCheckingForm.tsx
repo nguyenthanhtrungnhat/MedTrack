@@ -161,11 +161,11 @@ export default function DailyCheckingForm() {
   };
 
   return (
-    <div className="card shadow-sm mb-3">
-      <div className="card-header blueBg text-white">
+    <div className=" radius10 shadow-sm mb-3">
+      <div className="p-3 radius10b0 blueBg text-white">
         <h5 className="mb-0">Life function tracking sheet <i className="fa fa-file-text" /></h5>
       </div>
-      <div className="p-4 whiteBg border dropShadow">
+      <div className="p-4 whiteBg dropShadow">
         <ToastContainer />
         <h6 className="dlcgray">Update patient diagnostic indicators</h6>
         <form onSubmit={handleSubmit}>
