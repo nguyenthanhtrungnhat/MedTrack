@@ -8,7 +8,9 @@ export default function PatientSearch() {
   const [filteredPatients, setFilteredPatients] = useState<PatientProps[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
+  var url = '';
+  const roleID = sessionStorage.getItem("roleID");
+  { roleID == '1' ? (url = "/doctor/bed-details/") : (url = "/home/bed-details/") }
   // Fetch patient data
   useEffect(() => {
     fetch("http://localhost:3000/patients")
@@ -30,7 +32,7 @@ export default function PatientSearch() {
       setShowDropdown(false);
       return;
     }
-    
+
     const filtered = patients.filter((p) => {
       const name = p.fullName ? p.fullName.toLowerCase() : "";
       const id = p.patientID ? p.patientID.toString() : "";
@@ -82,7 +84,7 @@ export default function PatientSearch() {
           {filteredPatients.map((p) => (
             <Link
               key={p.patientID}
-              to={`/home/bed-details/${p.patientID}`}
+              to={`${url}${p.patientID}`}
               className="list-group-item list-group-item-action d-flex align-items-center text-decoration-none"
               onClick={() => {
                 setShowDropdown(false);
