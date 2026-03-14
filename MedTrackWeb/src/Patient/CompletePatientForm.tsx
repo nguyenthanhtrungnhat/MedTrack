@@ -1,20 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import QRScanner from "../QRScanner";
-
-const getUserIDFromToken = () => {
-    const token = sessionStorage.getItem("token");
-    if (!token) return null;
-    try {
-        const decoded: any = jwtDecode(token);
-        return decoded.userID;
-    } catch (error) {
-        console.error("Invalid token:", error);
-        return null;
-    }
-};
+import getUserIDFromToken from "../components/getUserIDFromToken";
 
 export default function CompletePatientForm({ onCompleted }: { onCompleted?: () => void }) {
     const navigate = useNavigate();

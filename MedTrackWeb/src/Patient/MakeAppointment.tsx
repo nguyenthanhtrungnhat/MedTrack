@@ -1,19 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const getUserIDFromToken = (): number | null => {
-    const token = sessionStorage.getItem("token");
-    if (!token) return null;
-    try {
-        const decoded = jwtDecode(token) as { userID: number };
-        return decoded.userID;
-    } catch {
-        return null;
-    }
-};
+import getUserIDFromToken from "../components/getUserIDFromToken";
 
 export default function MakeAppointment() {
     const [doctors, setDoctors] = useState<any[]>([]);

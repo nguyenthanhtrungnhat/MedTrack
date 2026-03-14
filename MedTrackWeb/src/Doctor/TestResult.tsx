@@ -1,19 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { NurseProps, TestResultProps } from "../interface";
-import { jwtDecode } from "jwt-decode";
-
-const getUserIDFromToken = () => {
-  const token = sessionStorage.getItem("token");
-  if (!token) return null;
-
-  try {
-    const decoded: any = jwtDecode(token);
-    return decoded.userID;
-  } catch {
-    return null;
-  }
-};
+import getUserIDFromToken from "../components/getUserIDFromToken";
 
 export default function TestResult() {
   const [data, setData] = useState<TestResultProps[]>([]);

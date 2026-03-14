@@ -3,7 +3,6 @@ import './../css/AllDesign.css';
 import { useEffect, useState } from 'react';
 import { PatientProps, RecordProps } from '../interface';
 import { Link } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode";
 import SidebarLogin from '../SidebarLogin';
 import { toast } from 'react-toastify';
 import PatientInformation from '../PatientInformation';
@@ -20,18 +19,8 @@ import oxygenTherapy from '../images/oxygen.webp';
 import painscale from '../images/gauge.webp';
 import sensorium from '../images/sensory.webp';
 import heartRate from '../images/heart-rate.webp';
+import getUserIDFromToken from '../components/getUserIDFromToken';
 
-const getUserIDFromToken = () => {
-    const token = sessionStorage.getItem("token");
-    if (!token) return null;
-    try {
-        const decoded: any = jwtDecode(token);
-        return decoded.userID;
-    } catch (error) {
-        console.error("Invalid token:", error);
-        return null;
-    }
-};
 
 export default function PatientScreen() {
     const [appointments, setAppointments] = useState<any[]>([]);

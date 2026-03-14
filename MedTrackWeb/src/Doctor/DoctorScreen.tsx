@@ -2,25 +2,12 @@ import { Link } from "react-router-dom";
 import { NurseProps, RoomProps } from "../interface";
 import { useEffect, useState } from "react";
 import Room from "../Room";
-import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import DoctorInformation from "../DoctorInformation";
+import getUserIDFromToken from "../components/getUserIDFromToken";
 
 export default function DoctorScreen() {
-    const getUserIDFromToken = () => {
-        const token = sessionStorage.getItem("token");
-        if (!token) return null;
-
-        try {
-            const decoded: any = jwtDecode(token);
-            return decoded.userID; // Extract userID from token
-        } catch (error) {
-            console.error("Invalid token:", error);
-            return null;
-        }
-    };
-
-    const [user, setUser] = useState<NurseProps | null>(null);
+        const [user, setUser] = useState<NurseProps | null>(null);
     sessionStorage.setItem("info", JSON.stringify(user));
     const [rooms, setRooms] = useState<RoomProps[]>([]);
     const [doctorID, setDoctorID] = useState<number | null>(null);
