@@ -37,7 +37,7 @@ export default function Introduce() {
               standards.
             </p>
             <p>
-              Officially opened on <strong>December 30, 2016</strong>, BIH has a capacity
+              Officially opened on <strong>December 30, 2016</strong>, IH has a capacity
               of <strong>1,200 beds</strong>, including <strong>300 inpatient beds</strong>
               and <strong>45 examination rooms</strong> covering all medical specialties.
             </p>
