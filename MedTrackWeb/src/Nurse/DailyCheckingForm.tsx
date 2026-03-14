@@ -165,7 +165,7 @@ export default function DailyCheckingForm() {
       <div className="p-2 ps-3 radius10b0 blueBg text-white">
         <h5 className="mb-0">Life function tracking sheet <i className="fa fa-file-text" /></h5>
       </div>
-      <div className="p-5 pt-3 whiteBg dropShadow">
+      <div className="p-5 pt-3 whiteBg dropShadow radius10t0">
         <ToastContainer />
         <h6 className="dlcgray">Update patient diagnostic indicators</h6>
         <form onSubmit={handleSubmit}>
