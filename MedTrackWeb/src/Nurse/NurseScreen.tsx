@@ -5,41 +5,39 @@ import NurseInformation from '../NurseInformation';
 import { useEffect, useState } from 'react';
 import { NurseProps, RoomProps } from '../interface';
 import { Link } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode";
-
-const getUserIDFromToken = () => {
-    const token = sessionStorage.getItem("token");
-    if (!token) return null;
-
-    try {
-        const decoded: any = jwtDecode(token);
-        return decoded.userID; // Extract userID from token
-    } catch (error) {
-        console.error("Invalid token:", error);
-        return null;
-    }
-};
+import getUserIDFromToken from '../components/getUserIDFromToken';
 
 export default function NurseScreen() {
     const [user, setUser] = useState<NurseProps | null>(null);
-    sessionStorage.setItem("info", JSON.stringify(user));
     const [rooms, setRooms] = useState<RoomProps[]>([]);
-    const [nurseID, setNurseID] = useState<number | null>(null);
-    sessionStorage.setItem("nurseID", JSON.stringify(nurseID));
     const userID = getUserIDFromToken();
     const url = `http://localhost:3000/nurses/by-user/${userID}`;
     const roomsUrl = 'http://localhost:3000/rooms';
-    // const nurseID = sessionStorage.getItem("nurseID") || ""; // get nurseID
     const [count, setCount] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
+
+    if (!userID) {
+        return <h3>Something's wrong here!</h3>;
+    }
+
     useEffect(() => {
-        if (!nurseID) {
-            return;
-        }
+        if (!userID) return;
+        axios.get(url)
+            .then(response => {
+                setUser(response.data);
+                console.log("Nurse Data:", response.data);
+            })
+            .catch(error => console.error("Error fetching nurse data:", error));
+    }, [userID]);
+
+    useEffect(() => {
+        setLoading(true)
+
+        sessionStorage.setItem("info", JSON.stringify(user));
 
         const fetchCount = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/schedules/${nurseID}`);
+                const res = await axios.get(`http://localhost:3000/api/schedules/${user?.nurseID}`);
                 const data = res.data;
                 if (Array.isArray(data)) {
                     setCount(data.length);
@@ -52,27 +50,6 @@ export default function NurseScreen() {
         };
 
         fetchCount();
-    }, [nurseID]);
-    useEffect(() => {
-        if (!userID) return;
-
-        axios.get(url)
-            .then(response => {
-                setNurseID(response.data.nurseID);
-                console.log("Nurse ID:", response.data.nurseID);
-            })
-            .catch(error => console.error("Error fetching nurseID:", error));
-    }, [userID]);
-
-    useEffect(() => {
-        if (!nurseID) return;
-        setLoading(true)
-        axios.get(`http://localhost:3000/nurses/${nurseID}`)
-            .then(response => {
-                setUser(response.data);
-                console.log("Nurse Data:", response.data);
-            })
-            .catch(error => console.error("Error fetching nurse:", error));
 
         axios.get(roomsUrl)
             .then(response => {
@@ -81,11 +58,7 @@ export default function NurseScreen() {
             })
             .catch(error => console.error("Error fetching rooms:", error))
             .finally(() => setLoading(false)); // stop loading
-    }, [nurseID]);
-
-    if (!userID) {
-        return <p>Please log in to view your nurse profile.</p>;
-    }
+    }, [user]);
 
     return (
         <div className="row">
