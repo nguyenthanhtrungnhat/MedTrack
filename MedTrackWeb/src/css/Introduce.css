@@ -1,0 +1,44 @@
+/* Default: full text for desktop */
+.text-content {
+  transition: max-height 0.4s ease;
+}
+
+/* Mobile view: collapse text */
+@media (max-width: 768px) {
+  .text-content {
+    max-height: 180px; /* show about 1 paragraph */
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Add fading shadow at bottom to hint there's more */
+  .text-content::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to top, white, transparent);
+  }
+
+  /* Expanded state */
+  .text-content.expanded {
+    max-height: none;
+  }
+
+  .text-content.expanded::after {
+    display: none;
+  }
+
+  /* Show more button */
+  .show-more-btn {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .show-more-btn:hover {
+    text-decoration: underline;
+  }
+}
