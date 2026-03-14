@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./Introduce.css";
+import './css/Introduce.css';
 
 export default function Introduce() {
   const [showMore, setShowMore] = useState(false);
