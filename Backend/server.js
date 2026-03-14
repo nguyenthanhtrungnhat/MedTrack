@@ -1457,6 +1457,26 @@ app.get("/api/prescriptions/:id", (req, res) => {
 
 })
 
+//data for sidebar
+app.get("/api/users/basic/:userID", (req, res) => {
+    const { userID } = req.params;
+
+    const sql = "SELECT fullName, phone FROM user WHERE userID = ?";
+
+    db.query(sql, [userID], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Database error" });
+        }
+
+        if (result.length === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.json(result[0]);
+    });
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
