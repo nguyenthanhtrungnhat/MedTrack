@@ -26,6 +26,7 @@ export default function NurseScreen() {
             .then(response => {
                 setUser(response.data);
                 console.log("Nurse Data:", response.data);
+                
             })
             .catch(error => console.error("Error fetching nurse data:", error));
     }, [userID]);
@@ -33,7 +34,7 @@ export default function NurseScreen() {
     useEffect(() => {
         setLoading(true)
 
-        sessionStorage.setItem("info", JSON.stringify(user));
+        sessionStorage.setItem("nurseID", JSON.stringify(user?.nurseID));
 
         const fetchCount = async () => {
             try {
