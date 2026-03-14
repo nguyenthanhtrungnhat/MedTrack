@@ -138,12 +138,12 @@ export default function Schedule() {
 
   return (
     <div className="mb-3">
-      <div className=" radius10 shadow-sm">
+      <div className="radius10 shadow-sm ">
         <div className="p-2 ps-3 radius10b0 blueBg text-white">
           <h5 className="mb-0">Schedule</h5>
         </div>
       </div>
-      <div className="p-4 whiteBg dropShadow">
+      <div className="p-4 whiteBg dropShadow radius10t0">
         {error ? (
           <ErrorPage />
         ) : (
