@@ -139,7 +139,7 @@ export default function Schedule() {
   return (
     <div className="mb-3">
       <div className=" radius10 shadow-sm">
-        <div className="p-3 radius10b0 blueBg text-white">
+        <div className="p-2 radius10b0 blueBg text-white">
           <h5 className="mb-0">Schedule</h5>
         </div>
       </div>
