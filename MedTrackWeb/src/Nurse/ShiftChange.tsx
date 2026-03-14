@@ -60,11 +60,11 @@ export default function ShiftChange() {
 
 
     return (
-        <div className=" radius10 shadow-sm mb-3">
-            <div className="p-2 ps-3 radius10b0 blueBg text-white">
+        <div className=" radius10  mb-3">
+            <div className="p-2 ps-3 radius10b0 blueBg text-white ">
                 <h5 className="mb-0">Your schedule</h5>
             </div>
-            <div className="p-4 whiteBg shadow-sm mb-3">
+            <div className="p-4 whiteBg shadow-sm mb-3 radius10t0 ">
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -89,7 +89,7 @@ export default function ShiftChange() {
             <div className="p-2 ps-3 radius10b0 blueBg text-white">
                 <h5 className="mb-0">Your Request</h5>
             </div>
-            <div className="p-4 whiteBg mb-3">
+            <div className="p-4 whiteBg mb-3 radius10t0 shadow-sm">
                 <table className="table table-bordered table-striped mt-3">
                     <thead>
                         <tr>
@@ -127,7 +127,7 @@ export default function ShiftChange() {
                 <div className="p-2 ps-3 radius10b0 blueBg text-white">
                     <h5 className="mb-0">Shift request</h5>
                 </div>
-                <div className="p-4 whiteBg shadow-sm mb-3">
+                <div className="p-4 whiteBg shadow-sm mb-3 radius10t0">
                     <form>
                         <label>Select Schedule</label>
                         <select
