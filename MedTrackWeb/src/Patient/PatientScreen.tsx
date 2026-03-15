@@ -108,9 +108,8 @@ export default function PatientScreen() {
                                 <span className="visually-hidden">Loading...</span>
                             </div>
                         ) : (
-                            value ? value : "N/A"
+                            value != null ? value : "N/A"
                         )}
-
                     </h4>
                     <span className="blueText">{unit}</span>
                 </div>
@@ -344,7 +343,7 @@ export default function PatientScreen() {
                                                     <i className="fa fa-caret-right" /> Update personal data
                                                 </Link>
                                             </li> */}
-                                           
+
                                             <li>
                                                 <Link to="/patient/make-appointment" className="text-decoration-none">
                                                     <i className="fa fa-caret-right" /> Make Appointment
@@ -359,7 +358,7 @@ export default function PatientScreen() {
                     </div>
                 </div>
             </div>
-              {record != null && (
+            {record != null && (
                 <div className="row ">
                     <div className="col-12 padding pt-0">
                         <div className="hasRoomList border padding whiteBg dropShadow">
