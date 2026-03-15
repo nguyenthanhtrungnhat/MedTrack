@@ -34,8 +34,8 @@ INSERT INTO `nurse` (`nurseID`,`department`,`userID`,`roomID`,`image`) VALUES
 (1,'Internal Medicine',1,1,'https://i.pravatar.cc/300?img=8');
 
 -- DOCTOR
-INSERT INTO `doctor` (`doctorID`,`department`,`nurseID`,`userID`,`requestID`,`office`) VALUES
-(1,'Internal Medicine',1,4,NULL,'301B10');
+INSERT INTO `doctor` (`doctorID`,`department`,`nurseID`,`userID`,`requestID`,`office`,`image`) VALUES
+(1,'Internal Medicine',1,4,NULL,'301B10','https://i.pravatar.cc/300?img=8');
 
 -- REQUEST
 INSERT INTO `request`
