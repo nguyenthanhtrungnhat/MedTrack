@@ -34,7 +34,8 @@ export default function NurseScreen() {
     useEffect(() => {
         setLoading(true)
 
-        sessionStorage.setItem("nurseID", JSON.stringify(user?.nurseID));
+        sessionStorage.setItem("nurseID", String(user?.nurseID));
+        console.log("nurseID from storage:", String(user?.nurseID));
 
         const fetchCount = async () => {
             try {
