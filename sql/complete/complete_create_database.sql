@@ -65,6 +65,7 @@ CREATE TABLE `doctor` (
   `userID` int DEFAULT NULL,
   `requestID` int DEFAULT NULL,
   `office` varchar(45) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`doctorID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
