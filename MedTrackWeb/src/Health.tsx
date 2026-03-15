@@ -109,8 +109,8 @@
         const [allRecords, setAllRecords] = useState<RecordProps[]>([]);
         const [record, setRecord] = useState<RecordProps | null>(null);
         const [showMore, setShowMore] = useState(false);
-        const patientByIdUrl = `http://localhost:3000/patients/${patientID}`;
-        const recordBypatientIdUrl = `http://localhost:3000/medical-records/${patientID}`;
+        const patientByIdUrl = `https://projectb-medtrack.onrender.com/patients/${patientID}`;
+        const recordBypatientIdUrl = `https://projectb-medtrack.onrender.com/medical-records/${patientID}`;
         useEffect(() => {
             setLoading(true); // start loading
             axios.get(recordBypatientIdUrl)
@@ -130,7 +130,7 @@
         }, [patientByIdUrl, recordBypatientIdUrl]);
 
         const handleRecordSelect = (recordID: number) => {
-            axios.get(`http://localhost:3000/medical-records/by-recordId/${recordID}`)
+            axios.get(`https://projectb-medtrack.onrender.com/medical-records/by-recordId/${recordID}`)
                 .then(response => setRecord(response.data))
                 .catch(error => console.error('Error fetching selected record:', error));
         };

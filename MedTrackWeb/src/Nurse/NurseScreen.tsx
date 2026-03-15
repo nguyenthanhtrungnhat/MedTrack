@@ -11,8 +11,8 @@ export default function NurseScreen() {
     const [user, setUser] = useState<NurseProps | null>(null);
     const [rooms, setRooms] = useState<RoomProps[]>([]);
     const userID = getUserIDFromToken();
-    const url = `http://localhost:3000/nurses/by-user/${userID}`;
-    const roomsUrl = 'http://localhost:3000/rooms';
+    const url = `https://projectb-medtrack.onrender.com/nurses/by-user/${userID}`;
+    const roomsUrl = 'https://projectb-medtrack.onrender.com/rooms';
     const [count, setCount] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -38,7 +38,7 @@ export default function NurseScreen() {
 
         const fetchCount = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/schedules/${user?.nurseID}`);
+                const res = await axios.get(`https://projectb-medtrack.onrender.com/api/schedules/${user?.nurseID}`);
                 const data = res.data;
                 if (Array.isArray(data)) {
                     setCount(data.length);

@@ -26,7 +26,7 @@ export default function PrescriptionList() {
     try {
 
       const res = await axios.get(
-        "http://localhost:3000/api/prescriptions"
+        "https://projectb-medtrack.onrender.com/api/prescriptions"
       )
 
       if (Array.isArray(res.data)) {

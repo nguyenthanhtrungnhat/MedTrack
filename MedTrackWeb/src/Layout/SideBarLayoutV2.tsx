@@ -25,7 +25,7 @@ export default function SideBarLayoutV2() {
         if (!userID) return;
 
         axios
-            .get(`http://localhost:3000/api/users/basic/${userID}`)
+            .get(`https://projectb-medtrack.onrender.com/api/users/basic/${userID}`)
             .then((res) => {
                 if (res && res.data) {
                     setInfo(res.data);

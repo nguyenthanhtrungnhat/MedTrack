@@ -12,10 +12,10 @@ export default function AllAppointment() {
         async function loadAppointments() {
             try {
                 // STEP 1 → Update overdue first
-                await axios.put("http://localhost:3000/appointments/check-overdue");
+                await axios.put("https://projectb-medtrack.onrender.com/appointments/check-overdue");
 
                 // STEP 2 → Fetch appointments again after update
-                const res = await axios.get(`http://localhost:3000/api/all-appointment/doctor/${doctorID}`);
+                const res = await axios.get(`https://projectb-medtrack.onrender.com/api/all-appointment/doctor/${doctorID}`);
                 setAppointments(res.data);
             } catch (err) {
                 console.error("Failed to update or load appointments:", err);

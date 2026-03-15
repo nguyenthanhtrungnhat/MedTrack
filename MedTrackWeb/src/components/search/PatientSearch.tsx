@@ -13,7 +13,7 @@ export default function PatientSearch() {
   { roleID == '1' ? (url = "/doctor/bed-details/") : (url = "/home/bed-details/") }
   // Fetch patient data
   useEffect(() => {
-    fetch("http://localhost:3000/patients")
+    fetch("https://projectb-medtrack.onrender.com/patients")
       .then((res) => res.json())
       .then((data) => {
         // Filter out invalid patients (no ID or fullName)

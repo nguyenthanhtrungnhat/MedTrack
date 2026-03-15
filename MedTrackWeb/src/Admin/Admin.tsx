@@ -89,7 +89,7 @@ export default function AdminScreen() {
 
         try {
             await axios.post(
-                "http://localhost:3000/admin/doctors",
+                "https://projectb-medtrack.onrender.com/admin/doctors",
                 {
                     ...doctorForm,
                     gender: Number(doctorForm.gender),
@@ -154,7 +154,7 @@ export default function AdminScreen() {
 
         try {
             await axios.post(
-                "http://localhost:3000/admin/nurses",
+                "https://projectb-medtrack.onrender.com/admin/nurses",
                 {
                     ...nurseForm,
                     gender: Number(nurseForm.gender),
@@ -204,7 +204,7 @@ export default function AdminScreen() {
         }
         try {
             const res = await axios.get<News[]>(
-                "http://localhost:3000/admin/news",
+                "https://projectb-medtrack.onrender.com/admin/news",
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -250,7 +250,7 @@ export default function AdminScreen() {
             formData.append("image", imageFile);
 
             const res = await axios.post(
-                "http://localhost:3000/upload/image",
+                "https://projectb-medtrack.onrender.com/upload/image",
                 formData,
                 {
                     headers: {
@@ -283,7 +283,7 @@ export default function AdminScreen() {
 
         // 2. Nếu là ảnh upload từ backend: /uploads/...
         if (image.startsWith("/uploads")) {
-            return `http://localhost:3000${image}`;
+            return `https://projectb-medtrack.onrender.com${image}`;
         }
 
         // 3. Nếu là đường dẫn tương đối FE: ./images/...
@@ -302,7 +302,7 @@ export default function AdminScreen() {
             return;
         }
         try {
-            await axios.post("http://localhost:3000/admin/news", newsForm, {
+            await axios.post("https://projectb-medtrack.onrender.com/admin/news", newsForm, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             toast.success("News created successfully");
@@ -331,7 +331,7 @@ export default function AdminScreen() {
 
         try {
             await axios.put(
-                `http://localhost:3000/admin/news/${news.newID}`,
+                `https://projectb-medtrack.onrender.com/admin/news/${news.newID}`,
                 {
                     title: news.title,
                     body: news.body,
@@ -391,7 +391,7 @@ export default function AdminScreen() {
         try {
 
             await axios.post(
-                "http://localhost:3000/admin/medicines",
+                "https://projectb-medtrack.onrender.com/admin/medicines",
                 medicineForm,
                 { headers: { Authorization: `Bearer ${token}` } }
             );

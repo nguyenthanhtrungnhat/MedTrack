@@ -54,7 +54,7 @@ export default function Schedule() {
 
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/schedules/${nurseID}`
+        `https://projectb-medtrack.onrender.com/api/schedules/${nurseID}`
       );
       const data = res.data;
 

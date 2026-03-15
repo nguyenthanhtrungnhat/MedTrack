@@ -10,7 +10,7 @@ export default function HomePage() {
 
     useEffect(() => {
         // Call your API
-        axios.get('http://localhost:3000/news') // adjust to your actual endpoint
+        axios.get('https://projectb-medtrack.onrender.com/news') // adjust to your actual endpoint
             .then((res) => {
                 setNews(res.data);
             })

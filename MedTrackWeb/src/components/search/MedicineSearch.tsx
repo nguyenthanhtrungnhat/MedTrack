@@ -29,7 +29,7 @@ export default function MedicineSearch({ addMedicine }: Props) {
         setLoading(true)
         setError(false)
 
-        const res = await axios.get("http://localhost:3000/medicines")
+        const res = await axios.get("https://projectb-medtrack.onrender.com/medicines")
 
         setMedicines(res.data)
 

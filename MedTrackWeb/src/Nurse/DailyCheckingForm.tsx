@@ -41,7 +41,7 @@ export default function DailyCheckingForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    axios.get<Patient[]>("http://localhost:3000/patients")
+    axios.get<Patient[]>("https://projectb-medtrack.onrender.com/patients")
       .then(res => setPatients(res.data))
       .catch(err => toast.error(`Failed to load patients data: ${err}`));
   }, []);
@@ -116,7 +116,7 @@ export default function DailyCheckingForm() {
     if (Object.values(newErrors).some(err => err)) return;
 
     try {
-      await axios.post("http://localhost:3000/post-medical-records", {
+      await axios.post("https://projectb-medtrack.onrender.com/post-medical-records", {
         patientID: parseInt(formData.patientID),
         heartRate: parseFloat(String(formData.heartRate)),
         pulse: parseFloat(String(formData.pulse)),

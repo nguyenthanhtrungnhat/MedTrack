@@ -16,7 +16,7 @@ export default function AllShiftRequest() {
 
     const fetchRequests = () => {
         axios
-            .get<ScheduleRequest[]>(`http://localhost:3000/schedulerequest`)
+            .get<ScheduleRequest[]>(`https://projectb-medtrack.onrender.com/schedulerequest`)
             .then(res => setRequests(res.data))
             .catch(err => console.error("Failed to load requests:", err));
     };
@@ -24,7 +24,7 @@ export default function AllShiftRequest() {
     // Unified function for approve/reject
     const handleStatusChange = (requestID: number, status: 1 | 2) => {
         axios
-            .patch(`http://localhost:3000/schedule-request/${requestID}/status`, { status })
+            .patch(`https://projectb-medtrack.onrender.com/schedule-request/${requestID}/status`, { status })
             .then(res => {
                 toast.success(res.data.message);
                 fetchRequests(); // reload table

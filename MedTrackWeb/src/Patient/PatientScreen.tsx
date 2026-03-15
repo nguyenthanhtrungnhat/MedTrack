@@ -121,9 +121,9 @@ export default function PatientScreen() {
     useEffect(() => {
         if (!userID) return;
         setLoading(true); // start loading
-        axios.get(`http://localhost:3000/appointments/${userID}`).then(res => setAppointments(res.data));
+        axios.get(`https://projectb-medtrack.onrender.com/appointments/${userID}`).then(res => setAppointments(res.data));
         axios
-            .get(`http://localhost:3000/api/patientByUserID/${userID}`)
+            .get(`https://projectb-medtrack.onrender.com/api/patientByUserID/${userID}`)
             .then(response => {
                 setPatients(response.data);
             })
@@ -139,7 +139,7 @@ export default function PatientScreen() {
             return;
         }
 
-        const url = `http://localhost:3000/medical-records/${patients[0].patientID}`;
+        const url = `https://projectb-medtrack.onrender.com/medical-records/${patients[0].patientID}`;
         axios.get(url)
             .then(response => {
                 const sorted = [...response.data].sort(
@@ -157,7 +157,7 @@ export default function PatientScreen() {
     }, [patients]);
 
     const handleRecordSelect = (recordID: number) => {
-        axios.get(`http://localhost:3000/medical-records/by-recordId/${recordID}`)
+        axios.get(`https://projectb-medtrack.onrender.com/medical-records/by-recordId/${recordID}`)
             .then(response => setRecord(response.data))
             .catch(error => console.error('Error fetching selected record:', error));
     };

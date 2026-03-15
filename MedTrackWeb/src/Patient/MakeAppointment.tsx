@@ -16,7 +16,7 @@ export default function MakeAppointment() {
     useEffect(() => {
         if (!userID) return;
 
-        axios.put("http://localhost:3000/appointments/check-overdue")
+        axios.put("https://projectb-medtrack.onrender.com/appointments/check-overdue")
             .then(() => loadAppointments())
             .catch(err => console.error(err));
 
@@ -25,7 +25,7 @@ export default function MakeAppointment() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            axios.put("http://localhost:3000/appointments/check-overdue")
+            axios.put("https://projectb-medtrack.onrender.com/appointments/check-overdue")
                 .then(() => loadAppointments())
                 .catch(err => console.error(err));
         }, 60 * 1000);
@@ -34,11 +34,11 @@ export default function MakeAppointment() {
     }, []);
 
     const loadDoctors = () => {
-        axios.get("http://localhost:3000/doctors").then(res => setDoctors(res.data));
+        axios.get("https://projectb-medtrack.onrender.com/doctors").then(res => setDoctors(res.data));
     };
 
     const loadAppointments = () => {
-        axios.get(`http://localhost:3000/appointments/${userID}`).then(res => setAppointments(res.data));
+        axios.get(`https://projectb-medtrack.onrender.com/appointments/${userID}`).then(res => setAppointments(res.data));
     };
 
     const handleDoctorChange = (id: string) => {
@@ -60,7 +60,7 @@ export default function MakeAppointment() {
         }
 
         try {
-            await axios.post("http://localhost:3000/appointments", { doctorID, userID, dateTime, location });
+            await axios.post("https://projectb-medtrack.onrender.com/appointments", { doctorID, userID, dateTime, location });
             toast.success("Appointment booked successfully!");
 
             setDoctorID(null);

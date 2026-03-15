@@ -13,8 +13,8 @@ export default function DoctorScreen() {
     const [doctorID, setDoctorID] = useState<number | null>(null);
     sessionStorage.setItem("doctorID", JSON.stringify(doctorID));
     const userID = getUserIDFromToken();
-    const url = `http://localhost:3000/doctors/by-user/${userID}`;
-    const roomsUrl = 'http://localhost:3000/rooms';
+    const url = `https://projectb-medtrack.onrender.com/doctors/by-user/${userID}`;
+    const roomsUrl = 'https://projectb-medtrack.onrender.com/rooms';
     // const nurseID = sessionStorage.getItem("nurseID") || ""; // get nurseID
     const [count, setCount] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ export default function DoctorScreen() {
 
         const fetchCount = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/appointment/doctor/${doctorID}`);
+                const res = await axios.get(`https://projectb-medtrack.onrender.com/api/appointment/doctor/${doctorID}`);
                 setCount(Array.isArray(res.data) ? res.data.length : 0);
             } catch (err) {
                 console.error("Error fetching appointment count:", err);
@@ -50,7 +50,7 @@ export default function DoctorScreen() {
     useEffect(() => {
         if (!doctorID) return;
         setLoading(true)
-        axios.get(`http://localhost:3000/doctors/${doctorID}`)
+        axios.get(`https://projectb-medtrack.onrender.com/doctors/${doctorID}`)
             .then(response => {
                 setUser(response.data);
                 console.log("Doctor Data:", response.data);
@@ -69,7 +69,7 @@ export default function DoctorScreen() {
     const [pendingShiftRequestCount, setPendingShiftRequestCount] = useState<number>(0);
 
     useEffect(() => {
-        axios.get("http://localhost:3000/schedule-request/pending/count")
+        axios.get("https://projectb-medtrack.onrender.com/schedule-request/pending/count")
             .then(res => setPendingShiftRequestCount(res.data.count))
             .catch(err => console.error("Error fetching pending shift request count:", err));
     }, []);

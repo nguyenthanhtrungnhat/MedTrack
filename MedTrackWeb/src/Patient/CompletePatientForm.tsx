@@ -68,7 +68,7 @@ export default function CompletePatientForm({ onCompleted }: { onCompleted?: () 
             }
 
             const res = await axios.put(
-                `http://localhost:3000/api/patient/complete`,
+                `https://projectb-medtrack.onrender.com/api/patient/complete`,
                 {
                     ...form,
                     CIC: form.CIC,

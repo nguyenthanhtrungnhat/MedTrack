@@ -29,7 +29,7 @@ export default function AccountTable({ roleID, roleName }: AccountTableProps) {
         try {
             setLoading(true);
             const res = await axios.get<Account[]>(
-                `http://localhost:3000/admin/accounts/${roleID}`,
+                `https://projectb-medtrack.onrender.com/admin/accounts/${roleID}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setAccounts(res.data);
@@ -49,7 +49,7 @@ export default function AccountTable({ roleID, roleName }: AccountTableProps) {
     const updateStatus = async (userID: number, isActive: 0 | 1) => {
         try {
             await axios.put(
-                `http://localhost:3000/admin/accounts/${userID}/status`,
+                `https://projectb-medtrack.onrender.com/admin/accounts/${userID}/status`,
                 { isActive },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

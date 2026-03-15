@@ -46,7 +46,7 @@ export default function PrescriptionDetail() {
         try {
 
             const res = await axios.get(
-                `http://localhost:3000/api/prescriptions/${id}`
+                `https://projectb-medtrack.onrender.com/api/prescriptions/${id}`
             )
 
             const data = res.data
