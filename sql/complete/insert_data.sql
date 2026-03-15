@@ -31,7 +31,7 @@ INSERT INTO `room` (`roomID`,`department`,`location`) VALUES
 
 -- NURSE
 INSERT INTO `nurse` (`nurseID`,`department`,`userID`,`roomID`,`image`) VALUES
-(1,'Internal Medicine',1,1,'https://i.pravatar.cc/300?img=5');
+(1,'Internal Medicine',1,1,'https://i.pravatar.cc/300?img=8');
 
 -- DOCTOR
 INSERT INTO `doctor` (`doctorID`,`department`,`nurseID`,`userID`,`requestID`,`office`) VALUES
