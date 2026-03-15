@@ -78,6 +78,7 @@ const router = createBrowserRouter([
           { path: "beds-in-room/:roomID", element: <BedsInRoom /> },
           { path: "shift-change", element: <ShiftChange /> },
           { path: "daily-checking", element: <DailyCheckingForm /> },
+          { path: "testresultlist", element: <TestResult /> },
           { path: "schedule", element: <Schedule /> }
         ]
       },
