@@ -3,18 +3,13 @@ import './css/AllDesign.css';
 import PatientInformation from './PatientInformation';
 import { useEffect, useState } from 'react';
 import { PatientProps } from './interface';
-import { Link, useParams } from 'react-router-dom';
-import SidebarLogin from './SidebarLogin';
-import Health from './Health';
+import { useParams } from 'react-router-dom';
 
 export default function BedDetails() {
     const [user, setUser] = useState<PatientProps | null>(null);
     const { patientID } = useParams();
-    const storedInfo = sessionStorage.getItem("info");
-    const info = storedInfo ? JSON.parse(storedInfo) : null;
     const patientByIdUrl = `http://localhost:3000/patients/${patientID}`;
     const [loading, setLoading] = useState(true);
-    const roleID = sessionStorage.getItem("roleID");
     useEffect(() => {
         if (!patientID) return;
         setLoading(true); // start loading

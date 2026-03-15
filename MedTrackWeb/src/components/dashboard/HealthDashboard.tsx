@@ -1,10 +1,9 @@
 import { parseBloodPressure, average } from "../../utils/healthStats";
 import { NORMAL_RANGES } from "../../utils/normalRanges";
 import { RecordProps } from "../../interface";
-
 import { AverageSummaryChart } from "../charts/AverageSummaryChart";
-import VitalsTrendTable from "../charts/VitalsTrendTable";
 import BloodPressureChart from "../charts/BloodPressureChart";
+import VitalsTrendChart from "../charts/VitalsLineChart";
 
 type Props = {
   records: RecordProps[];
@@ -23,9 +22,9 @@ export default function HealthDashboard({ records }: Props) {
       const bp = parseBloodPressure(r.bloodPressure);
       return bp
         ? {
-            time: new Date(r.timeCreate).toLocaleString(),
-            ...bp,
-          }
+          time: new Date(r.timeCreate).toLocaleString(),
+          ...bp,
+        }
         : null;
     })
     .filter(Boolean) as any[];
@@ -51,13 +50,24 @@ export default function HealthDashboard({ records }: Props) {
 
   return (
     <>
-      <h4 className="blueText mb-3">📊 Health Dashboard</h4>
-
-      <VitalsTrendTable records={sorted} />
-
-      <BloodPressureChart data={bpData} />
-
-      <AverageSummaryChart data={avgData} />
+      <div className="mb-3">
+        <div className="radius10 shadow-sm ">
+          <div className="p-2 ps-3 radius10b0 blueBg text-white">
+            <h5 className="mb-0">Health Dashboard</h5>
+          </div>
+        </div>
+        <div className="p-4 whiteBg dropShadow radius10t0">
+          <div className="row">
+            <div className="col-md-6">
+              <VitalsTrendChart records={records} />
+            </div>
+            <div className="col-md-6">
+              <BloodPressureChart data={bpData} />
+              <AverageSummaryChart data={avgData} />
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

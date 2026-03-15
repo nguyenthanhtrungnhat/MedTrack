@@ -8,6 +8,7 @@ import "../css/AllDesign.css";
 import DoctorTable from "./DoctorTable";
 import NurseTable from "./NurseTable";
 import PatientTable from "./PatientTable";
+import MedicineTable from "./MedicineTable";
 
 interface News {
     newID?: number;
@@ -37,7 +38,7 @@ type NurseFormState = DoctorFormState & {
 
 export default function AdminScreen() {
     const [activeTab, setActiveTab] = useState<
-        "doctors" | "nurses" | "patients" | "news"
+        "doctors" | "nurses" | "patients" | "news" | "medicines"
     >("doctors");
 
     const token = sessionStorage.getItem("token");
@@ -356,6 +357,62 @@ export default function AdminScreen() {
         }
     };
 
+    const [medicineForm, setMedicineForm] = useState({
+        medicineName: "",
+        genericName: "",
+        dosageForm: "",
+        strength: "",
+        description: ""
+    });
+
+    const [medicineReloadKey, setMedicineReloadKey] = useState(0);
+
+    const handleMedicineChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+
+        const { name, value } = e.target;
+
+        setMedicineForm(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+    };
+    const handleCreateMedicine = async (e: React.FormEvent) => {
+
+        e.preventDefault();
+
+        if (!medicineForm.medicineName) {
+            toast.error("Medicine name required");
+            return;
+        }
+
+        try {
+
+            await axios.post(
+                "http://localhost:3000/admin/medicines",
+                medicineForm,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            toast.success("Medicine added");
+
+            setMedicineForm({
+                medicineName: "",
+                genericName: "",
+                dosageForm: "",
+                strength: "",
+                description: ""
+            });
+
+            setMedicineReloadKey(k => k + 1);
+
+        } catch {
+            toast.error("Create failed");
+        }
+
+    };
     return (
 
         <div className="mainBg pt-5 mt-5 min-vh-100">
@@ -428,6 +485,14 @@ export default function AdminScreen() {
                                         onClick={() => setActiveTab("news")}
                                     >
                                         News Management
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button
+                                        className={`nav-link ${activeTab === "medicines" ? "active" : ""}`}
+                                        onClick={() => setActiveTab("medicines")}
+                                    >
+                                        Medicines
                                     </button>
                                 </li>
                             </ul>
@@ -858,6 +923,85 @@ export default function AdminScreen() {
                                         </table>
                                     </div>
                                 </div>
+                            )}
+                            {activeTab === "medicines" && (
+
+                                <div className="mt-3">
+
+                                    <h4 className="blueText mb-3">
+                                        Medicine Management
+                                    </h4>
+
+                                    <form className="row g-3 mb-4" onSubmit={handleCreateMedicine}>
+
+                                        <div className="col-md-3">
+                                            <label className="form-label">Medicine Name</label>
+                                            <input
+                                                name="medicineName"
+                                                className="form-control"
+                                                value={medicineForm.medicineName}
+                                                onChange={handleMedicineChange}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="col-md-3">
+                                            <label className="form-label">Generic Name</label>
+                                            <input
+                                                name="genericName"
+                                                className="form-control"
+                                                value={medicineForm.genericName}
+                                                onChange={handleMedicineChange}
+                                            />
+                                        </div>
+
+                                        <div className="col-md-2">
+                                            <label className="form-label">Form</label>
+                                            <input
+                                                name="dosageForm"
+                                                className="form-control"
+                                                placeholder="Tablet"
+                                                value={medicineForm.dosageForm}
+                                                onChange={handleMedicineChange}
+                                            />
+                                        </div>
+
+                                        <div className="col-md-2">
+                                            <label className="form-label">Strength</label>
+                                            <input
+                                                name="strength"
+                                                className="form-control"
+                                                placeholder="500mg"
+                                                value={medicineForm.strength}
+                                                onChange={handleMedicineChange}
+                                            />
+                                        </div>
+
+                                        <div className="col-md-12">
+                                            <label className="form-label">Description</label>
+                                            <textarea
+                                                name="description"
+                                                className="form-control"
+                                                rows={2}
+                                                value={medicineForm.description}
+                                                onChange={handleMedicineChange}
+                                            />
+                                        </div>
+
+                                        <div className="col-12">
+                                            <button className="btn btn-success">
+                                                Add Medicine
+                                            </button>
+                                        </div>
+
+                                    </form>
+
+                                    <hr />
+
+                                    <MedicineTable key={medicineReloadKey} />
+
+                                </div>
+
                             )}
                         </div>
                     </div>

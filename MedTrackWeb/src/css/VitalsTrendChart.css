@@ -1,0 +1,23 @@
+.vitals-chart-container {
+    width: 100%;
+    /* max-width: 1000px;   */
+    margin: 20px auto;
+}
+
+.vitals-chart-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 15px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.vitals-chart-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2b6cb0;
+    margin-bottom: 10px;
+}
+
+.vitals-chart-wrapper {
+    height: 400px;   /* control chart height */
+}

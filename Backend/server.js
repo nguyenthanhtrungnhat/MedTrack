@@ -1286,6 +1286,79 @@ app.get("/medicines/:id", (req, res) => {
 
 });
 
+app.get("/admin/medicines", (req, res) => {
+
+    db.query(
+        "SELECT * FROM medicines ORDER BY medicineName",
+        (err, results) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: "Failed to load medicines" });
+            }
+
+            res.json(results);
+        }
+    );
+
+});
+
+app.post("/admin/medicines", (req, res) => {
+
+    const {
+        medicineName,
+        genericName,
+        dosageForm,
+        strength,
+        description
+    } = req.body;
+
+    if (!medicineName) {
+        return res.status(400).json({ message: "Medicine name required" });
+    }
+
+    db.query(
+        `INSERT INTO medicines
+        (medicineName, genericName, dosageForm, strength, description)
+        VALUES (?,?,?,?,?)`,
+        [medicineName, genericName, dosageForm, strength, description],
+        (err, result) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: "Create failed" });
+            }
+
+            res.json({
+                message: "Medicine created",
+                medicineID: result.insertId
+            });
+        }
+    );
+
+});
+
+app.put("/admin/medicines/:id", (req, res) => {
+
+    const id = req.params.id;
+    const { isActive } = req.body;
+
+    db.query(
+        "UPDATE medicines SET isActive=? WHERE medicineID=?",
+        [isActive, id],
+        (err) => {
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: "Update failed" });
+            }
+
+            res.json({ message: "Status updated" });
+        }
+    );
+
+});
+
 //make prescription
 app.post("/make-prescriptions", (req, res) => {
   const { patientID, doctorID, diagnosis, notes, medicines } = req.body;
