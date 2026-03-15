@@ -29,12 +29,12 @@ interface ScheduleEvent extends Event {
   id: number;
   subject: string;
   room: string;
-  nurseID: string | null;
+  nurseID: number | null;
   color?: string;
 }
 
 export default function Schedule() {
-  const nurseID = sessionStorage.getItem("nurseID");
+  const nurseID = Number(sessionStorage.getItem("nurseID"));
 
   const [events, setEvents] = useState<ScheduleEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -43,8 +43,16 @@ export default function Schedule() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<View>("week");
 
-  const parseEventDate = (dateStr: string, timeStr: string) =>
-    new Date(`${dateStr}T${timeStr}`);
+  // Parse API date correctly
+  const parseEventDate = (dateStr: string, timeStr: string) => {
+    const dateOnly = dateStr.split("T")[0];
+    const [h, m, s] = timeStr.split(":").map(Number);
+
+    const date = new Date(dateOnly);
+    date.setHours(h, m, s || 0, 0);
+
+    return date;
+  };
 
   const fetchSchedules = async () => {
     if (!nurseID) {
@@ -56,14 +64,14 @@ export default function Schedule() {
       const res = await axios.get(
         `https://projectb-medtrack.onrender.com/api/schedules/${nurseID}`
       );
+
       const data = res.data;
 
       const mapped: ScheduleEvent[] = data.flatMap((item: any) => {
         const start = parseEventDate(item.date, item.start_at);
-        const end = new Date(
-          start.getTime() + item.working_hours * 60 * 60 * 1000
-        );
+        const end = new Date(start.getTime() + item.working_hours * 3600000);
 
+        // Handle shifts crossing midnight
         if (start.getDate() !== end.getDate()) {
           const endOfDay = new Date(start);
           endOfDay.setHours(23, 59, 59);
@@ -83,7 +91,7 @@ export default function Schedule() {
               end: endOfDay,
             },
             {
-              id: item.scheduleID,
+              id: item.scheduleID + 1000,
               title: item.subject,
               subject: item.subject,
               room: item.room_location,
@@ -93,20 +101,20 @@ export default function Schedule() {
               end,
             },
           ];
-        } else {
-          return [
-            {
-              id: item.scheduleID,
-              title: item.subject,
-              subject: item.subject,
-              room: item.room_location,
-              nurseID,
-              color: item.color || "lightblue",
-              start,
-              end,
-            },
-          ];
         }
+
+        return [
+          {
+            id: item.scheduleID,
+            title: item.subject,
+            subject: item.subject,
+            room: item.room_location,
+            nurseID,
+            color: item.color || "lightblue",
+            start,
+            end,
+          },
+        ];
       });
 
       setEvents(mapped);
@@ -130,19 +138,20 @@ export default function Schedule() {
     style: {
       backgroundColor: event.color || "lightblue",
       color: "white",
-      borderRadius: "4px",
+      borderRadius: "5px",
       border: "none",
-      padding: "2px",
+      padding: "3px",
     },
   });
 
   return (
     <div className="mb-3">
-      <div className="radius10 shadow-sm ">
+      <div className="radius10 shadow-sm">
         <div className="p-2 ps-3 radius10b0 blueBg text-white">
           <h5 className="mb-0">Schedule</h5>
         </div>
       </div>
+
       <div className="p-4 whiteBg dropShadow radius10t0">
         {error ? (
           <ErrorPage />
@@ -167,16 +176,17 @@ export default function Schedule() {
               timeslots={2}
               style={{ height: "80vh" }}
               eventPropGetter={eventStyleGetter}
-              toolbar={true}
+              toolbar
             />
 
             <Modal show={!!selectedEvent} onHide={handleCloseModal}>
               <Modal.Header closeButton>
                 <Modal.Title>Task Detail</Modal.Title>
               </Modal.Header>
+
               <Modal.Body>
                 {selectedEvent && (
-                  <div>
+                  <>
                     <p>
                       <strong>Subject:</strong> {selectedEvent.subject}
                     </p>
@@ -191,9 +201,10 @@ export default function Schedule() {
                       <strong>End:</strong>{" "}
                       {selectedEvent.end?.toLocaleString()}
                     </p>
-                  </div>
+                  </>
                 )}
               </Modal.Body>
+
               <Modal.Footer>
                 <Button variant="secondary" onClick={handleCloseModal}>
                   Close
