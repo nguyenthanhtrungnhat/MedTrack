@@ -134,6 +134,12 @@ export default function SideBarLayoutV2() {
                                             </li>
 
                                             <li>
+                                                <Link to="/doctor/testresultlist" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Test Result
+                                                </Link>
+                                            </li>
+
+                                            <li>
                                                 <Link to="/home/schedule" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Schedule
                                                 </Link>
