@@ -2,16 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
 import "../css/AllDesign.css";
-import SidebarLogin from "../SidebarLogin";
 
 export default function ShiftChange() {
-
-    const storedInfo = sessionStorage.getItem("info");
-    const info = storedInfo ? JSON.parse(storedInfo) : null;
     const nurseID = sessionStorage.getItem("nurseID");
-
     const [schedules, setSchedules] = useState<any[]>([]);
     const [requests, setRequests] = useState<any[]>([]);
     const [selectedScheduleID, setSelectedScheduleID] = useState("");
