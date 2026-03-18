@@ -247,7 +247,7 @@ export default function PrescriptionDetail() {
 
                                     <td>
                                         {m.frequency
-                                            ? `${m.frequency} times/day`
+                                            ? `${m.frequency}`
                                             : "-"}
                                     </td>
 
