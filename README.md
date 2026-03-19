@@ -28,7 +28,7 @@ To run this project locally:
 
 ```bash
 # Clone the repository
-git clone https://github.com/nguyenthanhtrungnhat/ProjectB-MedTrack
+git clone https://github.com/nguyenthanhtrungnhat/MedTrack
 
 # Navigate to the frontend folder
 cd MedTrackWeb
