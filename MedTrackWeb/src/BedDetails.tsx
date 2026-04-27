@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 export default function BedDetails() {
     const [user, setUser] = useState<PatientProps | null>(null);
     const { patientID } = useParams();
-    const patientByIdUrl = `http://localhost:3000/patients/${patientID}`;
+    const patientByIdUrl = `https://projectb-medtrack.onrender.com/patients/${patientID}`;
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         if (!patientID) return;
