@@ -1557,6 +1557,42 @@ app.get("/api/users/basic/:userID", (req, res) => {
     });
 });
 
+app.post("/api/treatment", async (req, res) => {
+  const { form, logs } = req.body;
+
+  try {
+    const [result] = await db.execute(
+      `INSERT INTO treatment_sheet (patientID, admissionNumber, patientCode, diagnosis)
+       VALUES (?, ?, ?, ?)`,
+      [1, form.admissionNumber, form.patientCode, form.diagnosis]
+    );
+
+    const sheetID = result.insertId;
+
+    for (const log of logs) {
+      await db.execute(
+        `INSERT INTO treatment_logs
+        (sheetID, logTime, subjective, objective, assessment, plan, instruction)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          sheetID,
+          log.time,
+          log.subjective,
+          log.objective,
+          log.assessment,
+          log.plan,
+          log.instruction,
+        ]
+      );
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error");
+  }
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

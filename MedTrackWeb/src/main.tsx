@@ -37,6 +37,7 @@ import NurseRoute from './routes/NurseRoute';
 import PatientRoute from './routes/PatientRoute';
 import AdminRoute from './routes/AdminRoute';
 import Layout from './Layout/Layout';
+import TreatMentTimelineFull from './components/ORC/TreatMentTimelineFull';
 
 const router = createBrowserRouter([
   {
@@ -120,6 +121,7 @@ const router = createBrowserRouter([
           { path: "testresultlist", element: <TestResult /> },
           { path: "prescription-form", element: <PrescriptionForm /> },
           { path: "prescriptions", element: <PrescriptionList /> },
+          { path: "treatmenttimeline", element: <TreatMentTimelineFull /> },
           { path: "prescriptions/:id", element: <PrescriptionDetail /> }
         ]
       },

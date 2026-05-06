@@ -58,8 +58,8 @@ export default function PrescriptionForm() {
       try {
 
         const [pRes, mRes] = await Promise.all([
-          axios.get("https://projectb-medtrack.onrender.com/patients"),
-          axios.get("https://projectb-medtrack.onrender.com/medicines")
+          axios.get("http://localhost:3000/patients"),
+          axios.get("http://localhost:3000/medicines")
         ])
 
         setPatients(pRes.data)
@@ -186,7 +186,7 @@ export default function PrescriptionForm() {
       setLoading(true)
 
       await axios.post(
-        "https://projectb-medtrack.onrender.com/make-prescriptions",
+        "http://localhost:3000/make-prescriptions",
         data
       )
 

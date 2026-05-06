@@ -24,7 +24,7 @@ export default function SideBarLayout() {
         if (!userID) return;
 
         axios
-            .get(`https://projectb-medtrack.onrender.com/api/users/basic/${userID}`)
+            .get(`http://localhost:3000/api/users/basic/${userID}`)
             .then((res) => {
                 if (res && res.data) {
                     setInfo(res.data);
@@ -114,6 +114,12 @@ export default function SideBarLayout() {
                                                     <i className="fa fa-caret-right"></i> Prescription List
                                                 </Link>
                                             </li>
+                                            <li>
+                                                <Link to="/doctor/treatmenttimeline" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> TreatMent TimeLine
+                                                </Link>
+                                            </li>
+
                                         </ul>
                                     )}
 

@@ -27,7 +27,7 @@ export default function RegisterScreen() {
 
         setLoading(true);
         try {
-            const response = await axios.post("https://projectb-medtrack.onrender.com/register", {
+            const response = await axios.post("http://localhost:3000/register", {
                 username,
                 email,
                 password,

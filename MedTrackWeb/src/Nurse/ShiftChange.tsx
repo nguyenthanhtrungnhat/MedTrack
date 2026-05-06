@@ -17,7 +17,7 @@ export default function ShiftChange() {
     useEffect(() => {
         if (!nurseID) return;
 
-        axios.get(`https://projectb-medtrack.onrender.com/api/schedules/${nurseID}`)
+        axios.get(`http://localhost:3000/api/schedules/${nurseID}`)
             .then(res => setSchedules(res.data))
             .catch(err => console.error(err));
 
@@ -26,7 +26,7 @@ export default function ShiftChange() {
 
 
     const fetchRequests = () => {
-        axios.get(`https://projectb-medtrack.onrender.com/status/${nurseID}`)
+        axios.get(`http://localhost:3000/status/${nurseID}`)
             .then(res => setRequests(res.data))
             .catch(() => toast.error("Failed to load requests"));
     };
@@ -37,7 +37,7 @@ export default function ShiftChange() {
         if (!selectedScheduleID || !expectedDate || !reason)
             return toast.warn("⚠ Please fill all fields!");
 
-        axios.post("https://projectb-medtrack.onrender.com/request", {
+        axios.post("http://localhost:3000/request", {
             scheduleID: Number(selectedScheduleID),
             newDate: expectedDate,
             reason: reason

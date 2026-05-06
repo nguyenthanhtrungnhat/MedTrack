@@ -25,7 +25,7 @@ export default function TestResult() {
   const [nurseID, setNurseID] = useState<number | null>(null);
 
   const userID = getUserIDFromToken();
-  const url = `https://projectb-medtrack.onrender.com/nurses/by-user/${userID}`;
+  const url = `http://localhost:3000/nurses/by-user/${userID}`;
 
   // 🔹 Get nurseID
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function TestResult() {
     setLoadingNurse(true);
 
     axios
-      .get(`https://projectb-medtrack.onrender.com/nurses/${nurseID}`)
+      .get(`http://localhost:3000/nurses/${nurseID}`)
       .then((response) => {
         setUser(response.data);
         console.log("Nurse Data:", response.data);
@@ -68,7 +68,7 @@ export default function TestResult() {
 
     axios
       .get<TestResultProps[]>(
-        "https://projectb-medtrack.onrender.com/testresult"
+        "http://localhost:3000/testresult"
       )
       .then((response) => {
         setData(response.data);

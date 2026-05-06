@@ -23,7 +23,7 @@ export default function MedicinesList() {
   const fetchMedicines = async () => {
     try {
       const response = await axios.get<Medicine[]>(
-        "https://projectb-medtrack.onrender.com/medicines"
+        "http://localhost:3000/medicines"
       );
       setMedicines(response.data);
     } catch (err) {
