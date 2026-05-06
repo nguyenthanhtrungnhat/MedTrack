@@ -185,156 +185,160 @@ export default function TreatmentOCR() {
   };
 
   return (
-    <div className="container mt-3">
+    <div className="mb-3">
       <ToastContainer />
+      <div className="card shadow-sm dropShadow  mb-3 border-0">
+        <div className="card-header blueBg text-white ">
+          <h5 className="mb-0">Treatment Scan</h5>
+        </div>
+        <div className="p-3 bg-light">
+          {/* upload */}
+          <input
+            type="file"
+            className="form-control"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
 
-      <h4 className="mb-3">Treatment OCR Scan</h4>
+          {/* preview */}
+          {file && (
+            <img
+              src={URL.createObjectURL(file)}
+              alt="preview"
+              className="img-fluid mt-2 border"
+            />
+          )}
 
-      {/* upload */}
-      <input
-        type="file"
-        className="form-control"
-        onChange={(e) => setFile(e.target.files?.[0] || null)}
-      />
+          {/* scan */}
+          <button
+            className="btn btn-primary mt-2"
+            onClick={scan}
+            disabled={scanning}
+          >
+            {scanning ? "Scanning..." : "Scan OCR"}
+          </button>
 
-      {/* preview */}
-      {file && (
-        <img
-          src={URL.createObjectURL(file)}
-          alt="preview"
-          className="img-fluid mt-2 border"
-        />
-      )}
+          <hr />
 
-      {/* scan */}
-      <button
-        className="btn btn-primary mt-2"
-        onClick={scan}
-        disabled={scanning}
-      >
-        {scanning ? "Scanning..." : "Scan OCR"}
-      </button>
+          {/* FORM */}
+          <input
+            className="form-control mt-2"
+            placeholder="Patient Code (HI)"
+            value={form.patientCode}
+            onChange={(e) =>
+              setForm({ ...form, patientCode: e.target.value })
+            }
+          />
 
-      <hr />
+          <input
+            className="form-control mt-2"
+            placeholder="Admission Number"
+            value={form.admissionNumber}
+            onChange={(e) =>
+              setForm({ ...form, admissionNumber: e.target.value })
+            }
+          />
 
-      {/* FORM */}
-      <input
-        className="form-control mt-2"
-        placeholder="Patient Code (HI)"
-        value={form.patientCode}
-        onChange={(e) =>
-          setForm({ ...form, patientCode: e.target.value })
-        }
-      />
+          <textarea
+            className="form-control mt-2"
+            placeholder="Diagnosis"
+            value={form.diagnosis}
+            onChange={(e) =>
+              setForm({ ...form, diagnosis: e.target.value })
+            }
+          />
 
-      <input
-        className="form-control mt-2"
-        placeholder="Admission Number"
-        value={form.admissionNumber}
-        onChange={(e) =>
-          setForm({ ...form, admissionNumber: e.target.value })
-        }
-      />
+          {/* LOG TABLE */}
+          {logs.length > 0 && (
+            <>
+              <h5 className="mt-3">Treatment Logs</h5>
 
-      <textarea
-        className="form-control mt-2"
-        placeholder="Diagnosis"
-        value={form.diagnosis}
-        onChange={(e) =>
-          setForm({ ...form, diagnosis: e.target.value })
-        }
-      />
+              <table className="table table-bordered mt-2">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Subjective</th>
+                    <th>Objective</th>
+                    <th>Assessment</th>
+                    <th>Plan</th>
+                    <th>Instruction</th>
+                  </tr>
+                </thead>
 
-      {/* LOG TABLE */}
-      {logs.length > 0 && (
-        <>
-          <h5 className="mt-3">Treatment Logs</h5>
+                <tbody>
+                  {logs.map((l, i) => (
+                    <tr key={i}>
+                      <td>
+                        <input
+                          className="form-control"
+                          value={l.logTime}
+                          onChange={(e) =>
+                            updateLog(i, "logTime", e.target.value)
+                          }
+                        />
+                      </td>
 
-          <table className="table table-bordered mt-2">
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Subjective</th>
-                <th>Objective</th>
-                <th>Assessment</th>
-                <th>Plan</th>
-                <th>Instruction</th>
-              </tr>
-            </thead>
+                      <td>
+                        <input
+                          className="form-control"
+                          value={l.subjective}
+                          onChange={(e) =>
+                            updateLog(i, "subjective", e.target.value)
+                          }
+                        />
+                      </td>
 
-            <tbody>
-              {logs.map((l, i) => (
-                <tr key={i}>
-                  <td>
-                    <input
-                      className="form-control"
-                      value={l.logTime}
-                      onChange={(e) =>
-                        updateLog(i, "logTime", e.target.value)
-                      }
-                    />
-                  </td>
+                      <td>
+                        <input
+                          className="form-control"
+                          value={l.objective}
+                          onChange={(e) =>
+                            updateLog(i, "objective", e.target.value)
+                          }
+                        />
+                      </td>
 
-                  <td>
-                    <input
-                      className="form-control"
-                      value={l.subjective}
-                      onChange={(e) =>
-                        updateLog(i, "subjective", e.target.value)
-                      }
-                    />
-                  </td>
+                      <td>
+                        <input
+                          className="form-control"
+                          value={l.assessment}
+                          onChange={(e) =>
+                            updateLog(i, "assessment", e.target.value)
+                          }
+                        />
+                      </td>
 
-                  <td>
-                    <input
-                      className="form-control"
-                      value={l.objective}
-                      onChange={(e) =>
-                        updateLog(i, "objective", e.target.value)
-                      }
-                    />
-                  </td>
+                      <td>
+                        <input
+                          className="form-control"
+                          value={l.plan}
+                          onChange={(e) =>
+                            updateLog(i, "plan", e.target.value)
+                          }
+                        />
+                      </td>
 
-                  <td>
-                    <input
-                      className="form-control"
-                      value={l.assessment}
-                      onChange={(e) =>
-                        updateLog(i, "assessment", e.target.value)
-                      }
-                    />
-                  </td>
+                      <td>
+                        <input
+                          className="form-control"
+                          value={l.instruction}
+                          onChange={(e) =>
+                            updateLog(i, "instruction", e.target.value)
+                          }
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
 
-                  <td>
-                    <input
-                      className="form-control"
-                      value={l.plan}
-                      onChange={(e) =>
-                        updateLog(i, "plan", e.target.value)
-                      }
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      className="form-control"
-                      value={l.instruction}
-                      onChange={(e) =>
-                        updateLog(i, "instruction", e.target.value)
-                      }
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
-
-      {/* SAVE */}
-      <button className="btn btn-success mt-3" onClick={handleSave}>
-        Save
-      </button>
+          {/* SAVE */}
+          <button className="btn btn-success mt-3" onClick={handleSave}>
+            Save
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
