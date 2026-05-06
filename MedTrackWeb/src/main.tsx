@@ -37,7 +37,7 @@ import NurseRoute from './routes/NurseRoute';
 import PatientRoute from './routes/PatientRoute';
 import AdminRoute from './routes/AdminRoute';
 import Layout from './Layout/Layout';
-import TreatMentTimelineFull from './components/ORC/TreatMentTimelineFull';
+import TreatMentTimelineFull from './components/ORC/TreatmentOCR';
 
 const router = createBrowserRouter([
   {

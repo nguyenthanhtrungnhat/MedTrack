@@ -8,7 +8,9 @@ const verifyToken = require("./verifyToken");
 const axios = require("axios");
 const path = require("path");
 const multer = require("multer");
-
+const Tesseract = require("tesseract.js");
+const { exec } = require("child_process");
+const fs = require("fs");
 
 function isAdmin(req, res, next) {
   if (!req.user || req.user.roleID !== 666) {
@@ -480,55 +482,55 @@ app.get("/api/appointment/doctor/:doctorID", (req, res) => {
 
 // GET total pending shift requests count
 app.get("/schedule-request/pending/count", (req, res) => {
-    const sql = `SELECT COUNT(*) AS count FROM scheduleRequest WHERE status = 0`; // 0 = Pending
-    db.query(sql, (err, result) => {
-        if (err) return res.status(500).json({ message: "DB error", err });
-        res.json({ count: result[0].count });
-    });
+  const sql = `SELECT COUNT(*) AS count FROM scheduleRequest WHERE status = 0`; // 0 = Pending
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json({ message: "DB error", err });
+    res.json({ count: result[0].count });
+  });
 });
 
 
 //reject, approve schedule request
 app.patch("/schedule-request/:id/status", (req, res) => {
-    const requestID = req.params.id;
-    const { status } = req.body; // 1 = approve, 2 = reject
+  const requestID = req.params.id;
+  const { status } = req.body; // 1 = approve, 2 = reject
 
-    if (![1, 2].includes(status)) {
-        return res.status(400).json({ message: "Invalid status. Must be 1 or 2." });
+  if (![1, 2].includes(status)) {
+    return res.status(400).json({ message: "Invalid status. Must be 1 or 2." });
+  }
+
+  const getRequestSql = "SELECT scheduleID, newDate, status FROM scheduleRequest WHERE requestID = ?";
+  db.query(getRequestSql, [requestID], (err, result) => {
+    if (err) return res.status(500).json({ message: "Database error", err });
+    if (result.length === 0) return res.status(404).json({ message: "Request not found" });
+
+    const request = result[0];
+
+    if (request.status !== 0) {
+      return res.status(400).json({ message: "Request is not pending" });
     }
 
-    const getRequestSql = "SELECT scheduleID, newDate, status FROM scheduleRequest WHERE requestID = ?";
-    db.query(getRequestSql, [requestID], (err, result) => {
-        if (err) return res.status(500).json({ message: "Database error", err });
-        if (result.length === 0) return res.status(404).json({ message: "Request not found" });
+    const scheduleID = request.scheduleID;
+    const newDate = request.newDate;
 
-        const request = result[0];
+    // Update scheduleRequest.status
+    const updateRequestSql = "UPDATE scheduleRequest SET status = ? WHERE requestID = ?";
+    db.query(updateRequestSql, [status, requestID], (err2) => {
+      if (err2) return res.status(500).json({ message: "Failed to update request", err2 });
 
-        if (request.status !== 0) {
-            return res.status(400).json({ message: "Request is not pending" });
-        }
+      if (status === 1) { // approve → update schedule.date
+        if (!newDate) return res.status(400).json({ message: "Request newDate is null" });
 
-        const scheduleID = request.scheduleID;
-        const newDate = request.newDate;
-
-        // Update scheduleRequest.status
-        const updateRequestSql = "UPDATE scheduleRequest SET status = ? WHERE requestID = ?";
-        db.query(updateRequestSql, [status, requestID], (err2) => {
-            if (err2) return res.status(500).json({ message: "Failed to update request", err2 });
-
-            if (status === 1) { // approve → update schedule.date
-                if (!newDate) return res.status(400).json({ message: "Request newDate is null" });
-
-                const updateScheduleSql = "UPDATE schedules SET date = ? WHERE scheduleID = ?";
-                db.query(updateScheduleSql, [newDate, scheduleID], (err3) => {
-                    if (err3) return res.status(500).json({ message: "Failed to update schedule", err3 });
-                    return res.json({ message: "Request approved and schedule date updated" });
-                });
-            } else { // reject
-                return res.json({ message: "Request rejected successfully" });
-            }
+        const updateScheduleSql = "UPDATE schedules SET date = ? WHERE scheduleID = ?";
+        db.query(updateScheduleSql, [newDate, scheduleID], (err3) => {
+          if (err3) return res.status(500).json({ message: "Failed to update schedule", err3 });
+          return res.json({ message: "Request approved and schedule date updated" });
         });
+      } else { // reject
+        return res.json({ message: "Request rejected successfully" });
+      }
     });
+  });
 });
 
 // POST: Add new schedule
@@ -1295,74 +1297,74 @@ app.get("/medicines/:id", (req, res) => {
 
 app.get("/admin/medicines", (req, res) => {
 
-    db.query(
-        "SELECT * FROM medicines ORDER BY medicineName",
-        (err, results) => {
+  db.query(
+    "SELECT * FROM medicines ORDER BY medicineName",
+    (err, results) => {
 
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ message: "Failed to load medicines" });
-            }
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Failed to load medicines" });
+      }
 
-            res.json(results);
-        }
-    );
+      res.json(results);
+    }
+  );
 
 });
 
 app.post("/admin/medicines", (req, res) => {
 
-    const {
-        medicineName,
-        genericName,
-        dosageForm,
-        strength,
-        description
-    } = req.body;
+  const {
+    medicineName,
+    genericName,
+    dosageForm,
+    strength,
+    description
+  } = req.body;
 
-    if (!medicineName) {
-        return res.status(400).json({ message: "Medicine name required" });
-    }
+  if (!medicineName) {
+    return res.status(400).json({ message: "Medicine name required" });
+  }
 
-    db.query(
-        `INSERT INTO medicines
+  db.query(
+    `INSERT INTO medicines
         (medicineName, genericName, dosageForm, strength, description)
         VALUES (?,?,?,?,?)`,
-        [medicineName, genericName, dosageForm, strength, description],
-        (err, result) => {
+    [medicineName, genericName, dosageForm, strength, description],
+    (err, result) => {
 
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ message: "Create failed" });
-            }
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Create failed" });
+      }
 
-            res.json({
-                message: "Medicine created",
-                medicineID: result.insertId
-            });
-        }
-    );
+      res.json({
+        message: "Medicine created",
+        medicineID: result.insertId
+      });
+    }
+  );
 
 });
 
 app.put("/admin/medicines/:id", (req, res) => {
 
-    const id = req.params.id;
-    const { isActive } = req.body;
+  const id = req.params.id;
+  const { isActive } = req.body;
 
-    db.query(
-        "UPDATE medicines SET isActive=? WHERE medicineID=?",
-        [isActive, id],
-        (err) => {
+  db.query(
+    "UPDATE medicines SET isActive=? WHERE medicineID=?",
+    [isActive, id],
+    (err) => {
 
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ message: "Update failed" });
-            }
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Update failed" });
+      }
 
-            res.json({ message: "Status updated" });
-        }
-    );
+      res.json({ message: "Status updated" });
+    }
+  );
 
 });
 
@@ -1539,60 +1541,192 @@ app.get("/api/prescriptions/:id", (req, res) => {
 
 //data for sidebar
 app.get("/api/users/basic/:userID", (req, res) => {
-    const { userID } = req.params;
+  const { userID } = req.params;
 
-    const sql = "SELECT fullName, phone FROM user WHERE userID = ?";
+  const sql = "SELECT fullName, phone FROM user WHERE userID = ?";
 
-    db.query(sql, [userID], (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Database error" });
-        }
-
-        if (result.length === 0) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        res.json(result[0]);
-    });
-});
-
-app.post("/api/treatment", async (req, res) => {
-  const { form, logs } = req.body;
-
-  try {
-    const [result] = await db.execute(
-      `INSERT INTO treatment_sheet (patientID, admissionNumber, patientCode, diagnosis)
-       VALUES (?, ?, ?, ?)`,
-      [1, form.admissionNumber, form.patientCode, form.diagnosis]
-    );
-
-    const sheetID = result.insertId;
-
-    for (const log of logs) {
-      await db.execute(
-        `INSERT INTO treatment_logs
-        (sheetID, logTime, subjective, objective, assessment, plan, instruction)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          sheetID,
-          log.time,
-          log.subjective,
-          log.objective,
-          log.assessment,
-          log.plan,
-          log.instruction,
-        ]
-      );
+  db.query(sql, [userID], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Database error" });
     }
 
-    res.json({ success: true });
+    if (result.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(result[0]);
+  });
+});
+
+/* ================= PDF → IMAGE ================= */
+const convertPdfToImage = (pdfPath) =>
+  new Promise((resolve, reject) => {
+    const output = pdfPath.replace(".pdf", "");
+    exec(`pdftoppm -png "${pdfPath}" "${output}"`, (err) => {
+      if (err) return reject(err);
+      resolve(`${output}-1.png`);
+    });
+  });
+
+/* ================= PARSE ================= */
+const parseForm = (text) => {
+  const get = (label) => {
+    const match = text.match(new RegExp(label + ".*?:\\s*(.+)", "i"));
+    return match ? match[1].trim() : "";
+  };
+
+  return {
+    admissionNumber: get("Admission Number"),
+    patientCode: get("HI|Patient Code"),
+    diagnosis: get("Diagnosis"),
+  };
+};
+
+const parseLogs = (text) => {
+  const lines = text.split("\n");
+  const logs = [];
+
+  for (let line of lines) {
+    const m = line.match(/^(\d{2}:\d{2})\s+(.*)/);
+    if (m) {
+      logs.push({
+        logTime: m[1],
+        subjective: m[2],
+        objective: "",
+        assessment: "",
+        plan: "",
+        instruction: "",
+      });
+    }
+  }
+
+  return logs;
+};
+
+/* ================= OCR ================= */
+app.post("/api/ocr", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  let filePath = req.file.path;
+  let convertedPath = null;
+
+  try {
+    // PDF → image
+    if (req.file.mimetype === "application/pdf") {
+      convertedPath = await convertPdfToImage(filePath);
+      filePath = convertedPath;
+    }
+
+    const result = await Tesseract.recognize(filePath, "eng");
+    const text = result.data.text;
+
+    const form = parseForm(text);
+    const logs = parseLogs(text);
+
+    return res.json({ form, logs });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error");
+    console.error("OCR error:", err);
+    return res.status(500).json({ error: "OCR failed" });
+  } finally {
+    try {
+      if (req.file?.path) fs.unlink(req.file.path, () => {});
+      if (convertedPath) fs.unlink(convertedPath, () => {});
+    } catch (e) {
+      console.error("Cleanup error:", e);
+    }
   }
 });
 
+/* ================= SAVE ================= */
+app.post("/api/treatment", (req, res) => {
+  const { admissionNumber, patientCode, diagnosis, doctorID, logs } =
+    req.body;
+
+  if (!patientCode) {
+    return res.status(400).json({ error: "Missing HI" });
+  }
+
+  db.query(
+    "SELECT patientID FROM patient WHERE HI = ?",
+    [patientCode],
+    (err, rows) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "DB error" });
+      }
+
+      if (!rows || rows.length === 0) {
+        return res.status(404).json({ error: "Patient not found" });
+      }
+
+      const patientID = rows[0].patientID;
+
+      db.query(
+        `INSERT INTO treatment_sheet
+         (patientID, doctorID, admissionNumber, patientCode, diagnosis)
+         VALUES (?, ?, ?, ?, ?)`,
+        [patientID, doctorID, admissionNumber, patientCode, diagnosis],
+        (err2, sheet) => {
+          if (err2) {
+            console.error(err2);
+            return res.status(500).json({ error: "Insert sheet failed" });
+          }
+
+          const sheetID = sheet.insertId;
+
+          // ================= SAFE LOG INSERT =================
+          if (!Array.isArray(logs) || logs.length === 0) {
+            return res.json({
+              success: true,
+              sheetID,
+              logsInserted: 0,
+            });
+          }
+
+          let inserted = 0;
+
+          logs.forEach((l) => {
+            db.query(
+              `INSERT INTO treatment_logs
+               (sheetID, logTime, subjective, objective, assessment, plan, instruction)
+               VALUES (?, ?, ?, ?, ?, ?, ?)`,
+              [
+                sheetID,
+                l.logTime || null,
+                l.subjective || "",
+                l.objective || "",
+                l.assessment || "",
+                l.plan || "",
+                l.instruction || "",
+              ],
+              (err3) => {
+                if (err3) {
+                  console.error("Insert log error:", err3);
+                  return res.status(500).json({
+                    error: "Insert logs failed",
+                  });
+                }
+
+                inserted++;
+
+                if (inserted === logs.length) {
+                  return res.json({
+                    success: true,
+                    sheetID,
+                    logsInserted: inserted,
+                  });
+                }
+              }
+            );
+          });
+        }
+      );
+    }
+  );
+});
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
