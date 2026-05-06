@@ -26,7 +26,7 @@ export default function AllAppointment() {
     }, [doctorID]);
 
     return (
-        <div className="card shadow-sm">
+        <div className="card shadow-sm mb-3">
             <div className="card-header blueBg text-white">
                 <h5 className="mb-0">Appointment List</h5>
             </div>

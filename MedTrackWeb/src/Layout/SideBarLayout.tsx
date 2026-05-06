@@ -119,6 +119,11 @@ export default function SideBarLayout() {
                                                     <i className="fa fa-caret-right"></i> TreatMent TimeLine
                                                 </Link>
                                             </li>
+                                             <li>
+                                                <Link to="/doctor/treatment" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> TreatMent DashBoard
+                                                </Link>
+                                            </li>
 
                                         </ul>
                                     )}

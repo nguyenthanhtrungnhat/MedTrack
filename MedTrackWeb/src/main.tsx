@@ -38,6 +38,8 @@ import PatientRoute from './routes/PatientRoute';
 import AdminRoute from './routes/AdminRoute';
 import Layout from './Layout/Layout';
 import TreatMentTimelineFull from './components/ORC/TreatmentOCR';
+import TreatmentDashboard from './components/ORC/TreatmentDashboard';
+import TreatmentDetail from './components/ORC/TreatmentDetail';
 
 const router = createBrowserRouter([
   {
@@ -122,6 +124,8 @@ const router = createBrowserRouter([
           { path: "prescription-form", element: <PrescriptionForm /> },
           { path: "prescriptions", element: <PrescriptionList /> },
           { path: "treatmenttimeline", element: <TreatMentTimelineFull /> },
+          { path: "treatment", element: <TreatmentDashboard /> },
+          { path: "treatment/:id", element: <TreatmentDetail /> },
           { path: "prescriptions/:id", element: <PrescriptionDetail /> }
         ]
       },

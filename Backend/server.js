@@ -1727,6 +1727,75 @@ app.post("/api/treatment", (req, res) => {
     }
   );
 });
+
+// GET ALL TREATMENT SHEETS
+app.get("/api/treatment/all", (req, res) => {
+  db.query(
+    `SELECT * FROM treatment_sheet ORDER BY createdAt DESC`,
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    }
+  );
+});
+
+// GET LOGS BY SHEET ID
+app.get("/api/treatment/logs/:sheetID", (req, res) => {
+  db.query(
+    `SELECT * FROM treatment_logs WHERE sheetID = ? ORDER BY logTime ASC`,
+    [req.params.sheetID],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    }
+  );
+});
+
+app.get("/api/treatment/:id", (req, res) => {
+  const id = req.params.id;
+
+  const sql = `
+    SELECT 
+      ts.*,
+      tl.logTime,
+      tl.subjective,
+      tl.objective,
+      tl.assessment,
+      tl.plan,
+      tl.instruction
+    FROM treatment_sheet ts
+    LEFT JOIN treatment_logs tl ON ts.sheetID = tl.sheetID
+    WHERE ts.sheetID = ?
+    ORDER BY tl.logTime ASC
+  `;
+
+  db.query(sql, [id], (err, rows) => {
+    if (err) return res.status(500).json(err);
+
+    if (!rows.length) return res.status(404).json({ error: "Not found" });
+
+    const base = {
+      sheetID: rows[0].sheetID,
+      admissionNumber: rows[0].admissionNumber,
+      patientCode: rows[0].patientCode,
+      diagnosis: rows[0].diagnosis,
+      createdAt: rows[0].createdAt,
+      logs: [],
+    };
+
+    base.logs = rows.map(r => ({
+      logTime: r.logTime,
+      subjective: r.subjective,
+      objective: r.objective,
+      assessment: r.assessment,
+      plan: r.plan,
+      instruction: r.instruction,
+    }));
+
+    res.json(base);
+  });
+});
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
