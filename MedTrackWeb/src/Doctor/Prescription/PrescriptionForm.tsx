@@ -27,6 +27,7 @@ interface PrescriptionItem {
 }
 
 export default function PrescriptionForm() {
+  const token = sessionStorage.getItem("token");
 
   const [patients, setPatients] = useState<Patient[]>([])
   const [medicines, setMedicines] = useState<Medicine[]>([])
@@ -58,8 +59,8 @@ export default function PrescriptionForm() {
       try {
 
         const [pRes, mRes] = await Promise.all([
-          axios.get("http://localhost:3000/patients"),
-          axios.get("http://localhost:3000/medicines")
+          axios.get("http://localhost:3000/patients", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("http://localhost:3000/medicines", { headers: { Authorization: `Bearer ${token}` } })
         ])
 
         setPatients(pRes.data)
@@ -186,8 +187,8 @@ export default function PrescriptionForm() {
       setLoading(true)
 
       await axios.post(
-        "http://localhost:3000/make-prescriptions",
-        data
+        "http://localhost:3000/prescriptions",
+        data, { headers: { Authorization: `Bearer ${token}` } }
       )
 
       toast.success("Prescription created successfully")

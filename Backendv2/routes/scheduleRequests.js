@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const verifyToken = require("../middleware/verifyToken");
+const { getAllRecords } = require('../utils/dbHelpers');
+
+// GET /request
+router.get('/',verifyToken, (req, res) => getAllRecords('schedulerequest', res));
 
 // POST /request  — submit shift change request
 router.post('/',verifyToken, (req, res) => {
@@ -88,5 +92,6 @@ router.patch('/:id/status',verifyToken, (req, res) => {
     });
   });
 });
+
 
 module.exports = router;

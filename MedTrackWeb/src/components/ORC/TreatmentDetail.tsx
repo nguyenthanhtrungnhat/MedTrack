@@ -21,6 +21,8 @@ type SheetType = {
 };
 
 export default function TreatmentDetail() {
+    const token = sessionStorage.getItem("token");
+
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -28,13 +30,13 @@ export default function TreatmentDetail() {
     const [loading, setLoading] = useState(true);
 
     const api = axios.create({
-        baseURL: "http://localhost:3000/api",
+        baseURL: "http://localhost:3000",
     });
 
     useEffect(() => {
         const fetch = async () => {
             try {
-                const res = await api.get(`/treatment/${id}`);
+                const res = await api.get(`/treatmenttimeline/${id}`, { headers: { Authorization: `Bearer ${token}` } });
                 setData(res.data);
             } finally {
                 setLoading(false);

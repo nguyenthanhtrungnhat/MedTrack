@@ -74,4 +74,45 @@ router.get('/update-overdue',verifyToken, (req, res) => {
   });
 });
 
+//get all appointment of current doctor
+router.get("/doctor/:doctorID", (req, res) => {
+  const doctorID = req.params.doctorID;
+
+  const sql = `
+        SELECT a.appointmentID, a.dateTime, a.location, a.appointmentStatus,
+               d.doctorID, u.fullName AS patientName
+        FROM appointment a
+        LEFT JOIN user u ON a.userID = u.userID
+        LEFT JOIN doctor d ON a.doctorID = d.doctorID
+        WHERE a.doctorID = ?
+        AND DATE(a.dateTime) = CURDATE()   -- only today appointments
+        ORDER BY a.dateTime DESC;
+    `;
+
+  db.query(sql, [doctorID], (err, result) => {
+    if (err) return res.status(500).json({ message: "Query Failed", error: err });
+    res.json(result);
+  });
+});
+
+router.get("/all-appointment/doctor/:doctorID", (req, res) => {
+  const doctorID = req.params.doctorID;
+
+  const sql = `
+        SELECT a.appointmentID, a.dateTime, a.location, a.appointmentStatus,
+               d.doctorID, u.fullName AS patientName
+        FROM appointment a
+        LEFT JOIN user u ON a.userID = u.userID  -- lấy tên bệnh nhân
+        LEFT JOIN doctor d ON a.doctorID = d.doctorID
+        WHERE a.doctorID = ?
+        ORDER BY a.dateTime DESC;
+    `;
+
+  db.query(sql, [doctorID], (err, result) => {
+    if (err) return res.status(500).json({ message: "Query Failed", error: err });
+    // console.log(result);
+    res.json(result);
+  });
+});
+
 module.exports = router;

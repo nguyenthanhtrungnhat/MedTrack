@@ -13,18 +13,18 @@ type SheetType = {
 export default function TreatmentDashboard() {
     const [sheets, setSheets] = useState<SheetType[]>([]);
     const [loading, setLoading] = useState(false);
-
+    const token = sessionStorage.getItem("token");
     const navigate = useNavigate();
 
     const api = axios.create({
-        baseURL: "http://localhost:3000/api",
+        baseURL: "http://localhost:3000",
     });
 
     useEffect(() => {
         const fetch = async () => {
             setLoading(true);
             try {
-                const res = await api.get("/treatment/all");
+                const res = await api.get("/treatmenttimeline/all", { headers: { Authorization: `Bearer ${token}` } });
                 setSheets(res.data || []);
             } finally {
                 setLoading(false);

@@ -7,7 +7,8 @@ import DoctorInformation from "../DoctorInformation";
 import getUserIDFromToken from "../components/getUserIDFromToken";
 
 export default function DoctorScreen() {
-        const [user, setUser] = useState<NurseProps | null>(null);
+    const [user, setUser] = useState<NurseProps | null>(null);
+    const token = sessionStorage.getItem("token");
     sessionStorage.setItem("info", JSON.stringify(user));
     const [rooms, setRooms] = useState<RoomProps[]>([]);
     const [doctorID, setDoctorID] = useState<number | null>(null);
@@ -25,7 +26,7 @@ export default function DoctorScreen() {
 
         const fetchCount = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/appointment/doctor/${doctorID}`);
+                const res = await axios.get(`http://localhost:3000/appointments/doctor/${doctorID}`, { headers: { Authorization: `Bearer ${token}` } });
                 setCount(Array.isArray(res.data) ? res.data.length : 0);
             } catch (err) {
                 console.error("Error fetching appointment count:", err);
@@ -39,7 +40,7 @@ export default function DoctorScreen() {
     useEffect(() => {
         if (!userID) return;
 
-        axios.get(url)
+        axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 setDoctorID(response.data.doctorID);
                 console.log("Doctor ID:", response.data.doctorID);
@@ -50,14 +51,14 @@ export default function DoctorScreen() {
     useEffect(() => {
         if (!doctorID) return;
         setLoading(true)
-        axios.get(`http://localhost:3000/doctors/${doctorID}`)
+        axios.get(`http://localhost:3000/doctors/${doctorID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 setUser(response.data);
                 console.log("Doctor Data:", response.data);
             })
             .catch(error => console.error("Error fetching doctor:", error));
 
-        axios.get(roomsUrl)
+        axios.get(roomsUrl, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 setRooms(response.data);
                 console.log("Room Data:", response.data);
@@ -69,7 +70,7 @@ export default function DoctorScreen() {
     const [pendingShiftRequestCount, setPendingShiftRequestCount] = useState<number>(0);
 
     useEffect(() => {
-        axios.get("http://localhost:3000/schedule-request/pending/count")
+        axios.get("http://localhost:3000/schedule-requests/pending/count", { headers: { Authorization: `Bearer ${token}` } })
             .then(res => setPendingShiftRequestCount(res.data.count))
             .catch(err => console.error("Error fetching pending shift request count:", err));
     }, []);

@@ -19,6 +19,7 @@ type LogType = {
 };
 
 export default function TreatmentOCR() {
+  const token = sessionStorage.getItem("token");
   const [file, setFile] = useState<File | null>(null);
   const [scanning, setScanning] = useState(false);
 
@@ -35,7 +36,7 @@ export default function TreatmentOCR() {
 
   const api = useMemo(() => {
     return axios.create({
-      baseURL: "http://localhost:3000/api",
+      baseURL: "http://localhost:3000",
     });
   }, []);
 
@@ -115,11 +116,24 @@ export default function TreatmentOCR() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await api.post("/ocr", formData, {
-        timeout: 30000,
-      });
+      const res = await api.post(
+        "/treatmenttimeline/ocr",
+        formData,
+        {
+          timeout: 30000,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      setForm(res.data.form || {});
+      setForm(
+        res.data.form || {
+          admissionNumber: "",
+          patientCode: "",
+          diagnosis: "",
+        }
+      );
       setLogs(normalizeLogs(res.data.logs || []));
 
       // 🔥 NO DUPLICATE TOAST
@@ -166,13 +180,13 @@ export default function TreatmentOCR() {
     }
 
     try {
-      await api.post("/treatment", {
+      await api.post("/treatmenttimeline", {
         admissionNumber: form.admissionNumber,
         patientCode: form.patientCode,
         diagnosis: form.diagnosis,
         doctorID,
         logs,
-      });
+      }, { headers: { Authorization: `Bearer ${token}` } });
 
       toast.success("Saved successfully", {
         toastId: "save-success",
@@ -186,7 +200,6 @@ export default function TreatmentOCR() {
 
   return (
     <div className="mb-3">
-      <ToastContainer />
       <div className="card shadow-sm dropShadow  mb-3 border-0">
         <div className="card-header blueBg text-white ">
           <h5 className="mb-0">Treatment Scan</h5>

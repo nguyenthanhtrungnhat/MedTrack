@@ -26,6 +26,7 @@ interface Prescription {
 }
 
 export default function PrescriptionDetail() {
+    const token = sessionStorage.getItem("token");
 
     const { id } = useParams()
     const navigate = useNavigate()
@@ -46,8 +47,8 @@ export default function PrescriptionDetail() {
         try {
 
             const res = await axios.get(
-                `http://localhost:3000/api/prescriptions/${id}`
-            )
+                `http://localhost:3000/prescriptions/${id}`
+                , { headers: { Authorization: `Bearer ${token}` } })
 
             const data = res.data
 

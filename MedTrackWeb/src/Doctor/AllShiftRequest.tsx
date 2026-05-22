@@ -6,7 +6,7 @@ import { ScheduleRequest } from "../interface";
 
 export default function AllShiftRequest() {
     const doctorID = Number(sessionStorage.getItem("doctorID"));
-
+    const token = sessionStorage.getItem("token");
     const [requests, setRequests] = useState<ScheduleRequest[]>([]);
 
     useEffect(() => {
@@ -16,7 +16,7 @@ export default function AllShiftRequest() {
 
     const fetchRequests = () => {
         axios
-            .get<ScheduleRequest[]>(`http://localhost:3000/schedulerequest`)
+            .get<ScheduleRequest[]>(`http://localhost:3000/schedule-requests`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => setRequests(res.data))
             .catch(err => console.error("Failed to load requests:", err));
     };
@@ -24,7 +24,7 @@ export default function AllShiftRequest() {
     // Unified function for approve/reject
     const handleStatusChange = (requestID: number, status: 1 | 2) => {
         axios
-            .patch(`http://localhost:3000/schedule-request/${requestID}/status`, { status })
+            .patch(`http://localhost:3000/schedule-request/${requestID}/status`, { status }, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => {
                 toast.success(res.data.message);
                 fetchRequests(); // reload table
