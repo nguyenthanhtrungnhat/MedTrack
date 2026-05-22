@@ -6,7 +6,7 @@ import getUserIDFromToken from "../components/getUserIDFromToken";
 export default function TestResult() {
   const [data, setData] = useState<TestResultProps[]>([]);
   const [loadingTest, setLoadingTest] = useState(true);
-  const [loadingNurse, setLoadingNurse] = useState(true);
+  // const [loadingNurse, setLoadingNurse] = useState(true);
   const [error, setError] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,46 +21,46 @@ export default function TestResult() {
     direction: "desc",
   });
 
-  const [user, setUser] = useState<NurseProps | null>(null);
-  const [nurseID, setNurseID] = useState<number | null>(null);
+  // const [user, setUser] = useState<NurseProps | null>(null);
+  // const [nurseID, setNurseID] = useState<number | null>(null);
 
   const userID = getUserIDFromToken();
-  const url = `http://localhost:3000/nurses/by-user/${userID}`;
+  // const url = `http://localhost:3000/nurses/by-user/${userID}`;
 
   // 🔹 Get nurseID
-  useEffect(() => {
-    if (!userID) return;
+  // useEffect(() => {
+  //   if (!userID) return;
 
-    axios
-      .get(url)
-      .then((response) => {
-        setNurseID(response.data.nurseID);
-        console.log("Nurse ID:", response.data.nurseID);
-      })
-      .catch((error) =>
-        console.error("Error fetching nurseID:", error)
-      );
-  }, [userID]);
+  //   axios
+  //     .get(url)
+  //     .then((response) => {
+  //       setNurseID(response.data.nurseID);
+  //       console.log("Nurse ID:", response.data.nurseID);
+  //     })
+  //     .catch((error) =>
+  //       console.error("Error fetching nurseID:", error)
+  //     );
+  // }, [userID]);
 
   // 🔹 Get nurse info
-  useEffect(() => {
-    if (nurseID == null) return;
+  // useEffect(() => {
+  //   if (nurseID == null) return;
 
-    setLoadingNurse(true);
+  //   setLoadingNurse(true);
 
-    axios
-      .get(`http://localhost:3000/nurses/${nurseID}`)
-      .then((response) => {
-        setUser(response.data);
-        console.log("Nurse Data:", response.data);
-      })
-      .catch((error) =>
-        console.error("Error fetching nurse:", error)
-      )
-      .finally(() => {
-        setLoadingNurse(false);
-      });
-  }, [nurseID]);
+  //   axios
+  //     .get(`http://localhost:3000/nurses/${nurseID}`)
+  //     .then((response) => {
+  //       setUser(response.data);
+  //       console.log("Nurse Data:", response.data);
+  //     })
+  //     .catch((error) =>
+  //       console.error("Error fetching nurse:", error)
+  //     )
+  //     .finally(() => {
+  //       setLoadingNurse(false);
+  //     });
+  // }, [nurseID]);
 
   // 🔹 Get test results
   useEffect(() => {
