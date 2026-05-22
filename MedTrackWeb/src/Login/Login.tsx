@@ -18,7 +18,7 @@ export default function LoginScreen() {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:3000/login", { email, password });
+            const response = await axios.post("http://localhost:3000/api/auth/login", { email, password });
             const { token, redirect } = response.data;
 
             if (!token || !redirect) {
