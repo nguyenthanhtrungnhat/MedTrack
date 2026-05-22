@@ -63,6 +63,9 @@ app.use("/schedule-requests", require("./routes/scheduleRequests"));
 app.use("/prescriptions", require("./routes/prescriptions"));
 app.use("/admin", require("./routes/admin"));
 app.use("/medicines", require("./routes/medicines"));
+app.use("/news", require("./routes/news"));
+app.use("/rooms", require("./routes/rooms"));
+app.use("/testresult", require("./routes/testresult"));
 
 // Test route
 app.get("/", (req, res) => {

@@ -35,7 +35,7 @@ interface ScheduleEvent extends Event {
 
 export default function Schedule() {
   const nurseID = Number(sessionStorage.getItem("nurseID"));
-
+  const token = sessionStorage.getItem("token");
   const [events, setEvents] = useState<ScheduleEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] =
@@ -61,9 +61,7 @@ export default function Schedule() {
     }
 
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/schedules/${nurseID}`
-      );
+      const res = await axios.get(`http://localhost:3000/schedules/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } });
 
       const data = res.data;
 

@@ -7,9 +7,10 @@ import { PatientProps } from './interface';
 export default function BedsInRoom() {
     const { roomID } = useParams();
     const [patients, setPatients] = useState<PatientProps[]>([]);
+    const token = sessionStorage.getItem("token");
     const url = `http://localhost:3000/rooms/${roomID}/patients`;
     useEffect(() => {
-        axios.get(url)
+        axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 setPatients(response.data);
                 console.log("Patient Data:", response.data);

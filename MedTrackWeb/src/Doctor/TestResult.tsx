@@ -1,12 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import { NurseProps, TestResultProps } from "../interface";
+import { TestResultProps } from "../interface";
 import getUserIDFromToken from "../components/getUserIDFromToken";
 
 export default function TestResult() {
   const [data, setData] = useState<TestResultProps[]>([]);
   const [loadingTest, setLoadingTest] = useState(true);
-  // const [loadingNurse, setLoadingNurse] = useState(true);
+  const token = sessionStorage.getItem("token");
   const [error, setError] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,55 +21,13 @@ export default function TestResult() {
     direction: "desc",
   });
 
-  // const [user, setUser] = useState<NurseProps | null>(null);
-  // const [nurseID, setNurseID] = useState<number | null>(null);
-
   const userID = getUserIDFromToken();
-  // const url = `http://localhost:3000/nurses/by-user/${userID}`;
 
-  // 🔹 Get nurseID
-  // useEffect(() => {
-  //   if (!userID) return;
-
-  //   axios
-  //     .get(url)
-  //     .then((response) => {
-  //       setNurseID(response.data.nurseID);
-  //       console.log("Nurse ID:", response.data.nurseID);
-  //     })
-  //     .catch((error) =>
-  //       console.error("Error fetching nurseID:", error)
-  //     );
-  // }, [userID]);
-
-  // 🔹 Get nurse info
-  // useEffect(() => {
-  //   if (nurseID == null) return;
-
-  //   setLoadingNurse(true);
-
-  //   axios
-  //     .get(`http://localhost:3000/nurses/${nurseID}`)
-  //     .then((response) => {
-  //       setUser(response.data);
-  //       console.log("Nurse Data:", response.data);
-  //     })
-  //     .catch((error) =>
-  //       console.error("Error fetching nurse:", error)
-  //     )
-  //     .finally(() => {
-  //       setLoadingNurse(false);
-  //     });
-  // }, [nurseID]);
-
-  // 🔹 Get test results
   useEffect(() => {
     setLoadingTest(true);
 
     axios
-      .get<TestResultProps[]>(
-        "http://localhost:3000/testresult"
-      )
+      .get<TestResultProps[]>("http://localhost:3000/testresult", { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => {
         setData(response.data);
       })
@@ -123,7 +81,7 @@ export default function TestResult() {
 
     if (searchTerm.trim() !== "") {
       filtered = filtered.filter((item) =>
-        item.username
+        (item.username || "")
           .toLowerCase()
           .includes(searchTerm.toLowerCase())
       );
@@ -137,8 +95,8 @@ export default function TestResult() {
         valueA = new Date(a.datetime).getTime();
         valueB = new Date(b.datetime).getTime();
       } else {
-        valueA = a.username.toLowerCase();
-        valueB = b.username.toLowerCase();
+        valueA = (a.username || "").toLowerCase();
+        valueB = (b.username || "").toLowerCase();
       }
 
       if (valueA < valueB)

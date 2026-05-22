@@ -8,7 +8,7 @@ import getUserIDFromToken from "../components/getUserIDFromToken";
 import Health from "../Health";
 
 export default function SideBarLayoutV2() {
-
+    const token = sessionStorage.getItem("token");
     const [info, setInfo] = useState<any>(null);
     const roleID = sessionStorage.getItem("roleID");
     const { pathname } = useLocation();
@@ -25,7 +25,7 @@ export default function SideBarLayoutV2() {
         if (!userID) return;
 
         axios
-            .get(`http://localhost:3000/api/users/basic/${userID}`)
+            .get(`http://localhost:3000/users/basic/${userID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then((res) => {
                 if (res && res.data) {
                     setInfo(res.data);

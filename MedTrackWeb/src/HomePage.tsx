@@ -7,10 +7,11 @@ import Introduce from './Introduce';
 import axios from 'axios';
 export default function HomePage() {
     const [news, setNews] = useState<any[]>([]);
+    const token = sessionStorage.getItem("token");
 
     useEffect(() => {
         // Call your API
-        axios.get('http://localhost:3000/news') // adjust to your actual endpoint
+        axios.get('http://localhost:3000/news', { headers: { Authorization: `Bearer ${token}` } }) // adjust to your actual endpoint
             .then((res) => {
                 setNews(res.data);
             })

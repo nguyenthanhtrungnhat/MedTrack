@@ -15,6 +15,7 @@ export default function NurseScreen() {
     const roomsUrl = 'http://localhost:3000/rooms';
     const [count, setCount] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
+    const token = sessionStorage.getItem("token");
 
     if (!userID) {
         return <h3>Something's wrong here!</h3>;
@@ -26,7 +27,7 @@ export default function NurseScreen() {
             .then(response => {
                 setUser(response.data);
                 console.log("Nurse Data:", response.data);
-                
+
             })
             .catch(error => console.error("Error fetching nurse data:", error));
     }, [userID]);
@@ -39,7 +40,7 @@ export default function NurseScreen() {
 
         const fetchCount = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/schedules/${user?.nurseID}`);
+                const res = await axios.get(`http://localhost:3000/schedules/${user?.nurseID}`, { headers: { Authorization: `Bearer ${token}` } });
                 const data = res.data;
                 if (Array.isArray(data)) {
                     setCount(data.length);
@@ -53,7 +54,7 @@ export default function NurseScreen() {
 
         fetchCount();
 
-        axios.get(roomsUrl)
+        axios.get(roomsUrl, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 setRooms(response.data);
                 console.log("Room Data:", response.data);
@@ -158,10 +159,9 @@ export default function NurseScreen() {
                 <div className="hasRoomList border padding whiteBg dropShadow">
                     <h2 className='blueText text-center marginBottom'>Room list</h2>
                     <div>
-
                         <div className="row">
-                            {rooms.map((room) => (
-                                <Room key={room.roomID} {...room} />
+                            {rooms.map((room, index) => (
+                                <Room key={`${room.roomID}-${index}`} {...room} />
                             ))}
                         </div>
                     </div>

@@ -7,6 +7,22 @@ const verifyToken = require("../middleware/verifyToken");
 // GET /nurses
 router.get('/', (req, res) => getAllRecordsWithUser('nurse', res));
 
+// Get full nurse details by userID
+router.get("/by-user/:userID", (req, res) => {
+  const { userID } = req.params;
+  const query = `
+    SELECT n.*, u.*
+    FROM nurse n
+    JOIN user u ON n.userID = u.userID
+    WHERE n.userID = ?;
+  `;
+  db.query(query, [userID], (err, results) => {
+    if (err) return res.status(500).json({ error: "Database error", details: err });
+    if (results.length === 0) return res.status(404).json({ error: "Nurse not found" });
+    res.json(results[0]);
+  });
+});
+
 // GET /nurses/:nurseID
 router.get('/:nurseID',verifyToken, (req, res) => {
   const { nurseID } = req.params;

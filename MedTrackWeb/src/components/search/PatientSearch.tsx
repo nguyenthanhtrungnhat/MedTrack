@@ -8,12 +8,13 @@ export default function PatientSearch() {
   const [filteredPatients, setFilteredPatients] = useState<PatientProps[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const token = sessionStorage.getItem("token");
   var url = '';
   const roleID = sessionStorage.getItem("roleID");
   { roleID == '1' ? (url = "/doctor/bed-details/") : (url = "/home/bed-details/") }
   // Fetch patient data
   useEffect(() => {
-    fetch("http://localhost:3000/patients")
+    fetch("http://localhost:3000/patients", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => res.json())
       .then((data) => {
         // Filter out invalid patients (no ID or fullName)

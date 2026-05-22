@@ -12,7 +12,7 @@ export default function SideBarLayout() {
     const roleID = sessionStorage.getItem("roleID");
     const { pathname } = useLocation();
     const navigate = useNavigate();
-
+    const token = sessionStorage.getItem("token");
     const userID = getUserIDFromToken();
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export default function SideBarLayout() {
         if (!userID) return;
 
         axios
-            .get(`http://localhost:3000/api/users/basic/${userID}`)
+            .get(`http://localhost:3000/users/basic/${userID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then((res) => {
                 if (res && res.data) {
                     setInfo(res.data);

@@ -11,13 +11,13 @@ export default function ShiftChange() {
     const [selectedScheduleID, setSelectedScheduleID] = useState("");
     const [expectedDate, setExpectedDate] = useState("");
     const [reason, setReason] = useState("");
-
+    const token = sessionStorage.getItem("token");
 
     // ================= LOAD SCHEDULE + REQUESTS =================
     useEffect(() => {
         if (!nurseID) return;
 
-        axios.get(`http://localhost:3000/api/schedules/${nurseID}`)
+        axios.get(`http://localhost:3000/schedules/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => setSchedules(res.data))
             .catch(err => console.error(err));
 
@@ -26,7 +26,7 @@ export default function ShiftChange() {
 
 
     const fetchRequests = () => {
-        axios.get(`http://localhost:3000/status/${nurseID}`)
+        axios.get(`http://localhost:3000/schedule-requests/status/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => setRequests(res.data))
             .catch(() => toast.error("Failed to load requests"));
     };
@@ -37,11 +37,11 @@ export default function ShiftChange() {
         if (!selectedScheduleID || !expectedDate || !reason)
             return toast.warn("⚠ Please fill all fields!");
 
-        axios.post("http://localhost:3000/request", {
+        axios.post("http://localhost:3000/schedule-requests", {
             scheduleID: Number(selectedScheduleID),
             newDate: expectedDate,
             reason: reason
-        })
+        }, { headers: { Authorization: `Bearer ${token}` } })
             .then(() => {
                 toast.success("✔ Request submitted!");
                 setReason("");

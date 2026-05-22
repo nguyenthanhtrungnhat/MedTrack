@@ -30,7 +30,7 @@ export default function PatientScreen() {
     const userID = getUserIDFromToken();
     const [showMore, setShowMore] = useState(false);
     const [loading, setLoading] = useState(true);
-
+    const token = sessionStorage.getItem("token");
     // 🩺 Dynamic badge generator
     const getHealthBadge = (type: string, value?: number | string | null) => {
         if (value === null || value === undefined) return { color: "text-bg-secondary", label: "N/A" };
@@ -123,7 +123,7 @@ export default function PatientScreen() {
         setLoading(true); // start loading
         axios.get(`http://localhost:3000/appointments/${userID}`).then(res => setAppointments(res.data));
         axios
-            .get(`http://localhost:3000/patientByUserID/${userID}`)
+            .get(`http://localhost:3000/patients/patientByUserID/${userID}`)
             .then(response => {
                 setPatients(response.data);
             })
@@ -140,7 +140,7 @@ export default function PatientScreen() {
         }
 
         const url = `http://localhost:3000/medical-records/${patients[0].patientID}`;
-        axios.get(url)
+        axios.get(url, {headers: {Authorization: `Bearer ${token}`}})
             .then(response => {
                 const sorted = [...response.data].sort(
                     (a, b) => new Date(b.timeCreate).getTime() - new Date(a.timeCreate).getTime()
@@ -157,7 +157,7 @@ export default function PatientScreen() {
     }, [patients]);
 
     const handleRecordSelect = (recordID: number) => {
-        axios.get(`http://localhost:3000/medical-records/by-recordId/${recordID}`)
+        axios.get(`http://localhost:3000/medical-records/by-recordId/${recordID}`, {headers: {Authorization: `Bearer ${token}`}})
             .then(response => setRecord(response.data))
             .catch(error => console.error('Error fetching selected record:', error));
     };

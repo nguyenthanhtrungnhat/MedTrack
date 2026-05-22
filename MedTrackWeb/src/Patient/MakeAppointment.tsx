@@ -10,35 +10,45 @@ export default function MakeAppointment() {
     const [doctorID, setDoctorID] = useState<number | null>(null);
     const [dateTime, setDateTime] = useState("");
     const [location, setLocation] = useState("");
-
+    const token = sessionStorage.getItem("token");
     const userID = getUserIDFromToken();
 
     useEffect(() => {
         if (!userID) return;
 
-        axios.put("http://localhost:3000/appointments/check-overdue")
-            .then(() => loadAppointments())
+        axios.put(
+            "http://localhost:3000/appointments/check-overdue",
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
+            .then(() => loadDoctors())
             .catch(err => console.error(err));
-
-        loadDoctors();
     }, []);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            axios.put("http://localhost:3000/appointments/check-overdue")
-                .then(() => loadAppointments())
-                .catch(err => console.error(err));
-        }, 60 * 1000);
-
-        return () => clearInterval(interval);
+        axios.put(
+            "http://localhost:3000/appointments/check-overdue",
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
+            .then(() => loadAppointments())
+            .catch(err => console.error(err));
     }, []);
 
     const loadDoctors = () => {
-        axios.get("http://localhost:3000/doctors").then(res => setDoctors(res.data));
+        axios.get("http://localhost:3000/doctors", { headers: { Authorization: `Bearer ${token}` } }).then(res => setDoctors(res.data));
     };
 
     const loadAppointments = () => {
-        axios.get(`http://localhost:3000/appointments/${userID}`).then(res => setAppointments(res.data));
+        axios.get(`http://localhost:3000/appointments/${userID}`, { headers: { Authorization: `Bearer ${token}` } }).then(res => setAppointments(res.data));
     };
 
     const handleDoctorChange = (id: string) => {
@@ -60,7 +70,7 @@ export default function MakeAppointment() {
         }
 
         try {
-            await axios.post("http://localhost:3000/appointments", { doctorID, userID, dateTime, location });
+            await axios.post("http://localhost:3000/appointments", { doctorID, userID, dateTime, location }, { headers: { Authorization: `Bearer ${token}` } });
             toast.success("Appointment booked successfully!");
 
             setDoctorID(null);

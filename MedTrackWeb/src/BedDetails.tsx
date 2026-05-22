@@ -8,12 +8,13 @@ import { useParams } from 'react-router-dom';
 export default function BedDetails() {
     const [user, setUser] = useState<PatientProps | null>(null);
     const { patientID } = useParams();
+    const token = sessionStorage.getItem("token");
     const patientByIdUrl = `http://localhost:3000/patients/${patientID}`;
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         if (!patientID) return;
         setLoading(true); // start loading
-        axios.get(patientByIdUrl)
+        axios.get(patientByIdUrl, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => setUser(response.data))
             .catch(error => console.error('Error fetching user:', error))
             .finally(() => setLoading(false)); // stop loading

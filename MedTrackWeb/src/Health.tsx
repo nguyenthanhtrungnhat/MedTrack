@@ -18,6 +18,7 @@
     import HealthDashboard from './components/dashboard/HealthDashboard';
 
     export default function Health() {
+        const token = sessionStorage.getItem("token");
         const [loading, setLoading] = useState(true);
         // 🩺 Dynamic badge generator
         const getHealthBadge = (type: string, value?: number | string | null) => {
@@ -109,11 +110,10 @@
         const [allRecords, setAllRecords] = useState<RecordProps[]>([]);
         const [record, setRecord] = useState<RecordProps | null>(null);
         const [showMore, setShowMore] = useState(false);
-        const patientByIdUrl = `http://localhost:3000/patients/${patientID}`;
         const recordBypatientIdUrl = `http://localhost:3000/medical-records/${patientID}`;
         useEffect(() => {
             setLoading(true); // start loading
-            axios.get(recordBypatientIdUrl)
+            axios.get(recordBypatientIdUrl, { headers: { Authorization: `Bearer ${token}` } })
                 .then(response => {
                     const sorted = [...response.data].sort(
                         (a, b) => new Date(b.timeCreate).getTime() - new Date(a.timeCreate).getTime()
@@ -127,10 +127,10 @@
                     setAllRecords([]);
                 })
                 .finally(() => setLoading(false)); // stop loading
-        }, [patientByIdUrl, recordBypatientIdUrl]);
+        }, [ recordBypatientIdUrl]);
 
         const handleRecordSelect = (recordID: number) => {
-            axios.get(`http://localhost:3000/medical-records/by-recordId/${recordID}`)
+            axios.get(`http://localhost:3000/medical-records/by-recordId/${recordID}`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(response => setRecord(response.data))
                 .catch(error => console.error('Error fetching selected record:', error));
         };
