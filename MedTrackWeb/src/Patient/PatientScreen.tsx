@@ -123,7 +123,7 @@ export default function PatientScreen() {
         setLoading(true); // start loading
         axios.get(`http://localhost:3000/appointments/${userID}`).then(res => setAppointments(res.data));
         axios
-            .get(`http://localhost:3000/api/patientByUserID/${userID}`)
+            .get(`http://localhost:3000/patientByUserID/${userID}`)
             .then(response => {
                 setPatients(response.data);
             })

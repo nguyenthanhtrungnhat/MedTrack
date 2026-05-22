@@ -51,18 +51,18 @@ const db = mysql.createPool({
 const verifyToken = require("./middleware/auth").verifyToken;
 
 // Routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/users", require("./routes/users"));
-app.use("/api/patients", require("./routes/patients"));
-app.use("/api/doctors", require("./routes/doctors"));
-app.use("/api/nurses", require("./routes/nurses"));
-app.use("/api/appointments", require("./routes/appointments"));
-app.use("/api/medical-records", require("./routes/medicalRecords"));
-app.use("/api/schedules", require("./routes/schedules"));
-app.use("/api/schedule-requests", require("./routes/scheduleRequests"));
-app.use("/api/prescriptions", require("./routes/prescriptions"));
-app.use("/api/admin", require("./routes/admin"));
-app.use("/api/medicines", require("./routes/medicines"));
+app.use("/auth", require("./routes/auth"));
+app.use("/users", require("./routes/users"));
+app.use("/patients", require("./routes/patients"));
+app.use("/doctors", require("./routes/doctors"));
+app.use("/nurses", require("./routes/nurses"));
+app.use("/appointments", require("./routes/appointments"));
+app.use("/medical-records", require("./routes/medicalRecords"));
+app.use("/schedules", require("./routes/schedules"));
+app.use("/schedule-requests", require("./routes/scheduleRequests"));
+app.use("/prescriptions", require("./routes/prescriptions"));
+app.use("/admin", require("./routes/admin"));
+app.use("/medicines", require("./routes/medicines"));
 
 // Test route
 app.get("/", (req, res) => {
