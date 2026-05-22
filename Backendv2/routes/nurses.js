@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { getAllRecordsWithUser } = require('../utils/dbHelpers');
+const verifyToken = require("../middleware/verifyToken");
 
 // GET /nurses
 router.get('/', (req, res) => getAllRecordsWithUser('nurse', res));
 
 // GET /nurses/:nurseID
-router.get('/:nurseID', (req, res) => {
+router.get('/:nurseID',verifyToken, (req, res) => {
   const { nurseID } = req.params;
   const query = `
     SELECT n.*, u.*
@@ -23,7 +24,7 @@ router.get('/:nurseID', (req, res) => {
 });
 
 // GET /nurses/by-user/:userID
-router.get('/by-user/:userID', (req, res) => {
+router.get('/by-user/:userID',verifyToken, (req, res) => {
   const { userID } = req.params;
   const query = `
     SELECT n.*, u.*
@@ -39,7 +40,7 @@ router.get('/by-user/:userID', (req, res) => {
 });
 
 // DELETE /nurses/:nurseID
-router.delete('/:nurseID', (req, res) => {
+router.delete('/:nurseID',verifyToken, (req, res) => {
   const nurseID = req.params.nurseID;
   db.query('DELETE FROM nurse WHERE nurseID = ?', [nurseID], (err, result) => {
     if (err) return res.status(500).json({ message: 'Failed to delete nurse', error: err });

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const verifyToken = require("../middleware/verifyToken");
 
 // POST /request  — submit shift change request
-router.post('/', (req, res) => {
+router.post('/',verifyToken, (req, res) => {
   const { scheduleID, newDate, reason } = req.body;
 
   if (!scheduleID || !newDate || !reason)
@@ -17,7 +18,7 @@ router.post('/', (req, res) => {
 });
 
 // GET /status/:nurseID  — requests by nurse
-router.get('/status/:nurseID', (req, res) => {
+router.get('/status/:nurseID',verifyToken, (req, res) => {
   const nurseID = req.params.nurseID;
   const sql = `
     SELECT sr.requestID, sr.newDate, sr.reason, sr.status,
@@ -34,7 +35,7 @@ router.get('/status/:nurseID', (req, res) => {
 });
 
 // GET /schedule-request/pending/count
-router.get('/pending/count', (req, res) => {
+router.get('/pending/count', verifyToken,(req, res) => {
   db.query('SELECT COUNT(*) AS count FROM scheduleRequest WHERE status = 0', (err, result) => {
     if (err) return res.status(500).json({ message: 'DB error', err });
     res.json({ count: result[0].count });
@@ -42,7 +43,7 @@ router.get('/pending/count', (req, res) => {
 });
 
 // PUT /schedule-request/:id  — simple status update
-router.put('/:id', (req, res) => {
+router.put('/:id',verifyToken, (req, res) => {
   const requestID = req.params.id;
   const { status } = req.body;
 
@@ -54,7 +55,7 @@ router.put('/:id', (req, res) => {
 });
 
 // PATCH /schedule-request/:id/status  — approve / reject with schedule update
-router.patch('/:id/status', (req, res) => {
+router.patch('/:id/status',verifyToken, (req, res) => {
   const requestID = req.params.id;
   const { status } = req.body; // 1 = approve, 2 = reject
 

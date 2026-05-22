@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const verifyToken = require("../middleware/verifyToken");
 
 // GET /api/prescriptions
-router.get('/', (req, res) => {
+router.get('/', verifyToken,(req, res) => {
   const sql = `
     SELECT 
       p.prescriptionID, p.diagnosis, p.notes, p.createdAt,
@@ -23,7 +24,7 @@ router.get('/', (req, res) => {
 });
 
 // GET /api/prescriptions/:id
-router.get('/:id', (req, res) => {
+router.get('/:id',verifyToken, (req, res) => {
   const prescriptionID = req.params.id;
   const sql = `
     SELECT 
@@ -48,7 +49,7 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /make-prescriptions
-router.post('/', (req, res) => {
+router.post('/',verifyToken, (req, res) => {
   const { patientID, doctorID, diagnosis, notes, medicines } = req.body;
 
   db.query(

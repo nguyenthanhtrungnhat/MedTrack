@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { getAllRecords } = require('../utils/dbHelpers');
+const verifyToken = require("../middleware/verifyToken");
 
 // GET /appointments
-router.get('/', (req, res) => getAllRecords('appointment', res));
+router.get('/',verifyToken, (req, res) => getAllRecords('appointment', res));
 
 // GET /appointments/:userID  (by patient userID)
 router.get('/:userID', (req, res) => {
@@ -23,7 +24,7 @@ router.get('/:userID', (req, res) => {
 });
 
 // POST /appointments
-router.post('/', (req, res) => {
+router.post('/',verifyToken, (req, res) => {
   const { doctorID, userID, dateTime, location } = req.body;
 
   db.query(
@@ -48,7 +49,7 @@ router.post('/', (req, res) => {
 });
 
 // PUT /appointments/check-overdue
-router.put('/check-overdue', (req, res) => {
+router.put('/check-overdue',verifyToken, (req, res) => {
   const sql = `
     UPDATE appointment
     SET appointmentStatus = 1
@@ -61,7 +62,7 @@ router.put('/check-overdue', (req, res) => {
 });
 
 // GET /update-overdue  (legacy endpoint — kept for compatibility)
-router.get('/update-overdue', (req, res) => {
+router.get('/update-overdue',verifyToken, (req, res) => {
   const sql = `
     UPDATE appointment
     SET appointmentStatus = 1

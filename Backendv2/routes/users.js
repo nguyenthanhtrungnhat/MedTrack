@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
-const verifyToken = require('../verifyToken');
+const verifyToken = require("../middleware/verifyToken");
 const { getAllRecords } = require('../utils/dbHelpers');
 
 // GET /users
 router.get('/', (req, res) => getAllRecords('user', res));
 
 // GET /api/users/basic/:userID  (sidebar data)
-router.get('/basic/:userID', (req, res) => {
+router.get('/basic/:userID',verifyToken, (req, res) => {
   const { userID } = req.params;
   db.query('SELECT fullName, phone FROM user WHERE userID = ?', [userID], (err, result) => {
     if (err) return res.status(500).json({ error: 'Database error' });
@@ -18,7 +18,7 @@ router.get('/basic/:userID', (req, res) => {
 });
 
 // GET /api/patientByUserID/:userID
-router.get('/patientByUserID/:userID', (req, res) => {
+router.get('/patientByUserID/:userID',verifyToken,(req, res) => {
   const userID = req.params.userID;
   const query = `
     SELECT p.*, u.*

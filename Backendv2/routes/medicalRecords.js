@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
-const verifyToken = require('../verifyToken');
+const verifyToken = require("../middleware/verifyToken");
 const { getAllRecords } = require('../utils/dbHelpers');
 
 // GET /medical-records
-router.get('/', (req, res) => getAllRecords('medicalrecords', res));
+router.get('/',verifyToken, (req, res) => getAllRecords('medicalrecords', res));
 
 // GET /medical-records/:patientID
-router.get('/:patientID', (req, res) => {
+router.get('/:patientID',verifyToken, (req, res) => {
   const { patientID } = req.params;
   db.query('SELECT * FROM medicalrecords WHERE patientID = ?', [patientID], (err, results) => {
     if (err) return res.status(500).json({ error: 'Database error', details: err });
@@ -18,7 +18,7 @@ router.get('/:patientID', (req, res) => {
 });
 
 // GET /medical-records/by-recordId/:recordID
-router.get('/by-recordId/:recordID', (req, res) => {
+router.get('/by-recordId/:recordID',verifyToken, (req, res) => {
   const recordID = parseInt(req.params.recordID);
   if (isNaN(recordID)) return res.status(400).json({ error: 'Invalid recordID' });
 

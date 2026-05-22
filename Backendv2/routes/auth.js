@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
-const verifyToken = require('../verifyToken');
+const verifyToken = require("../middleware/verifyToken");
 
 // POST /login
 router.post('/login', (req, res) => {

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
-const verifyToken = require('../verifyToken');
+const verifyToken = require("../middleware/verifyToken");
 const { isAdmin } = require('../middleware/auth');
 const upload = require('../config/upload');
 

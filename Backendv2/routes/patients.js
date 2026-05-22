@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { getAllRecordsWithUser } = require('../utils/dbHelpers');
+const verifyToken = require("../middleware/verifyToken");
 
 // GET /patients
-router.get('/', (req, res) => getAllRecordsWithUser('patient', res));
+router.get('/',verifyToken, (req, res) => getAllRecordsWithUser('patient', res));
 
 // GET /patients/:patientID
-router.get('/:patientID', (req, res) => {
+router.get('/:patientID', verifyToken,(req, res) => {
   const { patientID } = req.params;
   const query = `
     SELECT p.*, u.*
@@ -23,7 +24,7 @@ router.get('/:patientID', (req, res) => {
 });
 
 // DELETE /patients/:patientID
-router.delete('/:patientID', (req, res) => {
+router.delete('/:patientID',verifyToken, (req, res) => {
   const patientID = req.params.patientID;
   db.query('DELETE FROM patient WHERE patientID = ?', [patientID], (err, result) => {
     if (err) return res.status(500).json({ message: 'Failed to delete patient', error: err });

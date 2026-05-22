@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const { getAllRecordsWithUser } = require('../utils/dbHelpers');
+const verifyToken = require("../middleware/verifyToken");
 
 // GET /doctors
-router.get('/', (req, res) => getAllRecordsWithUser('doctor', res));
+router.get('/',verifyToken, (req, res) => getAllRecordsWithUser('doctor', res));
 
 // GET /doctors/:doctorID
-router.get('/:doctorID', (req, res) => {
+router.get('/:doctorID',verifyToken, (req, res) => {
   const { doctorID } = req.params;
   const query = `
     SELECT d.*, u.*
@@ -23,7 +24,7 @@ router.get('/:doctorID', (req, res) => {
 });
 
 // GET /doctors/by-user/:userID
-router.get('/by-user/:userID', (req, res) => {
+router.get('/by-user/:userID',verifyToken, (req, res) => {
   const { userID } = req.params;
   const query = `
     SELECT d.*, u.*
@@ -39,7 +40,7 @@ router.get('/by-user/:userID', (req, res) => {
 });
 
 // DELETE /doctors/:doctorID
-router.delete('/:doctorID', (req, res) => {
+router.delete('/:doctorID',verifyToken, (req, res) => {
   const doctorID = req.params.doctorID;
   db.query('DELETE FROM doctor WHERE doctorID = ?', [doctorID], (err, result) => {
     if (err) return res.status(500).json({ message: 'Failed to delete doctor', error: err });
@@ -49,7 +50,7 @@ router.delete('/:doctorID', (req, res) => {
 });
 
 // GET /api/appointment/doctor/:doctorID  (today only)
-router.get('/:doctorID/appointments/today', (req, res) => {
+router.get('/:doctorID/appointments/today', verifyToken,(req, res) => {
   const doctorID = req.params.doctorID;
   const sql = `
     SELECT a.appointmentID, a.dateTime, a.location, a.appointmentStatus,
@@ -68,7 +69,7 @@ router.get('/:doctorID/appointments/today', (req, res) => {
 });
 
 // GET /api/all-appointment/doctor/:doctorID  (all)
-router.get('/:doctorID/appointments', (req, res) => {
+router.get('/:doctorID/appointments',verifyToken, (req, res) => {
   const doctorID = req.params.doctorID;
   const sql = `
     SELECT a.appointmentID, a.dateTime, a.location, a.appointmentStatus,

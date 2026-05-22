@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const verifyToken = require("../middleware/verifyToken");
 
 // GET /api/schedules/:nurseID
-router.get('/:nurseID', (req, res) => {
+router.get('/:nurseID',verifyToken, (req, res) => {
   const nurseID = req.params.nurseID;
   const query = `
     SELECT 
@@ -27,7 +28,7 @@ router.get('/:nurseID', (req, res) => {
 });
 
 // POST /api/schedules
-router.post('/', (req, res) => {
+router.post('/',verifyToken, (req, res) => {
   const { scheduleID, subject, date, start_at, working_hours, color, roomID, room_location } = req.body;
 
   if (!subject || !date || !start_at || !working_hours || !roomID)
@@ -48,7 +49,7 @@ router.post('/', (req, res) => {
 });
 
 // PUT /api/schedules/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id',verifyToken, async (req, res) => {
   try {
     const scheduleID = req.params.id;
     const { subject, date, start_at, working_hours, color, roomID, room_location } = req.body;
