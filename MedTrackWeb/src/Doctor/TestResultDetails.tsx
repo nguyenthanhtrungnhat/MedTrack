@@ -1,24 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-
-type TestResultDetail = {
-    testResultID: number;
-    userID: number;
-    username: string;
-
-    title: string;
-    datetime: string;
-    testResultCode: string;
-    status: string;
-    type: string;
-
-    bloodGlucose?: number;
-    HbA1c?: number;
-    totalCholesterol?: number;
-    hdlCholesterol?: number;
-    ldlCholesterol?: number;
-};
+import { TestResultDetail } from "../interface";
 
 export default function TestResultDetails() {
     const { id } = useParams();
@@ -94,7 +77,7 @@ export default function TestResultDetails() {
                     <div className="col-md-6">
                         <strong>Type:</strong>
                         <br />
-                        {data.type}
+                        {data.typeName}
                     </div>
                 </div>
 
@@ -116,45 +99,51 @@ export default function TestResultDetails() {
 
                 <hr />
 
-                <h5>Laboratory Results</h5>
+                <h5 className="mt-4">
+                    Test Measurements
+                </h5>
 
                 <table className="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Result</th>
+                            <th>Unit</th>
+                            <th>Reference</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
                     <tbody>
-                        <tr>
-                            <th>Blood Glucose</th>
-                            <td>{data.bloodGlucose ?? "-"}</td>
-                        </tr>
+                        {data.items.map(item => (
+                            <tr key={item.itemID}>
+                                <td>{item.parameterName}</td>
 
-                        <tr>
-                            <th>HbA1c</th>
-                            <td>{data.HbA1c ?? "-"}</td>
-                        </tr>
+                                <td>{item.resultValue}</td>
 
-                        <tr>
-                            <th>Total Cholesterol</th>
-                            <td>
-                                {data.totalCholesterol ?? "-"}
-                            </td>
-                        </tr>
+                                <td>{item.unit}</td>
 
-                        <tr>
-                            <th>HDL Cholesterol</th>
-                            <td>
-                                {data.hdlCholesterol ?? "-"}
-                            </td>
-                        </tr>
+                                <td>{item.referenceRange}</td>
 
-                        <tr>
-                            <th>LDL Cholesterol</th>
-                            <td>
-                                {data.ldlCholesterol ?? "-"}
-                            </td>
-                        </tr>
+                                <td>
+                                    <span
+                                        className={`badge ${item.abnormalFlag === "High"
+                                                ? "bg-danger"
+                                                : item.abnormalFlag === "Low"
+                                                    ? "bg-warning"
+                                                    : "bg-success"
+                                            }`}
+                                    >
+                                        {item.abnormalFlag}
+                                    </span>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
 
                 <Link
-                    to="testresult/"
+                    to="/doctor/testresultlist"
                     className="btn btn-secondary"
                 >
                     Back

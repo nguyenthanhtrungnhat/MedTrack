@@ -103,16 +103,17 @@ export interface AppointmentProps {
     patientName?: string;         // optional if you want to show patient
 }
 
-export interface TestResultProps {
-  testResultID: number;
-  userID: number;
-  title: string;
-  datetime: string;
-  testResultCode: string;
-  status: "Completed" | "Pending" | "Failed";
-  type: string;
-  username: string;
-}
+// export interface TestResultProps {
+//   testResultID: number;
+//   userID: number;
+//   title: string;
+//   datetime: string;
+//   testResultCode: string;
+//   status: "Completed" | "Pending" | "Failed";
+//   type: string;
+//   username: string;
+// }
+
 // export interface Medicine {
 //   medicineID: number
 //   medicineName: string
@@ -122,3 +123,43 @@ export interface TestResultProps {
 //   description: string
 //   isActive: number
 // }
+export interface TestResultProps {
+  testResultID: number;
+  userID: number;
+  username: string;
+
+  testTypeID: number;
+  typeName: string;
+
+  title: string;
+  datetime: string;
+  testResultCode: string;
+  status: string;
+}
+
+export interface TestResultItem {
+  itemID: number;
+  parameterName: string;
+  resultValue: string;
+  unit: string;
+  referenceRange: string;
+  abnormalFlag: string;
+  notes?: string;
+}
+
+export interface TestResultDetail {
+  testResultID: number;
+  userID: number;
+  username: string;
+
+  testTypeID: number;
+  typeName: string;
+
+  title: string;
+  datetime: string;
+  testResultCode: string;
+  status: string;
+  remarks?: string;
+
+  items: TestResultItem[];
+}

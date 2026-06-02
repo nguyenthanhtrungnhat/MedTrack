@@ -194,7 +194,7 @@ export default function TestResult() {
               </th>
               <th>Test Code</th>
               <th>Status</th>
-              <th>Type</th>
+              <th>Test Type</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -238,7 +238,7 @@ export default function TestResult() {
                       {item.status}
                     </span>
                   </td>
-                  <td>{item.type}</td>
+                  <td>{item.typeName}</td>
                   <td>
                     <button
                       className="btn btn-sm btn-primary"
