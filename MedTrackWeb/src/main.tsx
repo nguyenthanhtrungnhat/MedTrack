@@ -40,6 +40,7 @@ import Layout from './Layout/Layout';
 import TreatMentTimelineFull from './components/ORC/TreatmentOCR';
 import TreatmentDashboard from './components/ORC/TreatmentDashboard';
 import TreatmentDetail from './components/ORC/TreatmentDetail';
+import TestResultDetails from './Doctor/TestResultDetails';
 
 const router = createBrowserRouter([
   {
@@ -121,6 +122,7 @@ const router = createBrowserRouter([
           { path: "allshiftrequest", element: <AllShiftRequest /> },
           { path: "medicine-list", element: <MedicinesList /> },
           { path: "testresultlist", element: <TestResult /> },
+          { path: "testresultlist/:id", element: <TestResultDetails /> },
           { path: "prescription-form", element: <PrescriptionForm /> },
           { path: "prescriptions", element: <PrescriptionList /> },
           { path: "treatmenttimeline", element: <TreatMentTimelineFull /> },
