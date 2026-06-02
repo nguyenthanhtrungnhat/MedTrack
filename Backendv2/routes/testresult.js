@@ -20,5 +20,33 @@ router.get('/',verifyToken, (req, res) => {
     });
 });
 
+router.get("/:id", verifyToken, (req, res) => {
+  const sql = `
+    SELECT
+      t.*,
+      u.username
+    FROM testresult t
+    JOIN user u
+      ON t.userID = u.userID
+    WHERE t.testResultID = ?
+  `;
 
+  db.query(
+    sql,
+    [req.params.id],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json(err);
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({
+          message: "Not found",
+        });
+      }
+
+      res.json(result[0]);
+    }
+  );
+});
 module.exports = router;
