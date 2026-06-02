@@ -2,13 +2,14 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { TestResultProps } from "../interface";
 import getUserIDFromToken from "../components/getUserIDFromToken";
+import { useNavigate } from "react-router-dom";
 
 export default function TestResult() {
   const [data, setData] = useState<TestResultProps[]>([]);
   const [loadingTest, setLoadingTest] = useState(true);
   const token = sessionStorage.getItem("token");
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserID, setSelectedUserID] =
     useState<number | "all">("all");
@@ -194,6 +195,7 @@ export default function TestResult() {
               <th>Test Code</th>
               <th>Status</th>
               <th>Type</th>
+              <th>Action</th>
             </tr>
           </thead>
 
@@ -237,6 +239,16 @@ export default function TestResult() {
                     </span>
                   </td>
                   <td>{item.type}</td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={() =>
+                        navigate(`${item.testResultID}`)
+                      }
+                    >
+                      View Details
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
