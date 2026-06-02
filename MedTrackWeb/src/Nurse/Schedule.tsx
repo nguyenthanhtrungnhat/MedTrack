@@ -61,7 +61,7 @@ export default function Schedule() {
     }
 
     try {
-      const res = await axios.get(`http://localhost:3000/schedules/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.get(`http://localhost:3000/schedules/nurse/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } });
 
       const data = res.data;
 

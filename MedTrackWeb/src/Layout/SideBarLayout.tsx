@@ -124,6 +124,11 @@ export default function SideBarLayout() {
                                                     <i className="fa fa-caret-right"></i> TreatMent DashBoard
                                                 </Link>
                                             </li>
+                                             <li>
+                                                <Link to="/doctor/assign-schedule" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Assign Schedule
+                                                </Link>
+                                            </li>
 
                                         </ul>
                                     )}

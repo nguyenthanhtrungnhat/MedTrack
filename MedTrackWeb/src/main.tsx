@@ -41,6 +41,7 @@ import TreatMentTimelineFull from './components/ORC/TreatmentOCR';
 import TreatmentDashboard from './components/ORC/TreatmentDashboard';
 import TreatmentDetail from './components/ORC/TreatmentDetail';
 import TestResultDetails from './Doctor/TestResultDetails';
+import DoctorAssignSchedule from './Doctor/DoctorAssignSchedule.tsx';
 
 const router = createBrowserRouter([
   {
@@ -128,6 +129,7 @@ const router = createBrowserRouter([
           { path: "treatmenttimeline", element: <TreatMentTimelineFull /> },
           { path: "treatment", element: <TreatmentDashboard /> },
           { path: "treatment/:id", element: <TreatmentDetail /> },
+          { path: "assign-schedule", element: <DoctorAssignSchedule /> },
           { path: "prescriptions/:id", element: <PrescriptionDetail /> }
         ]
       },

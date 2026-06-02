@@ -85,7 +85,7 @@ export default function SideBarLayoutV2() {
                                 <div className="padding">
 
                                     {roleID == "1" && (
-                                        <ul className='list-unstyled'>
+                                          <ul className='list-unstyled'>
                                             <li>
                                                 <Link to="/doctor/allappointment" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Appointments
@@ -115,6 +115,22 @@ export default function SideBarLayoutV2() {
                                                     <i className="fa fa-caret-right"></i> Prescription List
                                                 </Link>
                                             </li>
+                                            <li>
+                                                <Link to="/doctor/treatmenttimeline" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> TreatMent TimeLine
+                                                </Link>
+                                            </li>
+                                             <li>
+                                                <Link to="/doctor/treatment" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> TreatMent DashBoard
+                                                </Link>
+                                            </li>
+                                             <li>
+                                                <Link to="/doctor/assign-schedule" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Assign Schedule
+                                                </Link>
+                                            </li>
+
                                         </ul>
                                     )}
 
