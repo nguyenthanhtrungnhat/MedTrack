@@ -121,7 +121,7 @@ export default function TestResult() {
   };
 
   return (
-    <div className="card shadow-sm">
+    <div className="card dropShadow">
       <div className="card-header blueBg text-white">
         <h5 className="mb-0">Test Result List</h5>
       </div>
@@ -168,7 +168,7 @@ export default function TestResult() {
       </div>
 
       <div className="table-responsive">
-        <table className="table table-striped table-hover mb-0">
+        <table className="table table-striped table-hover">
           <thead className="table-dark">
             <tr>
               <th

@@ -412,7 +412,7 @@ CREATE TABLE treatment_sheet (
 CREATE TABLE treatment_logs (
   logID INT AUTO_INCREMENT PRIMARY KEY,
   sheetID INT NOT NULL,
-  logTime DATETIME,
+  logTime TIME,
   subjective TEXT,
   objective TEXT,
   assessment TEXT,

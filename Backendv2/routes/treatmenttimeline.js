@@ -12,6 +12,7 @@ const {
   parseForm,
   parseLogs,
 } = require("../utils/ocrHelpers");
+const verifyToken = require("../middleware/verifyToken");
 
 /* ================= MULTER ================= */
 const upload = multer({
@@ -19,7 +20,7 @@ const upload = multer({
 });
 
 /* ================= OCR ================= */
-router.post("/ocr", upload.single("file"), async (req, res) => {
+router.post("/ocr", upload.single("file"),verifyToken, async (req, res) => {
   if (!req.file) {
     return res.status(400).json({
       error: "No file uploaded",
@@ -70,7 +71,7 @@ router.post("/ocr", upload.single("file"), async (req, res) => {
 });
 
 /* ================= SAVE TREATMENT ================= */
-router.post("/", (req, res) => {
+router.post("/",verifyToken, (req, res) => {
   const {
     admissionNumber,
     patientCode,
@@ -200,7 +201,7 @@ router.post("/", (req, res) => {
 });
 
 /* ================= GET ALL SHEETS ================= */
-router.get("/all", (req, res) => {
+router.get("/all",verifyToken, (req, res) => {
   db.query(
     `
     SELECT *
@@ -220,7 +221,7 @@ router.get("/all", (req, res) => {
 });
 
 /* ================= GET LOGS ================= */
-router.get("/logs/:sheetID", (req, res) => {
+router.get("/logs/:sheetID",verifyToken, (req, res) => {
   db.query(
     `
     SELECT *
@@ -242,7 +243,7 @@ router.get("/logs/:sheetID", (req, res) => {
 });
 
 /* ================= GET SINGLE SHEET ================= */
-router.get("/:id", (req, res) => {
+router.get("/:id",verifyToken, (req, res) => {
   const id = req.params.id;
 
   const sql = `
