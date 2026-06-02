@@ -32,7 +32,7 @@ export default function LoginScreen() {
         setIsLoading(true);
         try {
             // Gọi API login từ backend đã ánh xạ qua axiosClient
-            const response = await axiosClient.post('/login', {
+            const response = await axiosClient.post('/auth/login', {
                 email: email.trim(),
                 password: password,
             });
