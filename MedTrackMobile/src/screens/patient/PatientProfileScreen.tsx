@@ -16,6 +16,8 @@ import { AuthContext } from '../../context/AuthContext';
 import axiosClient from '../../api/axiosClient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import ScreenWrapper from '../../components/ScreenWrapper';
+
 
 export default function PatientProfileScreen() {
     const { userID, logout } = useContext(AuthContext);
@@ -99,15 +101,15 @@ export default function PatientProfileScreen() {
 
     if (loading) {
         return (
-            <SafeAreaView style={styles.centerContainer}>
+            <ScreenWrapper style={styles.centerContainer}>
                 <ActivityIndicator size="large" color="#002677" />
                 <Text style={styles.loadingText}>Đang tải thông tin...</Text>
-            </SafeAreaView>
+            </ScreenWrapper>
         );
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <ScreenWrapper style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                     <Ionicons name="arrow-back" size={24} color="#002677" />
@@ -241,7 +243,7 @@ export default function PatientProfileScreen() {
 
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </ScreenWrapper>
     );
 }
 
@@ -249,7 +251,7 @@ const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#F5F7FA' },
     centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     loadingText: { marginTop: 10, color: '#666' },
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20, backgroundColor: '#fff', elevation: 2 },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#edf2f7' },
     backBtn: { padding: 5 },
     logoutBtn: { padding: 5 },
     headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#002677' },

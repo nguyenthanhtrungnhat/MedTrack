@@ -7,8 +7,7 @@ import PatientTabNavigator from './PatientTabNavigator';
 // Import các file screen (tạo file trống trước để test luồng)
 import LoginScreen from '../screens/auth/LoginScreen';
 // import PatientHomeScreen from '../screens/patient/PatientHomeScreen';
-// import DoctorHomeScreen from '../screens/doctor/DoctorHomeScreen';
-// import NurseHomeScreen from '../screens/nurse/NurseHomeScreen';
+import DoctorDrawerNavigator from './DoctorDrawerNavigator';
 
 // Dummy components để test
 const DummyScreen = ({ title }: { title: string }) => (
@@ -35,9 +34,7 @@ export default function AppNavigator() {
                     // Đã đăng nhập -> Phân luồng theo roleID
                     <>
                         {roleID === 1 && (
-                            <Stack.Screen name="DoctorStack">
-                                {(props) => <DummyScreen {...props} title="Doctor Home" />}
-                            </Stack.Screen>
+                            <Stack.Screen name="DoctorStack" component={DoctorDrawerNavigator} />
                         )}
                         {roleID === 2 && (
                             <Stack.Screen name="NurseStack">

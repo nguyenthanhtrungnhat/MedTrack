@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../context/AuthContext';
 import axiosClient from '../../api/axiosClient';
+import ScreenWrapper from '../../components/ScreenWrapper';
+
 
 export default function MedicalHistoryScreen() {
     const navigation = useNavigation();
@@ -105,7 +107,7 @@ export default function MedicalHistoryScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <ScreenWrapper style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                     <Ionicons name="arrow-back" size={24} color="#002677" />
@@ -141,13 +143,13 @@ export default function MedicalHistoryScreen() {
                     showsVerticalScrollIndicator={false}
                 />
             )}
-        </SafeAreaView>
+        </ScreenWrapper>
     );
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#F5F7FA' },
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20, backgroundColor: '#fff', elevation: 2 },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#edf2f7' },
     backBtn: { padding: 5 },
     headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#002677' },
     listContainer: { padding: 20 },

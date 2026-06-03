@@ -15,6 +15,8 @@ import { AuthContext } from '../../context/AuthContext';
 import axiosClient from '../../api/axiosClient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import ScreenWrapper from '../../components/ScreenWrapper';
+
 
 export default function MakeAppointmentScreen() {
     const { userID } = useContext(AuthContext);
@@ -143,14 +145,14 @@ export default function MakeAppointmentScreen() {
 
     if (loading) {
         return (
-            <SafeAreaView style={styles.centerContainer}>
+            <ScreenWrapper style={styles.centerContainer}>
                 <ActivityIndicator size="large" color="#002677" />
-            </SafeAreaView>
+            </ScreenWrapper>
         );
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <ScreenWrapper style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                     <Ionicons name="arrow-back" size={24} color="#002677" />
@@ -207,14 +209,14 @@ export default function MakeAppointmentScreen() {
                 )}
 
             </ScrollView>
-        </SafeAreaView>
+        </ScreenWrapper>
     );
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#F5F7FA' },
     centerContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20, backgroundColor: '#fff', elevation: 2 },
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 20, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#edf2f7' },
     backBtn: { padding: 5 },
     headerTitle: { fontSize: 18, fontWeight: 'bold', color: '#002677' },
     scrollContent: { paddingBottom: 40 },

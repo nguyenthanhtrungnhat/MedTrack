@@ -579,21 +579,57 @@ app.put('/api/schedules/:id', async (req, res) => {
       room_location
     } = req.body;
 
-    const [rows] = await db.execute('SELECT * FROM schedules WHERE scheduleID = ?', [scheduleID]);
+    const [rows] = await db.promise().execute('SELECT * FROM schedules WHERE scheduleID = ?', [scheduleID]);
     if (rows.length === 0) return res.status(404).json({ message: 'Schedule not found' });
 
     const sql = `
       UPDATE schedules
-      SET subject = ?, date = ?, start_at = ?, working_hours = ?, color = ?, roomID = ?, room_location = ?
+      SET name = ?, date = ?, start_at = ?, working_hours = ?, color = ?, roomID = ?
       WHERE scheduleID = ?
     `;
 
-    await db.execute(sql, [subject, date, start_at, working_hours, color, roomID, room_location, scheduleID]);
+    await db.promise().execute(sql, [subject, date, start_at, working_hours, color, roomID, scheduleID]);
     res.json({ message: '✅ Schedule updated successfully', schedule: { scheduleID, ...req.body } });
   } catch (err) {
     console.error('Error updating schedule:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
+});
+
+// GET all schedules
+app.get('/api/schedules', (req, res) => {
+  const query = `
+    SELECT 
+        s.scheduleID,
+        s.name,
+        s.date,
+        s.start_at,
+        s.working_hours,
+        s.color,
+        s.nurseID,
+        r.roomID,
+        r.location,
+        u.fullName
+    FROM schedules s
+    LEFT JOIN room r ON s.roomID = r.roomID
+    LEFT JOIN nurse n ON s.nurseID = n.nurseID
+    LEFT JOIN user u ON n.userID = u.userID
+    ORDER BY s.date, s.start_at
+  `;
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: 'Internal Server Error' });
+    res.json(results);
+  });
+});
+
+// DELETE schedule
+app.delete('/api/schedules/:id', (req, res) => {
+  const scheduleID = req.params.id;
+  db.query('DELETE FROM schedules WHERE scheduleID = ?', [scheduleID], (err, result) => {
+    if (err) return res.status(500).json({ error: 'Internal Server Error' });
+    if (result.affectedRows === 0) return res.status(404).json({ message: 'Not found' });
+    res.json({ success: true });
+  });
 });
 
 // app.post("/register", async (req, res) => {

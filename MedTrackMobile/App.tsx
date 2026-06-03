@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 export default function App() {
   return (
     <SafeAreaProvider>
+      <StatusBar style="dark" backgroundColor="#ffffff" />
       <AuthProvider>
         <AppNavigator />
       </AuthProvider>
