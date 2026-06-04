@@ -17,7 +17,7 @@ export default function ShiftChange() {
     useEffect(() => {
         if (!nurseID) return;
 
-        axios.get(`http://localhost:3000/schedules/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`http://localhost:3000/schedules/nurse/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then(res => setSchedules(res.data))
             .catch(err => console.error(err));
 
