@@ -23,7 +23,7 @@ export default function MedicineTable() {
         try {
 
             const res = await axios.get(
-                "https://projectb-medtrack.onrender.com/admin/medicines",
+                "http://localhost:3000/admin/medicines",
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -45,7 +45,7 @@ export default function MedicineTable() {
         try {
 
             await axios.put(
-                `https://projectb-medtrack.onrender.com/admin/medicines/${medicine.medicineID}`,
+                `http://localhost:3000/admin/medicines/${medicine.medicineID}`,
                 { isActive: newStatus },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
