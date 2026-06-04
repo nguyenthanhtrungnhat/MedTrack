@@ -21,15 +21,16 @@ interface Account {
 }
 
 export default function AccountTable({ roleID, roleName }: AccountTableProps) {
+    const token = sessionStorage.getItem("token");
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [loading, setLoading] = useState(false);
-    const token = sessionStorage.getItem("token");
+
 
     const loadAccounts = async () => {
         try {
             setLoading(true);
             const res = await axios.get<Account[]>(
-                `https://projectb-medtrack.onrender.com/admin/accounts/${roleID}`,
+                `http://localhost:3000/admin/accounts/${roleID}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setAccounts(res.data);
@@ -49,7 +50,7 @@ export default function AccountTable({ roleID, roleName }: AccountTableProps) {
     const updateStatus = async (userID: number, isActive: 0 | 1) => {
         try {
             await axios.put(
-                `https://projectb-medtrack.onrender.com/admin/accounts/${userID}/status`,
+                `http://localhost:3000/admin/accounts/${userID}/status`,
                 { isActive },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
