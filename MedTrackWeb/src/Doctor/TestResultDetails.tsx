@@ -4,6 +4,7 @@ import axios from "axios";
 import { TestResultDetail } from "../interface";
 
 export default function TestResultDetails() {
+    const roleID = sessionStorage.getItem("roleID");
     const { id } = useParams();
     const navigate = useNavigate();
     const [data, setData] =
@@ -50,12 +51,22 @@ export default function TestResultDetails() {
                 <div className="card-header blueBg text-white d-flex justify-content-between">
                     <h5 className="mb-0">Test Result Detail</h5>
                     <div>
-                        <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => navigate("/doctor/testresultlist")}
-                        >
-                            Back
-                        </button>
+                        {roleID == "1" && (
+                            <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => navigate("/doctor/testresultlist")}
+                            >
+                                Back
+                            </button>
+                        )}
+                        {roleID == "2" && (
+                            <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => navigate("/home/testresultlist")}
+                            >
+                                Back
+                            </button>
+                        )}
                     </div>
                 </div>
 
