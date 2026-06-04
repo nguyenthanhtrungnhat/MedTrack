@@ -84,6 +84,7 @@ const router = createBrowserRouter([
           { path: "shift-change", element: <ShiftChange /> },
           { path: "daily-checking", element: <DailyCheckingForm /> },
           { path: "testresultlist", element: <TestResult /> },
+          { path: "testresultlist/:id", element: <TestResultDetails /> },
           { path: "schedule", element: <Schedule /> }
         ]
       },
