@@ -183,7 +183,7 @@ export default function DailyCheckingForm() {
               {showResults && filteredPatients.length > 0 && (
                 <ul className="list-group position-absolute w-100" style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}>
                   {filteredPatients.map(patient => (
-                    <li key={patient.patientID} className="list-group-item list-group-item-action d-flex align-items-center"
+                    <li key={patient?.patientID} className="list-group-item list-group-item-action d-flex align-items-center"
                       style={{ cursor: "pointer" }}
                       onClick={() => handleSelectPatient(patient)}>
                       <img src={patient.image} alt={patient.fullName} className="rounded-circle me-2" style={{ width: "40px", height: "40px" }} />
@@ -198,7 +198,7 @@ export default function DailyCheckingForm() {
             </div>
           </div>
 
-          <input type="hidden" name="patientID" value={formData.patientID} />
+          <input type="hidden" name="patientID" value={formData?.patientID} />
 
           {/* Example for one row, repeat pattern for all fields */}
           <div className="row">
