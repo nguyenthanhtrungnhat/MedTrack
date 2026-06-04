@@ -11,10 +11,10 @@ interface Patient {
   image: string;
 }
 
-const token = sessionStorage.getItem("token");
+
 
 export default function DailyCheckingForm() {
-
+  const token = sessionStorage.getItem("token");
   const [formData, setFormData] = useState<FormData>({
     patientID: "",
     pulse: "",
