@@ -5,12 +5,21 @@ import {
   Event,
   View,
 } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
+import {
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+} from "date-fns";
 import { enUS } from "date-fns/locale";
 import axios from "axios";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../css/Schedule.css";
-import { Modal, Button } from "react-bootstrap";
+import {
+  Modal,
+  Button,
+  Badge,
+} from "react-bootstrap";
 import ErrorPage from "../ErrorPage";
 
 const locales = {
@@ -27,6 +36,7 @@ const localizer = dateFnsLocalizer({
 
 interface ScheduleEvent extends Event {
   id: number;
+  title: string;
   subject: string;
   room: string;
   nurseID: number | null;
@@ -34,91 +44,117 @@ interface ScheduleEvent extends Event {
 }
 
 export default function Schedule() {
-  const nurseID = Number(sessionStorage.getItem("nurseID"));
-  const token = sessionStorage.getItem("token");
-  const [events, setEvents] = useState<ScheduleEvent[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const nurseID = Number(
+    sessionStorage.getItem("nurseID")
+  );
+
+  const token =
+    sessionStorage.getItem("token");
+
+  const [events, setEvents] = useState<
+    ScheduleEvent[]
+  >([]);
+
+  const [error, setError] = useState<
+    string | null
+  >(null);
+
   const [selectedEvent, setSelectedEvent] =
     useState<ScheduleEvent | null>(null);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [view, setView] = useState<View>("week");
 
-  // Parse API date correctly
-  const parseEventDate = (dateStr: string, timeStr: string) => {
-    const dateOnly = dateStr.split("T")[0];
-    const [h, m, s] = timeStr.split(":").map(Number);
+  const [currentDate, setCurrentDate] =
+    useState(new Date());
+
+  const [view, setView] =
+    useState<View>("week");
+
+  const parseEventDate = (
+    dateStr: string,
+    timeStr: string
+  ) => {
+    const dateOnly =
+      dateStr.split("T")[0];
+
+    const [h, m, s] = timeStr
+      .split(":")
+      .map(Number);
 
     const date = new Date(dateOnly);
-    date.setHours(h, m, s || 0, 0);
+
+    date.setHours(
+      h || 0,
+      m || 0,
+      s || 0,
+      0
+    );
 
     return date;
   };
 
   const fetchSchedules = async () => {
     if (!nurseID) {
-      setError("No nurse ID found in sessionStorage");
+      setError(
+        "No nurse ID found in sessionStorage"
+      );
       return;
     }
 
     try {
-      const res = await axios.get(`http://localhost:3000/schedules/nurse/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } });
-
-      const data = res.data;
-
-      const mapped: ScheduleEvent[] = data.flatMap((item: any) => {
-        const start = parseEventDate(item.date, item.start_at);
-        const end = new Date(start.getTime() + item.working_hours * 3600000);
-
-        // Handle shifts crossing midnight
-        if (start.getDate() !== end.getDate()) {
-          const endOfDay = new Date(start);
-          endOfDay.setHours(23, 59, 59);
-
-          const startOfNextDay = new Date(end);
-          startOfNextDay.setHours(0, 0, 0);
-
-          return [
-            {
-              id: item.scheduleID,
-              title: item.subject,
-              subject: item.subject,
-              room: item.room_location,
-              nurseID,
-              color: item.color || "lightblue",
-              start,
-              end: endOfDay,
-            },
-            {
-              id: item.scheduleID + 1000,
-              title: item.subject,
-              subject: item.subject,
-              room: item.room_location,
-              nurseID,
-              color: item.color || "lightblue",
-              start: startOfNextDay,
-              end,
-            },
-          ];
+      const res = await axios.get(
+        `http://localhost:3000/schedules/nurse/${nurseID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        return [
-          {
+      const mapped: ScheduleEvent[] =
+        res.data.map((item: any) => {
+          const start = parseEventDate(
+            item.date,
+            item.start_at
+          );
+
+          const end = new Date(start);
+
+          end.setHours(
+            end.getHours() +
+            item.working_hours
+          );
+
+          return {
             id: item.scheduleID,
-            title: item.subject,
-            subject: item.subject,
-            room: item.room_location,
+
+            title: item.name,
+
+            subject: item.name,
+
+            room:
+              item.location || "N/A",
+
             nurseID,
-            color: item.color || "lightblue",
+
+            color:
+              item.color ||
+              "#3174ad",
+
             start,
             end,
-          },
-        ];
-      });
+          };
+        });
 
       setEvents(mapped);
+
       setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to load schedules");
+      console.error(err);
+
+      setError(
+        err.message ||
+        "Failed to load schedules"
+      );
+
       setEvents([]);
     }
   };
@@ -127,26 +163,45 @@ export default function Schedule() {
     fetchSchedules();
   }, [nurseID]);
 
-  const handleSelectEvent = (event: ScheduleEvent) =>
+  const handleSelectEvent = (
+    event: ScheduleEvent
+  ) => {
     setSelectedEvent(event);
+  };
 
-  const handleCloseModal = () => setSelectedEvent(null);
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+  };
 
-  const eventStyleGetter = (event: ScheduleEvent) => ({
-    style: {
-      backgroundColor: event.color || "lightblue",
-      color: "white",
-      borderRadius: "5px",
-      border: "none",
-      padding: "3px",
-    },
-  });
+  const eventStyleGetter = (
+    event: ScheduleEvent
+  ) => {
+    return {
+      style: {
+        backgroundColor:
+          event.color ||
+          "#3174ad",
+
+        color: "#fff",
+
+        border: "none",
+
+        borderRadius: "8px",
+
+        fontSize: "12px",
+
+        padding: "2px 6px",
+      },
+    };
+  };
 
   return (
     <div className="mb-3">
       <div className="radius10 shadow-sm">
         <div className="p-2 ps-3 radius10b0 blueBg text-white">
-          <h5 className="mb-0">Schedule</h5>
+          <h5 className="mb-0">
+            My Schedule
+          </h5>
         </div>
       </div>
 
@@ -160,51 +215,108 @@ export default function Schedule() {
               events={events}
               startAccessor="start"
               endAccessor="end"
-              titleAccessor={(event: ScheduleEvent) =>
-                `${event.subject} - ${event.room}`
-              }
-              onSelectEvent={handleSelectEvent}
               date={currentDate}
-              onNavigate={setCurrentDate}
               view={view}
-              onView={(newView) => setView(newView)}
-              views={["day", "week", "month"]}
-              defaultView="week"
-              step={30}
-              timeslots={2}
-              style={{ height: "80vh" }}
-              eventPropGetter={eventStyleGetter}
+              onNavigate={(date) =>
+                setCurrentDate(date)
+              }
+              onView={(newView) =>
+                setView(newView)
+              }
               toolbar
+              selectable
+              popup
+              views={[
+                "month",
+                "week",
+                "day",
+                "agenda",
+              ]}
+              defaultView="week"
+              style={{
+                height: "80vh",
+              }}
+              eventPropGetter={
+                eventStyleGetter
+              }
+              onSelectEvent={
+                handleSelectEvent
+              }
             />
 
-            <Modal show={!!selectedEvent} onHide={handleCloseModal}>
+            <Modal
+              show={!!selectedEvent}
+              onHide={handleCloseModal}
+              centered
+            >
               <Modal.Header closeButton>
-                <Modal.Title>Task Detail</Modal.Title>
+                <Modal.Title>
+                  Schedule Detail
+                </Modal.Title>
               </Modal.Header>
 
               <Modal.Body>
                 {selectedEvent && (
                   <>
                     <p>
-                      <strong>Subject:</strong> {selectedEvent.subject}
+                      <strong>
+                        Task:
+                      </strong>
                     </p>
+
+                    <Badge bg="primary">
+                      {
+                        selectedEvent.subject
+                      }
+                    </Badge>
+
+                    <hr />
+
                     <p>
-                      <strong>Room:</strong> {selectedEvent.room}
+                      <strong>
+                        Room:
+                      </strong>{" "}
+                      {
+                        selectedEvent.room
+                      }
                     </p>
+
                     <p>
-                      <strong>Start:</strong>{" "}
+                      <strong>
+                        Start:
+                      </strong>{" "}
                       {selectedEvent.start?.toLocaleString()}
                     </p>
+
                     <p>
-                      <strong>End:</strong>{" "}
+                      <strong>
+                        End:
+                      </strong>{" "}
                       {selectedEvent.end?.toLocaleString()}
+                    </p>
+
+                    <p>
+                      <strong>
+                        Duration:
+                      </strong>{" "}
+                      {(
+                        (selectedEvent.end!.getTime() -
+                          selectedEvent.start!.getTime()) /
+                        3600000
+                      ).toFixed(1)}{" "}
+                      hours
                     </p>
                   </>
                 )}
               </Modal.Body>
 
               <Modal.Footer>
-                <Button variant="secondary" onClick={handleCloseModal}>
+                <Button
+                  variant="secondary"
+                  onClick={
+                    handleCloseModal
+                  }
+                >
                   Close
                 </Button>
               </Modal.Footer>
