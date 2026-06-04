@@ -40,7 +40,7 @@ export default function NurseScreen() {
 
         const fetchCount = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/schedules/${user?.nurseID}`, { headers: { Authorization: `Bearer ${token}` } });
+                const res = await axios.get(`http://localhost:3000/schedules/nurse/${user?.nurseID}`, { headers: { Authorization: `Bearer ${token}` } });
                 const data = res.data;
                 if (Array.isArray(data)) {
                     setCount(data.length);
