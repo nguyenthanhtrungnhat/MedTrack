@@ -5,5 +5,5 @@ const { getAllRecords } = require('../utils/dbHelpers');
 const verifyToken = require("../middleware/verifyToken");
 
 // GET /news
-router.get('/',verifyToken, (req, res) => getAllRecords('news', res));
+router.get('/', (req, res) => getAllRecords('news', res));
 module.exports = router;
