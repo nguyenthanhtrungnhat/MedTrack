@@ -46,7 +46,7 @@ export default function DoctorShiftRequestsScreen() {
                     text: 'Confirm', 
                     onPress: async () => {
                         try {
-                            await axiosClient.patch(`/schedule-request/${requestID}/status`, { status });
+                            await axiosClient.patch(`/schedule-requests/${requestID}/status`, { status });
                             Alert.alert('Success', `Request ${actionName.toLowerCase()}d.`);
                             fetchRequests(); // Reload
                         } catch (error) {

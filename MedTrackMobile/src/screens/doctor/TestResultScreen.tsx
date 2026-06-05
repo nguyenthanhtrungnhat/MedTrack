@@ -7,11 +7,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import HamburgerMenu from '../../components/HamburgerMenu';
 import { DOCTOR_MENU_ITEMS } from '../../components/DoctorLayout';
+import { NURSE_MENU_ITEMS } from '../../components/NurseLayout';
 import ScreenWrapper from '../../components/ScreenWrapper';
 
 
 export default function TestResultScreen() {
-    const { userID } = useContext(AuthContext);
+    const { userID, roleID } = useContext(AuthContext);
     const navigation = useNavigation<any>();
 
     const [results, setResults] = useState<any[]>([]);
@@ -74,7 +75,11 @@ export default function TestResultScreen() {
     return (
         <ScreenWrapper style={styles.container}>
             <View style={styles.header}>
-                <HamburgerMenu menuItems={DOCTOR_MENU_ITEMS} activeKey="TestResult" onSelect={(key) => navigation.navigate(key)} />
+                <HamburgerMenu 
+                    menuItems={roleID === 2 ? NURSE_MENU_ITEMS : DOCTOR_MENU_ITEMS} 
+                    activeKey="TestResult" 
+                    onSelect={(key) => navigation.navigate(key)} 
+                />
                 <Text style={styles.headerTitle}>Test Results</Text>
                 <View style={{ width: 30 }} />
             </View>

@@ -23,7 +23,7 @@ type Props = {
 };
 
 export default function HamburgerMenu({ menuItems, activeKey, onSelect }: Props) {
-    const { logout } = React.useContext(AuthContext);
+    const { logout, roleID } = React.useContext(AuthContext);
     const [visible, setVisible] = useState(false);
     const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
     const overlayAnim = useRef(new Animated.Value(0)).current;
@@ -95,7 +95,9 @@ export default function HamburgerMenu({ menuItems, activeKey, onSelect }: Props)
                             </View>
                             <View>
                                 <Text style={styles.drawerTitle}>MedTrack</Text>
-                                <Text style={styles.drawerSubtitle}>Doctor</Text>
+                                <Text style={styles.drawerSubtitle}>
+                                    {roleID === 1 ? 'Doctor' : roleID === 2 ? 'Nurse' : roleID === 3 ? 'Patient' : 'Staff'}
+                                </Text>
                             </View>
                         </View>
 

@@ -4,15 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthContext } from '../context/AuthContext';
 import PatientTabNavigator from './PatientTabNavigator';
 
-// Import các file screen (tạo file trống trước để test luồng)
 import LoginScreen from '../screens/auth/LoginScreen';
-// import PatientHomeScreen from '../screens/patient/PatientHomeScreen';
 import DoctorDrawerNavigator from './DoctorDrawerNavigator';
-
-// Dummy components để test
-const DummyScreen = ({ title }: { title: string }) => (
-    <></> // Tạm thời để trống
-);
+import NurseDrawerNavigator from './NurseDrawerNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,9 +31,7 @@ export default function AppNavigator() {
                             <Stack.Screen name="DoctorStack" component={DoctorDrawerNavigator} />
                         )}
                         {roleID === 2 && (
-                            <Stack.Screen name="NurseStack">
-                                {(props) => <DummyScreen {...props} title="Nurse Home" />}
-                            </Stack.Screen>
+                            <Stack.Screen name="NurseStack" component={NurseDrawerNavigator} />
                         )}
                         {roleID === 3 && (
                             <Stack.Screen name="PatientStack" component={PatientTabNavigator} />

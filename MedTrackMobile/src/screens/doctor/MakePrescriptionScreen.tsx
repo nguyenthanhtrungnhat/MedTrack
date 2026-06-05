@@ -17,6 +17,7 @@ export default function MakePrescriptionScreen() {
 
     const [patients, setPatients] = useState<any[]>([]);
     const [medicines, setMedicines] = useState<any[]>([]);
+    const [doctorID, setDoctorID] = useState<number | null>(null);
     const [loadingData, setLoadingData] = useState(true);
 
     const [selectedPatient, setSelectedPatient] = useState<any | null>(null);
@@ -31,12 +32,16 @@ export default function MakePrescriptionScreen() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [pRes, mRes] = await Promise.all([
+                const [pRes, mRes, docRes] = await Promise.all([
                     axiosClient.get('/patients'),
-                    axiosClient.get('/medicines')
+                    axiosClient.get('/medicines'),
+                    axiosClient.get(`/doctors/by-user/${userID}`)
                 ]);
                 setPatients(pRes.data);
                 setMedicines(mRes.data);
+                if (docRes.data && docRes.data.doctorID) {
+                    setDoctorID(docRes.data.doctorID);
+                }
             } catch (err) {
                 Alert.alert("Error", "Failed to load patients and medicines data.");
             } finally {
@@ -88,6 +93,10 @@ export default function MakePrescriptionScreen() {
             Alert.alert("Missing Information", "Please select a patient.");
             return;
         }
+        if (!doctorID) {
+            Alert.alert("Error", "Doctor profile not found.");
+            return;
+        }
         if (items.length === 0) {
             Alert.alert("Missing Information", "Please add at least 1 medicine.");
             return;
@@ -104,7 +113,7 @@ export default function MakePrescriptionScreen() {
         try {
             const payload = {
                 patientID: selectedPatient.patientID,
-                doctorID: userID,
+                doctorID: doctorID,
                 diagnosis,
                 notes,
                 medicines: items.map(i => ({

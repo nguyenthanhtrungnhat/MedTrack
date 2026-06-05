@@ -8,8 +8,10 @@ import {
     ScrollView,
     ActivityIndicator,
     Alert,
-    FlatList
+    FlatList,
+    Platform
 } from 'react-native';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../../context/AuthContext';
 import axiosClient from '../../api/axiosClient';
@@ -27,6 +29,9 @@ export default function MakeAppointmentScreen() {
     
     const [selectedDoctorId, setSelectedDoctorId] = useState<number | null>(null);
     const [dateTime, setDateTime] = useState('');
+    const [dateObj, setDateObj] = useState(new Date());
+    const [showPicker, setShowPicker] = useState(false);
+    const [pickerMode, setPickerMode] = useState<'date' | 'time'>('date');
     const [location, setLocation] = useState('');
 
     const [loading, setLoading] = useState(true);
@@ -68,6 +73,24 @@ export default function MakeAppointmentScreen() {
     const handleDoctorSelect = (doc: any) => {
         setSelectedDoctorId(doc.doctorID);
         setLocation(doc.office || '');
+    };
+
+    const showMode = (currentMode: 'date' | 'time') => {
+        setShowPicker(true);
+        setPickerMode(currentMode);
+    };
+
+    const onPickerChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+        setShowPicker(Platform.OS === 'ios');
+        if (selectedDate) {
+            setDateObj(selectedDate);
+            const year = selectedDate.getFullYear();
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+            const hours = String(selectedDate.getHours()).padStart(2, '0');
+            const minutes = String(selectedDate.getMinutes()).padStart(2, '0');
+            setDateTime(`${year}-${month}-${day} ${hours}:${minutes}`);
+        }
     };
 
     const handleCreate = async () => {
@@ -175,12 +198,28 @@ export default function MakeAppointmentScreen() {
 
                 <View style={styles.formContainer}>
                     <Text style={styles.sectionTitle}>2. Ngày giờ khám</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="YYYY-MM-DD HH:mm (VD: 2026-06-15 08:30)"
-                        value={dateTime}
-                        onChangeText={setDateTime}
-                    />
+                    <View style={styles.dateTimeContainer}>
+                        <TouchableOpacity style={styles.dateBtn} onPress={() => showMode('date')}>
+                            <Ionicons name="calendar-outline" size={20} color="#002677" style={{marginRight: 8}}/>
+                            <Text style={styles.dateBtnText}>{dateTime ? dateTime.split(' ')[0] : 'Chọn ngày'}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.dateBtn} onPress={() => showMode('time')}>
+                            <Ionicons name="time-outline" size={20} color="#002677" style={{marginRight: 8}}/>
+                            <Text style={styles.dateBtnText}>{dateTime && dateTime.includes(' ') ? dateTime.split(' ')[1] : 'Chọn giờ'}</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {showPicker && (
+                        <DateTimePicker
+                            testID="dateTimePicker"
+                            value={dateObj}
+                            mode={pickerMode}
+                            is24Hour={true}
+                            display="default"
+                            onChange={onPickerChange}
+                            minimumDate={new Date()}
+                        />
+                    )}
 
                     <Text style={styles.sectionTitle}>3. Phòng khám (Tự động)</Text>
                     <TextInput
@@ -231,6 +270,9 @@ const styles = StyleSheet.create({
     formContainer: { paddingHorizontal: 20, marginTop: 10 },
     input: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 8, padding: 12, fontSize: 16, color: '#333' },
     inputDisabled: { backgroundColor: '#F0F0F0', color: '#999' },
+    dateTimeContainer: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
+    dateBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', borderWidth: 1, borderColor: '#002677', padding: 12, borderRadius: 8 },
+    dateBtnText: { color: '#002677', fontSize: 16, fontWeight: 'bold' },
     bookBtn: { backgroundColor: '#27ae60', padding: 16, borderRadius: 8, alignItems: 'center', marginTop: 20 },
     bookBtnDisabled: { backgroundColor: '#95a5a6' },
     bookBtnText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
