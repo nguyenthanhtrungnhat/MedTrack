@@ -7,97 +7,166 @@ import getUserIDFromToken from "../components/getUserIDFromToken";
 export default function MakeAppointment() {
     const [doctors, setDoctors] = useState<any[]>([]);
     const [appointments, setAppointments] = useState<any[]>([]);
+
     const [doctorID, setDoctorID] = useState<number | null>(null);
     const [dateTime, setDateTime] = useState("");
     const [location, setLocation] = useState("");
+
     const token = sessionStorage.getItem("token");
     const userID = getUserIDFromToken();
+    const role = sessionStorage.getItem("role"); // Nurse | Patient
 
+    // ======================================================
+    // LOAD DATA
+    // ======================================================
     useEffect(() => {
         if (!userID) return;
 
-        axios.put(
-            "http://localhost:3000/appointments/check-overdue",
-            {},
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        )
-            .then(() => loadDoctors())
-            .catch(err => console.error(err));
-    }, []);
+        loadDoctors();
+        loadAppointments();
 
-    useEffect(() => {
-        axios.put(
-            "http://localhost:3000/appointments/check-overdue",
-            {},
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        )
-            .then(() => loadAppointments())
-            .catch(err => console.error(err));
-    }, []);
+        const interval = setInterval(() => {
+            loadAppointments();
+        }, 5000);
 
-    const loadDoctors = () => {
-        axios.get("http://localhost:3000/doctors", { headers: { Authorization: `Bearer ${token}` } }).then(res => setDoctors(res.data));
+        return () => clearInterval(interval);
+    }, [userID]);
+
+    // ======================================================
+    // API CALLS
+    // ======================================================
+    const loadDoctors = async () => {
+        try {
+            const res = await axios.get("http://localhost:3000/doctors", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setDoctors(res.data);
+        } catch {
+            toast.error("Failed to load doctors");
+        }
     };
 
-    const loadAppointments = () => {
-        axios.get(`http://localhost:3000/appointments/${userID}`, { headers: { Authorization: `Bearer ${token}` } }).then(res => setAppointments(res.data));
+    const loadAppointments = async () => {
+        try {
+            const res = await axios.get(
+                `http://localhost:3000/appointments/${userID}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setAppointments(res.data);
+        } catch {
+            toast.error("Failed to load appointments");
+        }
     };
 
+    // ======================================================
+    // DOCTOR CHANGE
+    // ======================================================
     const handleDoctorChange = (id: string) => {
-        setDoctorID(Number(id));
-        const doctor = doctors.find(d => d.doctorID == id);
+        const numId = Number(id);
+        setDoctorID(numId);
+
+        const doctor = doctors.find(d => d.doctorID === numId);
         setLocation(doctor?.office ?? "");
     };
 
+    // ======================================================
+    // CREATE APPOINTMENT (WITH TOAST)
+    // ======================================================
     const handleCreate = async () => {
+        if (!doctorID || !dateTime)
+            return toast.warning("Please select doctor and date!");
 
-        if (!doctorID || !dateTime) return toast.warning("Please select doctor and date!");
-
-        //Prevent duplicate booking (Client Side)
-        const duplicate = appointments.some(a =>
-            a.doctorID === doctorID && a.dateTime === dateTime
+        const duplicate = appointments.some(
+            a => a.doctorID === doctorID && a.dateTime === dateTime
         );
+
         if (duplicate) {
-            return toast.error("You already booked this doctor on that date!");
+            return toast.error("Already booked this doctor on that date!");
         }
 
+        const loading = toast.loading("Booking appointment...");
+
         try {
-            await axios.post("http://localhost:3000/appointments", { doctorID, userID, dateTime, location }, { headers: { Authorization: `Bearer ${token}` } });
-            toast.success("Appointment booked successfully!");
+            await axios.post(
+                "http://localhost:3000/appointments",
+                { doctorID, userID, dateTime, location },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            toast.dismiss(loading);
+            toast.success("Appointment booked successfully");
 
             setDoctorID(null);
             setDateTime("");
             setLocation("");
-            loadAppointments();
+
+            await loadAppointments();
         } catch (err: any) {
-            if (err.response?.status === 400) toast.error(err.response.data.message);
-            else toast.error("Booking failed, try again!");
+            toast.dismiss(loading);
+            toast.error(err.response?.data?.message || "Booking failed");
         }
     };
 
+    // ======================================================
+    // STATUS LOGIC
+    // ======================================================
+    const getStatus = (status: number) => {
+        switch (status) {
+            case 0:
+                return "Incoming";
+            case 1:
+                return "Done";
+            case 2:
+                return "Missed";
+            default:
+                return "Unknown";
+        }
+    };
+
+    const getBadgeClass = (status: number) => {
+        switch (status) {
+            case 0:
+                return "bg-warning text-dark";
+            case 1:
+                return "bg-success";
+            case 2:
+                return "bg-danger";
+            default:
+                return "bg-secondary";
+        }
+    };
+
+    // ======================================================
+    // VIEW RULE (IMPORTANT FIX)
+    // ======================================================
+    const visibleAppointments =
+        role === "Nurse"
+            ? appointments
+            : appointments; // Patient sees ALL
+
+    // ======================================================
+    // RENDER
+    // ======================================================
     return (
-        <div className="container mt-5 pt-5">
-            <ToastContainer position="top-right" autoClose={2000} />
-
-            <h2>Make Appointment</h2>
-
+        <div >
+            <div className=" card shadow mb-4">
+                <div className="card-header blueBg text-white ">
+                    <h5>Make Appointment </h5>
+                </div>
+          
+            {/* ================= FORM ================= */}
             <div className="card p-3 mb-4">
+
                 <label><b>Doctor</b></label>
-                <select className="form-control mb-3"
+                <select
+                    className="form-control mb-3"
                     value={doctorID ?? ""}
-                    onChange={(e) => handleDoctorChange(e.target.value)}>
+                    onChange={(e) => handleDoctorChange(e.target.value)}
+                >
                     <option value="">-- Select Doctor --</option>
                     {doctors.map(d => (
                         <option key={d.doctorID} value={d.doctorID}>
-                            Dr. {d.fullName} — {d.department}
+                            Dr. {d.fullName}
                         </option>
                     ))}
                 </select>
@@ -110,35 +179,55 @@ export default function MakeAppointment() {
                     onChange={(e) => setDateTime(e.target.value)}
                 />
 
-                <label><b>Location (Auto)</b></label>
-                <input type="text" className="form-control mb-3" value={location} disabled />
+                <label><b>Location</b></label>
+                <input
+                    type="text"
+                    className="form-control mb-3"
+                    value={location}
+                    disabled
+                />
 
                 <button className="btn btn-success" onClick={handleCreate}>
                     Book Appointment
                 </button>
             </div>
+  </div>
+            {/* ================= TABLE ================= */}
+            <div className="card shadow mb-4">
+                <div className="card-header blueBg text-white ">
+                    <h5> Appointment </h5>
+                </div>
 
-            <h4>Your Appointments</h4>
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th><th>Doctor</th><th>Date</th><th>Location</th><th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {appointments.map(a => (
-                        <tr key={a.appointmentID} >
-                            <td className={a.appointmentStatus ? 'bg-danger' : 'bg-success'}>{a.appointmentID}</td>
-                            <td className={a.appointmentStatus ? 'bg-danger' : 'bg-success'}>{a.doctorName}</td>
-                            <td className={a.appointmentStatus ? 'bg-danger' : 'bg-success'}>{a.dateTime}</td>
-                            <td className={a.appointmentStatus ? 'bg-danger' : 'bg-success'}>{a.location}</td>
-                            <td className={a.appointmentStatus ? 'bg-danger' : 'bg-success'}>
-                                {a.appointmentStatus ? "Overdue" : "Coming"}
-                            </td>
+                <table className="table table-bordered">
+                    <thead className="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Status</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        {visibleAppointments.map(a => (
+                            <tr key={a.appointmentID}>
+                                <td>{a.appointmentID}</td>
+                                <td>{a.doctorName}</td>
+                                <td>{new Date(a.dateTime).toLocaleDateString()}</td>
+                                <td>{a.location}</td>
+
+                                {/* STATUS */}
+                                <td>
+                                    <span className={`badge ${getBadgeClass(a.attendanceStatus)}`}>
+                                        {getStatus(a.attendanceStatus)}
+                                    </span>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }

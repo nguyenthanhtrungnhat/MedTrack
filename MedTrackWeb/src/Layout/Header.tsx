@@ -112,7 +112,7 @@ export default function Header() {
                                         <h5 className="whiteText hasProfileIcon m-0">Profile</h5>
                                     </Link>
                                 </li>
-                                <Noti />
+                                {/* <Noti /> */}
                             </ul>
                         ) : null}
                         {!token && (

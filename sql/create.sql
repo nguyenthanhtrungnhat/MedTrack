@@ -122,12 +122,18 @@ CREATE TABLE `schedules` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 -- 14. APPOINTMENT table
 CREATE TABLE `appointment` (
-  `appointmentID` int NOT NULL AUTO_INCREMENT,
-  `dateTime` date DEFAULT NULL,
-  `location` varchar(255) DEFAULT NULL,
-  `appointmentStatus` tinyint DEFAULT '0',
-  `doctorID` int DEFAULT NULL,
-  `userID` int DEFAULT NULL,
+  `appointmentID` INT NOT NULL AUTO_INCREMENT,
+  `dateTime` DATE NOT NULL,
+  `location` VARCHAR(255) DEFAULT NULL,
+
+  -- 0 = Upcoming
+  -- 1 = Completed (patient came)
+  -- 2 = Missed (no-show)
+  `attendanceStatus` TINYINT DEFAULT 0,
+
+  `doctorID` INT DEFAULT NULL,
+  `userID` INT DEFAULT NULL,
+
   PRIMARY KEY (`appointmentID`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 -- 15. NEWS table
@@ -289,8 +295,16 @@ ALTER TABLE `schedules`
 ADD CONSTRAINT `schedules_ibfk_1` FOREIGN KEY (`nurseID`) REFERENCES `nurse` (`nurseID`),
   ADD CONSTRAINT `schedules_ibfk_2` FOREIGN KEY (`roomID`) REFERENCES `room` (`roomID`);
 ALTER TABLE `appointment`
-ADD CONSTRAINT `appointment_ibfk_1` FOREIGN KEY (`doctorID`) REFERENCES `doctor` (`doctorID`),
-  ADD CONSTRAINT `appointment_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`);
+ADD CONSTRAINT `fk_appointment_doctor`
+FOREIGN KEY (`doctorID`) REFERENCES `doctor`(`doctorID`)
+ON DELETE SET NULL
+ON UPDATE CASCADE;
+
+ALTER TABLE `appointment`
+ADD CONSTRAINT `fk_appointment_user`
+FOREIGN KEY (`userID`) REFERENCES `user`(`userID`)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 ALTER TABLE `scheduleRequest`
 ADD CONSTRAINT `fk_schedule_request` FOREIGN KEY (`scheduleID`) REFERENCES `schedules` (`scheduleID`) ON DELETE CASCADE ON UPDATE CASCADE;
 -- ======================================================

@@ -159,10 +159,25 @@ export default function SideBarLayout() {
                                                     <i className="fa fa-caret-right"></i> Schedule
                                                 </Link>
                                             </li>
+                                             <li>
+                                                <Link to="/home/appointment-track" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Track Appointment
+                                                </Link>
+                                            </li>
+                                            
 
                                         </ul>
                                     )}
+                                    {roleID == "3" && (
+                                        <ul className='list-unstyled'>
 
+                                            <li>
+                                                <Link to="/patient/make-appointment" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Make appointment
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    )}
                                 </div>
                             </div>
 

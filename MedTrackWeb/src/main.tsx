@@ -42,6 +42,7 @@ import TreatmentDashboard from './components/ORC/TreatmentDashboard';
 import TreatmentDetail from './components/ORC/TreatmentDetail';
 import TestResultDetails from './Doctor/TestResultDetails';
 import DoctorAssignSchedule from './Doctor/DoctorAssignSchedule.tsx';
+import NurseAppointmentTracker from './Nurse/NurseAppointmentTracker.tsx';
 
 const router = createBrowserRouter([
   {
@@ -85,7 +86,8 @@ const router = createBrowserRouter([
           { path: "daily-checking", element: <DailyCheckingForm /> },
           { path: "testresultlist", element: <TestResult /> },
           { path: "testresultlist/:id", element: <TestResultDetails /> },
-          { path: "schedule", element: <Schedule /> }
+          { path: "schedule", element: <Schedule /> },
+          { path: "appointment-track", element: <NurseAppointmentTracker /> }
         ]
       },
       // Pages using SidebarLayoutV2
@@ -150,11 +152,18 @@ const router = createBrowserRouter([
       {
         path: "/patient", element: <Layout />, children: [
           { index: true, element: <HomePage /> },
-          { path: "make-appointment", element: <MakeAppointment /> },
-          { path: "patient-profile", element: <PatientScreen /> },
           { path: "services", element: <Services /> },
           { path: "hservices", element: <HospitalServices /> },
           { path: "completedata", element: <CompletePatientForm /> },
+          { path: "patient-profile", element: <PatientScreen /> },
+        ]
+      },
+      {
+        element: <SideBarLayout />,
+        children: [
+          { path: "make-appointment", element: <MakeAppointment /> },
+
+          // { path: "completedata", element: <CompletePatientForm /> },
         ]
       },
     ],

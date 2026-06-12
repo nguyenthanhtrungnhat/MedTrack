@@ -117,20 +117,20 @@ INSERT INTO `schedules`
 
 -- APPOINTMENTS
 INSERT INTO `appointment`
-(`appointmentID`,`dateTime`,`location`,`appointmentStatus`,`doctorID`,`userID`) VALUES
+(`appointmentID`,`dateTime`,`location`,`attendanceStatus`,`doctorID`,`userID`) VALUES
 
--- current
-(4,'2026-03-15 ','Room 208B11',0,1,2),
+-- TODAY (2026-03-15)
+(4,'2026-03-15','Room 208B11',0,1,2),
 (5,'2026-03-15','Room 208B11',0,1,3),
-(6,'2026-03-15 ','Room 301B10',0,1,2),
-(7,'2026-03-15 ','Room 301B10',0,1,3),
-(8,'2026-03-15 ','Room 208B11',0,1,2),
+(6,'2026-03-15','Room 301B10',0,1,2),
+(7,'2026-03-15','Room 301B10',0,1,3),
+(8,'2026-03-15','Room 208B11',0,1,2),
 
--- upcoming
-(9,'2026-03-18 ','Room 208B11',0,1,2),
-(10,'2026-03-20 ','Room 208B11',0,1,2),
-(11,'2026-03-21 ','Room 208B11',0,1,3),
-(12,'2026-03-22 ','Room 301B10',0,1,3);
+-- UPCOMING
+(9,'2026-03-18','Room 208B11',0,1,2),
+(10,'2026-03-20','Room 208B11',0,1,2),
+(11,'2026-03-21','Room 208B11',0,1,3),
+(12,'2026-03-22','Room 301B10',0,1,3);
 
 -- NEWS
 INSERT INTO `news`

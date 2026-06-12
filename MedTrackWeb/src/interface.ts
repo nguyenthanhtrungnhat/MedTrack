@@ -95,6 +95,7 @@ export interface ScheduleRequest {
     status: 0 | 1 | 2; // 0 = Pending, 1 = Approved, 2 = Rejected
 }
 export interface AppointmentProps {
+    attendanceStatus: number;
     appointmentID: number;
     dateTime: string;             // DATE or DATETIME from DB
     location: string | null;
