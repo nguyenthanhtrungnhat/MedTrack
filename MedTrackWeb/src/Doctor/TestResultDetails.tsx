@@ -7,6 +7,7 @@ export default function TestResultDetails() {
     const roleID = sessionStorage.getItem("roleID");
     const { id } = useParams();
     const navigate = useNavigate();
+
     const [data, setData] =
         useState<TestResultDetail | null>(null);
 
@@ -33,36 +34,50 @@ export default function TestResultDetails() {
             .finally(() => {
                 setLoading(false);
             });
-    }, [id]);
+    }, [id, token]);
 
-    if (loading)
-        return <div className="text-center">Loading...</div>;
+    if (loading) {
+        return (
+            <div className="text-center">
+                Loading...
+            </div>
+        );
+    }
 
-    if (!data)
+    if (!data) {
         return (
             <div className="alert alert-danger">
                 Test Result Not Found
             </div>
         );
+    }
 
     return (
         <div className="mb-3">
             <div className="card shadow-sm dropShadow mb-3 border-0">
                 <div className="card-header blueBg text-white d-flex justify-content-between">
-                    <h5 className="mb-0">Test Result Detail</h5>
+                    <h5 className="mb-0">
+                        Test Result Detail
+                    </h5>
+
                     <div>
-                        {roleID == "1" && (
+                        {roleID === "1" && (
                             <button
                                 className="btn btn-primary btn-sm"
-                                onClick={() => navigate("/doctor/testresultlist")}
+                                onClick={() =>
+                                    navigate("/doctor/testresultlist")
+                                }
                             >
                                 Back
                             </button>
                         )}
-                        {roleID == "2" && (
+
+                        {roleID === "2" && (
                             <button
                                 className="btn btn-primary btn-sm"
-                                onClick={() => navigate("/home/testresultlist")}
+                                onClick={() =>
+                                    navigate("/home/testresultlist")
+                                }
                             >
                                 Back
                             </button>
@@ -71,26 +86,30 @@ export default function TestResultDetails() {
                 </div>
 
                 <div className="p-3 border-bottom bg-light">
-
                     <div className="row mb-3">
                         <div className="col-md-6">
                             <strong>Patient:</strong>
                             <br />
-                            {data.username}
+                            {data.patientName}
                         </div>
 
                         <div className="col-md-6">
-                            <strong>Code:</strong>
+                            <strong>CIC:</strong>
                             <br />
-                            {data.testResultCode}
+                            {data.patientCIC}
+                        </div>
+                        <div className="col-md-6">
+                            <strong>Doctor:</strong>
+                            <br />
+                            {data.doctorName}
                         </div>
                     </div>
 
                     <div className="row mb-3">
                         <div className="col-md-6">
-                            <strong>Title:</strong>
+                            <strong>Code:</strong>
                             <br />
-                            {data.title}
+                            {data.testResultCode}
                         </div>
 
                         <div className="col-md-6">
@@ -102,9 +121,9 @@ export default function TestResultDetails() {
 
                     <div className="row mb-3">
                         <div className="col-md-6">
-                            <strong>Status:</strong>
+                            <strong>Title:</strong>
                             <br />
-                            {data.status}
+                            {data.title}
                         </div>
 
                         <div className="col-md-6">
@@ -116,8 +135,19 @@ export default function TestResultDetails() {
                         </div>
                     </div>
 
+                    {data.remarks && (
+                        <div className="row mb-3">
+                            <div className="col-12">
+                                <strong>Remarks:</strong>
+                                <br />
+                                {data.remarks}
+                            </div>
+                        </div>
+                    )}
+
                     <hr />
                 </div>
+
                 <div className="p-3">
                     <h5 className="mt-4">
                         Test Measurements
@@ -129,40 +159,61 @@ export default function TestResultDetails() {
                                 <th>Parameter</th>
                                 <th>Result</th>
                                 <th>Unit</th>
-                                <th>Reference</th>
+                                <th>Reference Range</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {data.items.map(item => (
-                                <tr key={item.itemID}>
-                                    <td>{item.parameterName}</td>
+                            {data.items.length > 0 ? (
+                                data.items.map((item) => (
+                                    <tr key={item.itemID}>
+                                        <td>
+                                            {item.parameterName}
+                                        </td>
 
-                                    <td>{item.resultValue}</td>
+                                        <td>
+                                            {item.resultValue}
+                                        </td>
 
-                                    <td>{item.unit}</td>
+                                        <td>
+                                            {item.unit || "-"}
+                                        </td>
 
-                                    <td>{item.referenceRange}</td>
+                                        <td>
+                                            {item.referenceRange || "-"}
+                                        </td>
 
-                                    <td>
-                                        <span
-                                            className={`badge ${item.abnormalFlag === "High"
-                                                ? "bg-danger"
-                                                : item.abnormalFlag === "Low"
-                                                    ? "bg-warning"
-                                                    : "bg-success"
-                                                }`}
-                                        >
-                                            {item.abnormalFlag}
-                                        </span>
+                                        <td>
+                                            <span
+                                                className={`badge ${item.abnormalFlag === "High"
+                                                    ? "bg-danger"
+                                                    : item.abnormalFlag === "Low"
+                                                        ? "bg-warning text-dark"
+                                                        : item.abnormalFlag === "Critical"
+                                                            ? "bg-dark"
+                                                            : "bg-success"
+                                                    }`}
+                                            >
+                                                {item.abnormalFlag}
+                                            </span>
+                                        </td>
+
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan={6}
+                                        className="text-center"
+                                    >
+                                        No measurements found
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </div>
     );

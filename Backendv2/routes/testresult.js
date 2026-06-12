@@ -4,33 +4,48 @@ const db = require('../config/db');
 const { getAllRecords } = require('../utils/dbHelpers');
 const verifyToken = require("../middleware/verifyToken");
 
-// GET /tesresult
+// GET /tesresult by doctorID
 router.get("/", verifyToken, (req, res) => {
+
+  const doctorID = req.query.doctorID;
 
   const sql = `
     SELECT
       tr.testResultID,
       tr.userID,
-      u.username,
+      p.fullName AS patientName,
+      p.CIC AS patientCIC,
+
+      tr.doctorID,
+      d.fullName AS doctorName,
 
       tr.title,
       tr.datetime,
       tr.testResultCode,
-      tr.status,
 
       tt.testTypeID,
       tt.typeName
 
     FROM testresult tr
-    JOIN user u
-      ON tr.userID = u.userID
+
+    JOIN user p
+      ON tr.userID = p.userID
+
+    JOIN doctor doc
+      ON tr.doctorID = doc.doctorID
+
+    JOIN user d
+      ON doc.userID = d.userID
+
     JOIN testtype tt
       ON tr.testTypeID = tt.testTypeID
+
+    WHERE tr.doctorID = ?
 
     ORDER BY tr.datetime DESC
   `;
 
-  db.query(sql, (err, result) => {
+  db.query(sql, [doctorID], (err, result) => {
 
     if (err)
       return res.status(500).json(err);
@@ -46,17 +61,32 @@ router.get("/:id", verifyToken, (req, res) => {
   const id = req.params.id;
 
   const headerSql = `
-    SELECT
-      tr.*,
-      u.username,
-      tt.typeName
-    FROM testresult tr
-    JOIN user u
-      ON tr.userID = u.userID
-    JOIN testtype tt
-      ON tr.testTypeID = tt.testTypeID
-    WHERE tr.testResultID = ?
-  `;
+SELECT
+  tr.*,
+
+  p.fullName AS patientName,
+  p.CIC AS patientCIC,
+
+  d.fullName AS doctorName,
+
+  tt.typeName
+
+FROM testresult tr
+
+JOIN user p
+  ON tr.userID = p.userID
+
+JOIN doctor doc
+  ON tr.doctorID = doc.doctorID
+
+JOIN user d
+  ON doc.userID = d.userID
+
+JOIN testtype tt
+  ON tr.testTypeID = tt.testTypeID
+
+WHERE tr.testResultID = ?
+`;
 
   db.query(headerSql, [id], (err, headerRows) => {
 

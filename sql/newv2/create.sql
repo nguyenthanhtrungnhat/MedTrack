@@ -190,7 +190,10 @@ CREATE TABLE `scheduleRequest` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 17. TESTRESULT tables
+-- ======================================================
 -- TEST TYPE
+-- ======================================================
+
 CREATE TABLE testtype (
     testTypeID INT AUTO_INCREMENT PRIMARY KEY,
 
@@ -200,12 +203,17 @@ CREATE TABLE testtype (
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- ======================================================
 -- TEST RESULT
+-- ======================================================
+
 CREATE TABLE testresult (
     testResultID INT AUTO_INCREMENT PRIMARY KEY,
 
     userID INT NOT NULL,
     testTypeID INT NOT NULL,
+    doctorID INT NOT NULL,
 
     title VARCHAR(255) NOT NULL,
 
@@ -213,23 +221,20 @@ CREATE TABLE testresult (
 
     testResultCode VARCHAR(50) NOT NULL UNIQUE,
 
-    status ENUM(
-        'Pending',
-        'Completed',
-        'Failed'
-    ) DEFAULT 'Pending',
-
     remarks TEXT NULL,
 
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  
+
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ON UPDATE CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+-- ======================================================
 -- TEST RESULT ITEMS
+-- ======================================================
+
 CREATE TABLE testresult_item (
     itemID INT AUTO_INCREMENT PRIMARY KEY,
 
@@ -256,54 +261,101 @@ CREATE TABLE testresult_item (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE INDEX idx_testresult_user
-ON testresult(userID);
 
-CREATE INDEX idx_testresult_type
-ON testresult(testTypeID);
+-- ======================================================
+-- MEDICINES
+-- ======================================================
 
-CREATE INDEX idx_testresult_datetime
-ON testresult(datetime);
-
-CREATE INDEX idx_testresult_item_result
-ON testresult_item(testResultID);
-
--- 18. MEDICINES table
-CREATE TABLE `medicines` (
-  `medicineID` INT NOT NULL AUTO_INCREMENT,
-  `medicineName` VARCHAR(150) NOT NULL,
-  `genericName` VARCHAR(150) DEFAULT NULL,
-  `dosageForm` VARCHAR(50) DEFAULT NULL,     -- Tablet, Capsule, Syrup, Injection
-  `strength` VARCHAR(50) DEFAULT NULL,       -- 500mg, 250mg/5ml
-  `description` VARCHAR(500) DEFAULT NULL,
-  `isActive` TINYINT(1) DEFAULT 1,
-  PRIMARY KEY (`medicineID`)
+CREATE TABLE medicines (
+  medicineID INT NOT NULL AUTO_INCREMENT,
+  medicineName VARCHAR(150) NOT NULL,
+  genericName VARCHAR(150) DEFAULT NULL,
+  dosageForm VARCHAR(50) DEFAULT NULL,
+  strength VARCHAR(50) DEFAULT NULL,
+  description VARCHAR(500) DEFAULT NULL,
+  isActive TINYINT(1) DEFAULT 1,
+  PRIMARY KEY (medicineID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 19. PRESCRIPTIONS table
-CREATE TABLE `prescriptions` (
-  `prescriptionID` INT NOT NULL AUTO_INCREMENT,
-  `patientID` INT NOT NULL,
-  `doctorID` INT NOT NULL,
-  `diagnosis` VARCHAR(1000) DEFAULT NULL,
-  `notes` VARCHAR(1000) DEFAULT NULL,
-  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`prescriptionID`)
+
+-- ======================================================
+-- PRESCRIPTIONS
+-- ======================================================
+
+CREATE TABLE prescriptions (
+  prescriptionID INT NOT NULL AUTO_INCREMENT,
+  patientID INT NOT NULL,
+  doctorID INT NOT NULL,
+  diagnosis VARCHAR(1000) DEFAULT NULL,
+  notes VARCHAR(1000) DEFAULT NULL,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (prescriptionID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 20. PRESCRIPTION_ITEMS table
-CREATE TABLE `prescription_items` (
-  `prescriptionItemID` INT NOT NULL AUTO_INCREMENT,
-  `prescriptionID` INT NOT NULL,
-  `medicineID` INT NOT NULL,
-  `dosage` VARCHAR(100) DEFAULT NULL,       -- 1 tablet
-  `frequency` VARCHAR(100) DEFAULT NULL,    -- 3 times/day
-  `durationDays` INT DEFAULT NULL,          -- number of days
-  `quantity` INT DEFAULT NULL,              -- total pills
-  `instructions` VARCHAR(500) DEFAULT NULL, -- after meals, before sleep
-  PRIMARY KEY (`prescriptionItemID`)
+
+-- ======================================================
+-- PRESCRIPTION ITEMS
+-- ======================================================
+
+CREATE TABLE prescription_items (
+  prescriptionItemID INT NOT NULL AUTO_INCREMENT,
+  prescriptionID INT NOT NULL,
+  medicineID INT NOT NULL,
+  dosage VARCHAR(100) DEFAULT NULL,
+  frequency VARCHAR(100) DEFAULT NULL,
+  durationDays INT DEFAULT NULL,
+  quantity INT DEFAULT NULL,
+  instructions VARCHAR(500) DEFAULT NULL,
+  PRIMARY KEY (prescriptionItemID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- ======================================================
+-- TREATMENT SHEET
+-- ======================================================
+
+CREATE TABLE treatment_sheet (
+  sheetID INT AUTO_INCREMENT PRIMARY KEY,
+
+  patientID INT NOT NULL,
+
+  doctorID INT NULL,
+
+  admissionNumber VARCHAR(50),
+
+  patientCode VARCHAR(50),
+
+  diagnosis TEXT,
+
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ======================================================
+-- TREATMENT LOGS
+-- ======================================================
+
+CREATE TABLE treatment_logs (
+  logID INT AUTO_INCREMENT PRIMARY KEY,
+
+  sheetID INT NOT NULL,
+
+  logTime TIME,
+
+  subjective TEXT,
+
+  objective TEXT,
+
+  assessment TEXT,
+
+  plan TEXT,
+
+  instruction TEXT,
+
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ===================== ADD FOREIGN KEYS =====================
 
 ALTER TABLE `userrole`
@@ -351,13 +403,16 @@ ALTER TABLE `scheduleRequest`
   FOREIGN KEY (`scheduleID`) REFERENCES `schedules` (`scheduleID`)
   ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- ======================================================
+-- TEST RESULT FKs
+-- ======================================================
+
 ALTER TABLE testresult
 ADD CONSTRAINT fk_testresult_user
 FOREIGN KEY (userID)
 REFERENCES user(userID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
-
 
 ALTER TABLE testresult
 ADD CONSTRAINT fk_testresult_type
@@ -366,6 +421,12 @@ REFERENCES testtype(testTypeID)
 ON DELETE RESTRICT
 ON UPDATE CASCADE;
 
+ALTER TABLE testresult
+ADD CONSTRAINT fk_testresult_doctor
+FOREIGN KEY (doctorID)
+REFERENCES doctor(doctorID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 
 ALTER TABLE testresult_item
 ADD CONSTRAINT fk_testresult_item
@@ -374,50 +435,61 @@ REFERENCES testresult(testResultID)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
-ALTER TABLE `prescriptions`
-ADD CONSTRAINT `fk_prescription_patient`
-FOREIGN KEY (`patientID`) REFERENCES `patient`(`patientID`)
-ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `prescriptions`
-ADD CONSTRAINT `fk_prescription_doctor`
-FOREIGN KEY (`doctorID`) REFERENCES `doctor`(`doctorID`)
-ON DELETE CASCADE ON UPDATE CASCADE;
+-- ======================================================
+-- PRESCRIPTION FKs
+-- ======================================================
 
-ALTER TABLE `prescription_items`
-ADD CONSTRAINT `fk_prescription_items_prescription`
-FOREIGN KEY (`prescriptionID`)
-REFERENCES `prescriptions`(`prescriptionID`)
-ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE prescriptions
+ADD CONSTRAINT fk_prescription_patient
+FOREIGN KEY (patientID)
+REFERENCES patient(patientID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 
-ALTER TABLE `prescription_items`
-ADD CONSTRAINT `fk_prescription_items_medicine`
-FOREIGN KEY (`medicineID`)
-REFERENCES `medicines`(`medicineID`)
-ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE prescriptions
+ADD CONSTRAINT fk_prescription_doctor
+FOREIGN KEY (doctorID)
+REFERENCES doctor(doctorID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE prescription_items
+ADD CONSTRAINT fk_prescription_items_prescription
+FOREIGN KEY (prescriptionID)
+REFERENCES prescriptions(prescriptionID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE prescription_items
+ADD CONSTRAINT fk_prescription_items_medicine
+FOREIGN KEY (medicineID)
+REFERENCES medicines(medicineID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 
 
+-- ======================================================
+-- TREATMENT SHEET FKs
+-- ======================================================
 
-CREATE TABLE treatment_sheet (
-  sheetID INT AUTO_INCREMENT PRIMARY KEY,
-  patientID INT NOT NULL,
-  doctorID INT NULL,
-  admissionNumber VARCHAR(50),
-  patientCode VARCHAR(50),
-  diagnosis TEXT,
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (patientID) REFERENCES patient(patientID) ON DELETE CASCADE
-);
+ALTER TABLE treatment_sheet
+ADD CONSTRAINT fk_treatment_sheet_patient
+FOREIGN KEY (patientID)
+REFERENCES patient(patientID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 
-CREATE TABLE treatment_logs (
-  logID INT AUTO_INCREMENT PRIMARY KEY,
-  sheetID INT NOT NULL,
-  logTime TIME,
-  subjective TEXT,
-  objective TEXT,
-  assessment TEXT,
-  plan TEXT,
-  instruction TEXT,
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (sheetID) REFERENCES treatment_sheet(sheetID) ON DELETE CASCADE
-);
+ALTER TABLE treatment_sheet
+ADD CONSTRAINT fk_treatment_sheet_doctor
+FOREIGN KEY (doctorID)
+REFERENCES doctor(doctorID)
+ON DELETE SET NULL
+ON UPDATE CASCADE;
+
+ALTER TABLE treatment_logs
+ADD CONSTRAINT fk_treatment_logs_sheet
+FOREIGN KEY (sheetID)
+REFERENCES treatment_sheet(sheetID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;

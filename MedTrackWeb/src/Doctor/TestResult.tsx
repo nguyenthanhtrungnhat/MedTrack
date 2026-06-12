@@ -5,17 +5,20 @@ import getUserIDFromToken from "../components/getUserIDFromToken";
 import { useNavigate } from "react-router-dom";
 
 export default function TestResult() {
+  const doctorID = sessionStorage.getItem("doctorID");
   const [data, setData] = useState<TestResultProps[]>([]);
   const [loadingTest, setLoadingTest] = useState(true);
-  const token = sessionStorage.getItem("token");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserID, setSelectedUserID] =
     useState<number | "all">("all");
 
+  const token = sessionStorage.getItem("token");
+  const navigate = useNavigate();
+
   const [sortConfig, setSortConfig] = useState<{
-    key: "datetime" | "username";
+    key: "datetime" | "patientName";
     direction: "asc" | "desc";
   }>({
     key: "datetime",
@@ -27,8 +30,17 @@ export default function TestResult() {
   useEffect(() => {
     setLoadingTest(true);
 
-    axios
-      .get<TestResultProps[]>("http://localhost:3000/testresult", { headers: { Authorization: `Bearer ${token}` } })
+    axios.get<TestResultProps[]>(
+      "http://localhost:3000/testresult",
+      {
+        params: {
+          doctorID,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then((response) => {
         setData(response.data);
       })
@@ -38,39 +50,33 @@ export default function TestResult() {
       .finally(() => {
         setLoadingTest(false);
       });
-  }, []);
+  }, [token]);
 
   if (!userID) {
-    return <p>Please log in to view your nurse profile.</p>;
+    return (
+      <p>
+        Please log in to view your nurse profile.
+      </p>
+    );
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Completed":
-        return "success";
-      case "Pending":
-        return "warning";
-      case "Failed":
-        return "danger";
-      default:
-        return "secondary";
-    }
-  };
-
-  // 🔹 Extract unique users
   const uniqueUsers = useMemo(() => {
-    const map = new Map<number, string>();
+    const map = new Map();
+
     data.forEach((item) => {
-      map.set(item.userID, item.username);
+      map.set(item.userID, {
+        patientName: item.patientName,
+        patientCIC: item.patientCIC,
+      });
     });
 
-    return Array.from(map, ([userID, username]) => ({
+    return Array.from(map, ([userID, value]) => ({
       userID,
-      username,
+      patientName: value.patientName,
+      patientCIC: value.patientCIC,
     }));
   }, [data]);
 
-  // 🔹 Filter + Sort
   const processedData = useMemo(() => {
     let filtered = [...data];
 
@@ -81,40 +87,61 @@ export default function TestResult() {
     }
 
     if (searchTerm.trim() !== "") {
-      filtered = filtered.filter((item) =>
-        (item.username || "")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+      const keyword = searchTerm.toLowerCase();
+
+      filtered = filtered.filter(
+        (item) =>
+          item.patientName
+            .toLowerCase()
+            .includes(keyword) ||
+          (item.patientCIC || "")
+            .toLowerCase()
+            .includes(keyword)
       );
     }
-
     filtered.sort((a, b) => {
-      let valueA: number | string;
-      let valueB: number | string;
+      let valueA: string | number;
+      let valueB: string | number;
 
       if (sortConfig.key === "datetime") {
         valueA = new Date(a.datetime).getTime();
         valueB = new Date(b.datetime).getTime();
       } else {
-        valueA = (a.username || "").toLowerCase();
-        valueB = (b.username || "").toLowerCase();
+        valueA = a.patientName.toLowerCase();
+        valueB = b.patientName.toLowerCase();
       }
 
-      if (valueA < valueB)
-        return sortConfig.direction === "asc" ? -1 : 1;
-      if (valueA > valueB)
-        return sortConfig.direction === "asc" ? 1 : -1;
+      if (valueA < valueB) {
+        return sortConfig.direction === "asc"
+          ? -1
+          : 1;
+      }
+
+      if (valueA > valueB) {
+        return sortConfig.direction === "asc"
+          ? 1
+          : -1;
+      }
+
       return 0;
     });
 
     return filtered;
-  }, [data, selectedUserID, searchTerm, sortConfig]);
+  }, [
+    data,
+    selectedUserID,
+    searchTerm,
+    sortConfig,
+  ]);
 
-  const handleSort = (key: "datetime" | "username") => {
+  const handleSort = (
+    key: "datetime" | "patientName"
+  ) => {
     setSortConfig((prev) => ({
       key,
       direction:
-        prev.key === key && prev.direction === "asc"
+        prev.key === key &&
+          prev.direction === "asc"
           ? "desc"
           : "asc",
     }));
@@ -123,21 +150,20 @@ export default function TestResult() {
   return (
     <div className="card dropShadow">
       <div className="card-header blueBg text-white">
-        <h5 className="mb-0">Test Result List</h5>
+        <h5 className="mb-0">
+          Test Result List
+        </h5>
       </div>
 
-      {/* Search + Dropdown */}
       <div className="p-3 border-bottom bg-light">
         <div className="row g-2">
           <div className="col-md-4">
             <input
               type="text"
               className="form-control"
-              placeholder="Search by username..."
+              placeholder="Search by patient name or CIC..."
               value={searchTerm}
-              onChange={(e) =>
-                setSearchTerm(e.target.value)
-              }
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
@@ -153,13 +179,16 @@ export default function TestResult() {
                 )
               }
             >
-              <option value="all">All Users</option>
+              <option value="all">
+                All Patients
+              </option>
+
               {uniqueUsers.map((user) => (
                 <option
                   key={user.userID}
                   value={user.userID}
                 >
-                  {user.username}
+                  {user.patientName} ({user.patientCIC})
                 </option>
               ))}
             </select>
@@ -173,28 +202,40 @@ export default function TestResult() {
             <tr>
               <th
                 style={{ cursor: "pointer" }}
-                onClick={() => handleSort("username")}
+                onClick={() =>
+                  handleSort("patientName")
+                }
               >
-                User{" "}
-                {sortConfig.key === "username" &&
+                Patient{" "}
+                {sortConfig.key ===
+                  "patientName" &&
                   (sortConfig.direction === "asc"
                     ? "↑"
                     : "↓")}
               </th>
+
+              <th>Doctor</th>
+
               <th>Title</th>
+
               <th
                 style={{ cursor: "pointer" }}
-                onClick={() => handleSort("datetime")}
+                onClick={() =>
+                  handleSort("datetime")
+                }
               >
                 Date & Time{" "}
-                {sortConfig.key === "datetime" &&
+                {sortConfig.key ===
+                  "datetime" &&
                   (sortConfig.direction === "asc"
                     ? "↑"
                     : "↓")}
               </th>
+
               <th>Test Code</th>
-              <th>Status</th>
+
               <th>Test Type</th>
+
               <th>Action</th>
             </tr>
           </thead>
@@ -202,48 +243,65 @@ export default function TestResult() {
           <tbody>
             {loadingTest ? (
               <tr>
-                <td colSpan={6} className="text-center py-4">
+                <td
+                  colSpan={7}
+                  className="text-center py-4"
+                >
                   Loading...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={6} className="text-center text-danger py-4">
+                <td
+                  colSpan={7}
+                  className="text-center text-danger py-4"
+                >
                   {error}
                 </td>
               </tr>
             ) : processedData.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-4">
+                <td
+                  colSpan={7}
+                  className="text-center py-4"
+                >
                   No data available
                 </td>
               </tr>
             ) : (
               processedData.map((item) => (
                 <tr key={item.testResultID}>
-                  <td>{item.username}</td>
+                  <td>
+                    {item.patientName}
+                    <br />
+                    <small className="text-muted">
+                      CIC: {item.patientCIC}
+                    </small>
+                  </td>
+
+                  <td>{item.doctorName}</td>
+
                   <td>{item.title}</td>
+
                   <td>
                     {new Date(
                       item.datetime
                     ).toLocaleString()}
                   </td>
-                  <td>{item.testResultCode}</td>
+
                   <td>
-                    <span
-                      className={`badge bg-${getStatusBadge(
-                        item.status
-                      )}`}
-                    >
-                      {item.status}
-                    </span>
+                    {item.testResultCode}
                   </td>
+
                   <td>{item.typeName}</td>
+
                   <td>
                     <button
                       className="btn btn-sm btn-primary"
                       onClick={() =>
-                        navigate(`${item.testResultID}`)
+                        navigate(
+                          `${item.testResultID}`
+                        )
                       }
                     >
                       View Details

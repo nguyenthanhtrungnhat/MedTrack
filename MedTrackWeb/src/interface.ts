@@ -7,19 +7,19 @@ export interface NurseProps {
     nurseID: string,
     address: string,
     email: string,
-    CIC:number
+    CIC: number
 }
 export interface RoomProps {
     department: string,
     roomID: string
 }
 export interface PatientProps {
-    patientID: string|undefined
+    patientID: string | undefined
     image?: string;
     fullName: string;
     gender: string;
     dob: string;
-    phone: number|string;
+    phone: number | string;
     address: string;
     email: string;
     hospitalizationsDiagnosis?: string;
@@ -28,7 +28,7 @@ export interface PatientProps {
     HI?: string;
     admissionDate?: string;
     relativeName?: string;
-    relativeNumber?: number|string
+    relativeNumber?: number | string
     dischargeDate?: string;
     CIC?: number;
     username?: string;
@@ -56,34 +56,34 @@ export interface RecordProps {
     sensorium: number
 }
 export interface SidebarInfoProps {
-    phone?: string|number;
+    phone?: string | number;
     fullName?: string;
 }
 export interface FormData {
     patientID: string;
-    pulse: number|string;
-    spo2: number|string;
-    temperature: number|string;
-    oxygenTherapy: number|string;
+    pulse: number | string;
+    spo2: number | string;
+    temperature: number | string;
+    oxygenTherapy: number | string;
     bloodPressure: string;
-    height: number|string;
-    weight: number|string;
-    sensorium: number|string;
-    respiratoryRate: number|string;
-    urine: number|string;
-    heartRate: number|string;
-    hurtScale: number|string;
+    height: number | string;
+    weight: number | string;
+    sensorium: number | string;
+    respiratoryRate: number | string;
+    urine: number | string;
+    heartRate: number | string;
+    hurtScale: number | string;
     currentCondition: string;
 };
-export interface Schedule{
-    subject:string;
-    working_hours:number;
-    date:string;
-    scheduleID:string;
-    start_at:string;
-    color:string;
-    roomID:string;
-    room_location:string;
+export interface Schedule {
+    subject: string;
+    working_hours: number;
+    date: string;
+    scheduleID: string;
+    start_at: string;
+    color: string;
+    roomID: string;
+    room_location: string;
 }
 export interface ScheduleRequest {
     requestID: number;
@@ -124,42 +124,46 @@ export interface AppointmentProps {
 //   isActive: number
 // }
 export interface TestResultProps {
-  testResultID: number;
-  userID: number;
-  username: string;
+    testResultID: number;
 
-  testTypeID: number;
-  typeName: string;
+    userID: number;
+    patientName: string;
+    patientCIC: string;
+    doctorID: number;
+    doctorName: string;
 
-  title: string;
-  datetime: string;
-  testResultCode: string;
-  status: string;
+    title: string;
+    datetime: string;
+
+    testResultCode: string;
+
+    testTypeID: number;
+    typeName: string;
 }
 
 export interface TestResultItem {
-  itemID: number;
-  parameterName: string;
-  resultValue: string;
-  unit: string;
-  referenceRange: string;
-  abnormalFlag: string;
-  notes?: string;
+    itemID: number;
+    parameterName: string;
+    resultValue: string;
+    unit: string;
+    referenceRange: string;
+    abnormalFlag: string;
 }
 
 export interface TestResultDetail {
-  testResultID: number;
-  userID: number;
-  username: string;
+    testResultID: number;
+    userID: number;
+    doctorID: number;
+    patientCIC: string;
+    patientName: string;
+    doctorName: string;
 
-  testTypeID: number;
-  typeName: string;
+    title: string;
+    datetime: string;
+    testResultCode: string;
 
-  title: string;
-  datetime: string;
-  testResultCode: string;
-  status: string;
-  remarks?: string;
+    typeName: string;
+    remarks: string;
 
-  items: TestResultItem[];
+    items: TestResultItem[];
 }
