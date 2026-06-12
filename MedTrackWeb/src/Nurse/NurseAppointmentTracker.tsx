@@ -89,7 +89,7 @@ export default function NurseAppointmentTracker() {
         if (status === 1) {
             toast.success("Marked as Done");
         } else if (status === 2) {
-            toast.error("Marked as Missed");
+            toast.success("Marked as Missed");
         } else {
             toast.info("Status updated");
         }

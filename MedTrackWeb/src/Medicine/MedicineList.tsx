@@ -15,6 +15,7 @@ export default function MedicinesList() {
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     fetchMedicines();
@@ -23,7 +24,11 @@ export default function MedicinesList() {
   const fetchMedicines = async () => {
     try {
       const response = await axios.get<Medicine[]>(
-        "http://localhost:3000/medicines"
+        "http://localhost:3000/medicines", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
       );
       setMedicines(response.data);
     } catch (err) {
@@ -35,10 +40,10 @@ export default function MedicinesList() {
   };
 
   return (
-     <div className="card shadow-sm mb-3">
-            <div className="card-header blueBg text-white">
-                <h5 className="mb-0">Medicine List</h5>
-            </div>
+    <div className="card shadow-sm mb-3">
+      <div className="card-header blueBg text-white">
+        <h5 className="mb-0">Medicine List</h5>
+      </div>
       {error && (
         <div className="alert alert-danger">{error}</div>
       )}

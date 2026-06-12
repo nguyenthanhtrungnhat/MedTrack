@@ -116,8 +116,6 @@ INSERT INTO doctor (doctorID, departmentID, userID, office, image) VALUES
 
 
 INSERT INTO roompatient (roomID, patientID) VALUES
-(2,1),
-(1,2),
 (3,3),
 (2,4),
 (1,5),
