@@ -10,17 +10,58 @@ router.get('/',verifyToken, (req, res) => getAllRecords('room', res));
 // API to get patients by roomID
 router.get("/:roomID/patients", (req, res) => {
   const { roomID } = req.params;
+
   const query = `
-      SELECT p.*, u.fullName, u.email, u.phone
-      FROM patient p
-      JOIN roompatient rp ON p.patientID = rp.patientID
-      JOIN user u ON p.userID = u.userID 
-      WHERE rp.roomID = ?;
+    SELECT
+      p.patientID,
+      p.image,
+      p.HI,
+      u.fullName,
+      u.CIC,
+      u.gender,
+      u.phone,
+      u.email,
+      u.dob
+    FROM patient p
+    INNER JOIN roompatient rp
+      ON p.patientID = rp.patientID
+    INNER JOIN user u
+      ON p.userID = u.userID
+    WHERE rp.roomID = ?
+    ORDER BY u.fullName;
   `;
+
   db.query(query, [roomID], (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error", details: err });
+    if (err) {
+      return res.status(500).json({
+        error: "Database error",
+        details: err
+      });
+    }
+
     res.json(results);
   });
 });
 
+// GET rooms by department
+router.get("/department/:departmentID", verifyToken, (req, res) => {
+  const { departmentID } = req.params;
+
+  const sql = `
+    SELECT *
+    FROM room
+    WHERE departmentID = ?
+  `;
+
+  db.query(sql, [departmentID], (err, results) => {
+    if (err) {
+      return res.status(500).json({
+        error: "Database error",
+        details: err
+      });
+    }
+
+    res.json(results);
+  });
+});
 module.exports = router;

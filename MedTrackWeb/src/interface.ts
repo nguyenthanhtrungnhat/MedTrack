@@ -1,5 +1,6 @@
 export interface NurseProps {
     image?: string,
+    departmentID: number,
     fullName: string,
     gender: string,
     dob: string,
@@ -11,6 +12,7 @@ export interface NurseProps {
 }
 export interface RoomProps {
     department: string,
+    location: string,
     roomID: string
 }
 export interface PatientProps {

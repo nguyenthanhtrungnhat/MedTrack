@@ -17,6 +17,31 @@ INSERT INTO `user`
 INSERT INTO `role` (`roleID`,`nameRole`) VALUES 
 (1,'Doctor'),(2,'Nurse'),(3,'Patient'),(666,'Admin');
 
+
+-- DEPARTMENT table
+INSERT INTO department
+(departmentID, departmentCode, departmentName, description, location)
+VALUES
+(1,'IM','Internal Medicine',
+'General Internal Medicine Department',
+'Building A'),
+
+(2,'CARD','Cardiology',
+'Heart and Cardiovascular Treatment',
+'Building B'),
+
+(3,'ENDO','Endocrinology',
+'Diabetes and Hormonal Disorders',
+'Building C'),
+
+(4,'PED','Pediatrics',
+'Children Healthcare Department',
+'Building D'),
+
+(5,'EMR','Emergency',
+'Emergency Treatment Department',
+'Ground Floor');
+
 -- USERROLE table
 INSERT INTO `userrole` (`userRoleID`,`roleID`,`userID`) VALUES
 (1,2,1),
@@ -26,54 +51,55 @@ INSERT INTO `userrole` (`userRoleID`,`roleID`,`userID`) VALUES
 (5,666,5);
 
 -- ROOM table  
-INSERT INTO `room` (`roomID`,`department`,`location`) VALUES
-(1,'Internal Medicine','208B11');
+INSERT INTO room
+(roomID, departmentID, location)
+VALUES
+(1,1,'208B11'),
+(2,2,'301B10'),
+(3,3,'302A05');
 
 -- NURSE
-INSERT INTO `nurse` (`nurseID`,`department`,`userID`,`roomID`,`image`) VALUES
-(1,'Internal Medicine',1,1,'https://i.pravatar.cc/300?img=8');
+INSERT INTO nurse
+(nurseID, departmentID, userID, image)
+VALUES
+(1,1,1,'https://i.pravatar.cc/300?img=8');
 
 -- DOCTOR
-INSERT INTO `doctor` (`doctorID`,`department`,`nurseID`,`userID`,`requestID`,`office`,`image`) VALUES
-(1,'Internal Medicine',1,4,NULL,'301B10','https://i.pravatar.cc/300?img=8');
+INSERT INTO doctor
+(doctorID, departmentID, userID, office, image)
+VALUES
+(1,1,4,'301B10','https://i.pravatar.cc/300?img=9');
 
--- REQUEST
-INSERT INTO `request`
-(`requestID`,`dateTime`,`requestContent`,`requestStatus`,`nurseID`,`doctorID`,`requestType`) VALUES
-(1,'2026-03-10 09:00:00','Patient requires blood pressure evaluation',0,1,1,1);
-
--- FEEDBACK
-INSERT INTO `feedback`
-(`feedBackID`,`feedBackForFacility`,`feedBackForDoctor`,`feedBackForNurse`) VALUES
-(1,'Clean and well organized facility','Doctor explained treatment clearly','Nurse was very supportive'),
-(2,'Average waiting time','Doctor consultation was satisfactory','Nurse assistance was helpful'),
-(3,'Facility needs improvement','Doctor seemed rushed','Nurse response was slow');
 
 -- PATIENT
-INSERT INTO `patient`
-(`patientID`,`HI`,`admissionDate`,`dischargeDate`,
-`hospitalizationsDiagnosis`,`summaryCondition`,`dischargeDiagnosis`,
-`relativeName`,`relativeNumber`,`userID`,`feedBackID`,`image`) VALUES
+INSERT INTO patient
+(patientID,HI,admissionDate,dischargeDate,
+hospitalizationsDiagnosis,summaryCondition,dischargeDiagnosis,
+relativeName,relativeNumber,userID,image)
+VALUES
 
 (1,'HI-2026-001','2026-03-01 09:00:00','2026-03-05 16:00:00',
-'Hypertension','Patient stabilized after medication',
+'Hypertension',
+'Patient stabilized after medication',
 'Controlled blood pressure',
-'Tran Van Minh','0903123456',2,2,'https://i.pravatar.cc/300?img=12'),
+'Tran Van Minh',
+'0903123456',
+2,
+'https://i.pravatar.cc/300?img=12'),
 
 (2,'HI-2026-002','2026-03-02 11:00:00','2026-03-06 10:30:00',
-'Type 2 Diabetes','Condition improved with insulin therapy',
+'Type 2 Diabetes',
+'Condition improved with insulin therapy',
 'Stable glucose level',
-'Le Thi Huong','0912345678',3,3,'https://i.pravatar.cc/300?img=15');
-
+'Le Thi Huong',
+'0912345678',
+3,
+'https://i.pravatar.cc/300?img=15');
 -- ROOM PATIENT
 INSERT INTO `roompatient` (`roomID`,`patientID`) VALUES
 (1,1),
 (1,2);
 
--- NURSE PATIENT
-INSERT INTO `nursepatient` (`nurseID`,`patientID`) VALUES
-(1,1),
-(1,2);
 
 -- SCHEDULES
 INSERT INTO `schedules`

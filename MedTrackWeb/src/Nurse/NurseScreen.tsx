@@ -12,7 +12,7 @@ export default function NurseScreen() {
     const [rooms, setRooms] = useState<RoomProps[]>([]);
     const userID = getUserIDFromToken();
     const url = `http://localhost:3000/nurses/by-user/${userID}`;
-    const roomsUrl = 'http://localhost:3000/rooms';
+
     const [count, setCount] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     const token = sessionStorage.getItem("token");
@@ -33,35 +33,51 @@ export default function NurseScreen() {
     }, [userID]);
 
     useEffect(() => {
-        setLoading(true)
+        if (!user?.departmentID) return;
 
-        sessionStorage.setItem("nurseID", String(user?.nurseID));
-        console.log("nurseID from storage:", String(user?.nurseID));
+        setLoading(true);
 
-        const fetchCount = async () => {
+        sessionStorage.setItem("nurseID", String(user.nurseID));
+
+        const fetchData = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/schedules/nurse/${user?.nurseID}`, { headers: { Authorization: `Bearer ${token}` } });
-                const data = res.data;
-                if (Array.isArray(data)) {
-                    setCount(data.length);
-                } else {
-                    setCount(0);
-                }
-            } catch (err: any) {
+                // Schedule count
+                const scheduleRes = await axios.get(
+                    `http://localhost:3000/schedules/nurse/${user.nurseID}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                setCount(
+                    Array.isArray(scheduleRes.data)
+                        ? scheduleRes.data.length
+                        : 0
+                );
+
+                // Rooms in same department
+                const roomRes = await axios.get(
+                    `http://localhost:3000/rooms/department/${user.departmentID}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                setRooms(roomRes.data);
+            } catch (err) {
+                console.error(err);
                 setCount(0);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchCount();
-
-        axios.get(roomsUrl, { headers: { Authorization: `Bearer ${token}` } })
-            .then(response => {
-                setRooms(response.data);
-                console.log("Room Data:", response.data);
-            })
-            .catch(error => console.error("Error fetching rooms:", error))
-            .finally(() => setLoading(false)); // stop loading
-    }, [user]);
+        fetchData();
+    }, [user, token]);
 
     return (
         <div className="row">
@@ -70,39 +86,33 @@ export default function NurseScreen() {
                     nurseID={String(user?.nurseID)}
                     image={user?.image || ""}
                     fullName={user?.fullName || ""}
-                    gender={
-                        user?.gender == "1"
-                            ? "Male"
-                            : user?.gender == "2"
-                                ? "Female"
-                                : ""
-                    }
+                    gender={user?.gender == "1"
+                        ? "Male"
+                        : user?.gender == "2"
+                            ? "Female"
+                            : ""}
                     dob={user?.dob?.split("T")[0] || ""}
                     phone={user?.phone || ""}
                     CIC={Number(user?.CIC)}
                     address={user?.address || ""}
                     email={user?.email || ""}
-                    loading={loading}
-                />
+                    loading={loading} departmentID={0}                />
             ) : (
                 <NurseInformation
-                    nurseID={String(user?.nurseID)}
-                    image={user?.image || ""}
-                    fullName={user?.fullName || ""}
-                    gender={
-                        user?.gender == "1"
+                        nurseID={String(user?.nurseID)}
+                        image={user?.image || ""}
+                        fullName={user?.fullName || ""}
+                        gender={user?.gender == "1"
                             ? "Male"
                             : user?.gender == "2"
                                 ? "Female"
-                                : ""
-                    }
-                    dob={user?.dob?.split("T")[0] || ""}
-                    phone={user?.phone || ""}
-                    CIC={Number(user?.CIC)}
-                    address={user?.address || ""}
-                    email={user?.email || ""}
-                    loading={loading}
-                />
+                                : ""}
+                        dob={user?.dob?.split("T")[0] || ""}
+                        phone={user?.phone || ""}
+                        CIC={Number(user?.CIC)}
+                        address={user?.address || ""}
+                        email={user?.email || ""}
+                        loading={loading} departmentID={0}                />
             )}
             <div className="col-lg-6 col-sm-12 ">
                 <div className="hasSchedule padding border whiteBg marginBottom dropShadow">

@@ -30,6 +30,7 @@ export default function NurseInformation({
   CIC,
   address,
   email,
+  departmentID,
   loading
 }: NurseProps & { loading?: boolean }) {
   return (
