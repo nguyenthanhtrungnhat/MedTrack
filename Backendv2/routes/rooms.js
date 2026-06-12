@@ -48,9 +48,12 @@ router.get("/department/:departmentID", verifyToken, (req, res) => {
   const { departmentID } = req.params;
 
   const sql = `
-    SELECT *
-    FROM room
-    WHERE departmentID = ?
+    SELECT 
+      r.*,
+      d.departmentName
+    FROM room r
+    JOIN department d ON r.departmentID = d.departmentID
+    WHERE r.departmentID = ?
   `;
 
   db.query(sql, [departmentID], (err, results) => {

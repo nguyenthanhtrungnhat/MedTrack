@@ -3,7 +3,7 @@ import { RoomProps } from "./interface";
 import "./css/Room.css";
 
 export default function Room({
-    department,
+    departmentName,
     roomID,
     location
 }: RoomProps) {
@@ -32,7 +32,7 @@ export default function Room({
                         </p>
 
                         <h6 className="blueText text-center">
-                            {department} Department
+                            Department: {departmentName} 
                         </h6>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
 interface Patient {
+  CIC: number
   patientID: number
   fullName: string
 }
@@ -87,12 +88,15 @@ export default function PrescriptionForm() {
   useEffect(() => {
 
     const filtered = patients
-      .filter(p =>
-        p.fullName.toLowerCase().includes(patientSearch.toLowerCase())
-      )
-      .slice(0, 10)
+      .filter(p => {
+        const keyword = patientSearch.toLowerCase().trim();
 
-    setFilteredPatients(filtered)
+        return (
+          p.fullName.toLowerCase().includes(keyword) ||
+          p.CIC?.toString().includes(keyword)
+        );
+      })
+      .slice(0, 10);
 
   }, [patientSearch, patients])
 
@@ -259,7 +263,7 @@ export default function PrescriptionForm() {
 
           <input
             className="form-control"
-            placeholder="Search patient..."
+            placeholder="Search patient by name or CIC..."
             value={patientSearch}
             onChange={(e) => setPatientSearch(e.target.value)}
           />
@@ -282,12 +286,17 @@ export default function PrescriptionForm() {
                   className="list-group-item list-group-item-action"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    setSelectedPatient(p)
-                    setPatientSearch("")
-                    toast.success(`Selected ${p.fullName}`)
+                    setSelectedPatient(p);
+                    setPatientSearch("");
+                    toast.success(`Selected ${p.fullName}`);
                   }}
                 >
-                  {p.fullName} (ID: {p.patientID})
+                  <div>
+                    <strong>{p.fullName}</strong>
+                  </div>
+                  <small className="text-muted">
+                    CIC: {p.CIC}
+                  </small>
                 </li>
 
               ))}
@@ -298,7 +307,7 @@ export default function PrescriptionForm() {
 
           {selectedPatient && (
             <div className="alert alert-info mt-2">
-              Selected: {selectedPatient.fullName}
+              Selected: {selectedPatient.fullName} - CIC: {selectedPatient.CIC}
             </div>
           )}
 

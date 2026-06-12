@@ -11,7 +11,7 @@ export interface NurseProps {
     CIC: number
 }
 export interface RoomProps {
-    department: string,
+    departmentName: string,
     location: string,
     roomID: string
 }
