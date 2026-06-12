@@ -5,23 +5,27 @@ import "react-toastify/dist/ReactToastify.css";
 import getUserIDFromToken from "../components/getUserIDFromToken";
 
 export default function MakeAppointment() {
+    const [departments, setDepartments] = useState<any[]>([]);
     const [doctors, setDoctors] = useState<any[]>([]);
     const [appointments, setAppointments] = useState<any[]>([]);
 
+    const [departmentID, setDepartmentID] = useState<number | null>(null);
     const [doctorID, setDoctorID] = useState<number | null>(null);
+
     const [dateTime, setDateTime] = useState("");
     const [location, setLocation] = useState("");
 
     const token = sessionStorage.getItem("token");
     const userID = getUserIDFromToken();
-    const role = sessionStorage.getItem("role"); // Nurse | Patient
+    const role = sessionStorage.getItem("role");
 
     // ======================================================
-    // LOAD DATA
+    // LOAD INITIAL DATA
     // ======================================================
     useEffect(() => {
         if (!userID) return;
 
+        loadDepartments();
         loadDoctors();
         loadAppointments();
 
@@ -33,8 +37,19 @@ export default function MakeAppointment() {
     }, [userID]);
 
     // ======================================================
-    // API CALLS
+    // API
     // ======================================================
+    const loadDepartments = async () => {
+        try {
+            const res = await axios.get("http://localhost:3000/departments", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setDepartments(res.data);
+        } catch {
+            toast.error("Failed to load departments");
+        }
+    };
+
     const loadDoctors = async () => {
         try {
             const res = await axios.get("http://localhost:3000/doctors", {
@@ -59,7 +74,14 @@ export default function MakeAppointment() {
     };
 
     // ======================================================
-    // DOCTOR CHANGE
+    // FILTER DOCTORS BY DEPARTMENT
+    // ======================================================
+    const filteredDoctors = departmentID
+        ? doctors.filter(d => d.departmentID === departmentID)
+        : [];
+
+    // ======================================================
+    // SELECT DOCTOR
     // ======================================================
     const handleDoctorChange = (id: string) => {
         const numId = Number(id);
@@ -70,11 +92,22 @@ export default function MakeAppointment() {
     };
 
     // ======================================================
-    // CREATE APPOINTMENT (WITH TOAST)
+    // CHANGE DEPARTMENT
+    // ======================================================
+    const handleDepartmentChange = (id: string) => {
+        const numId = Number(id);
+        setDepartmentID(numId);
+
+        setDoctorID(null); // reset doctor when department changes
+        setLocation("");
+    };
+
+    // ======================================================
+    // CREATE APPOINTMENT
     // ======================================================
     const handleCreate = async () => {
-        if (!doctorID || !dateTime)
-            return toast.warning("Please select doctor and date!");
+        if (!departmentID || !doctorID || !dateTime)
+            return toast.warning("Please select department, doctor and date!");
 
         const duplicate = appointments.some(
             a => a.doctorID === doctorID && a.dateTime === dateTime
@@ -94,8 +127,9 @@ export default function MakeAppointment() {
             );
 
             toast.dismiss(loading);
-            toast.success("Appointment booked successfully");
+            toast.success("Appointment booked successfully 🎉");
 
+            setDepartmentID(null);
             setDoctorID(null);
             setDateTime("");
             setLocation("");
@@ -108,94 +142,102 @@ export default function MakeAppointment() {
     };
 
     // ======================================================
-    // STATUS LOGIC
+    // STATUS
     // ======================================================
     const getStatus = (status: number) => {
         switch (status) {
-            case 0:
-                return "Incoming";
-            case 1:
-                return "Done";
-            case 2:
-                return "Missed";
-            default:
-                return "Unknown";
+            case 0: return "Incoming";
+            case 1: return "Done";
+            case 2: return "Missed";
+            default: return "Unknown";
         }
     };
 
     const getBadgeClass = (status: number) => {
         switch (status) {
-            case 0:
-                return "bg-warning text-dark";
-            case 1:
-                return "bg-success";
-            case 2:
-                return "bg-danger";
-            default:
-                return "bg-secondary";
+            case 0: return "bg-warning text-dark";
+            case 1: return "bg-success";
+            case 2: return "bg-danger";
+            default: return "bg-secondary";
         }
     };
 
-    // ======================================================
-    // VIEW RULE (IMPORTANT FIX)
-    // ======================================================
-    const visibleAppointments =
-        role === "Nurse"
-            ? appointments
-            : appointments; // Patient sees ALL
+    const visibleAppointments = appointments;
 
     // ======================================================
-    // RENDER
+    // UI
     // ======================================================
     return (
-        <div >
-            <div className=" card shadow mb-4">
-                <div className="card-header blueBg text-white ">
-                    <h5>Make Appointment </h5>
-                </div>
-          
+        <div>
+            <ToastContainer position="top-right" autoClose={2000} />
+
             {/* ================= FORM ================= */}
-            <div className="card p-3 mb-4">
+            <div className="card shadow mb-4">
+                <div className="card-header blueBg text-white">
+                    <h5>Make Appointment</h5>
+                </div>
 
-                <label><b>Doctor</b></label>
-                <select
-                    className="form-control mb-3"
-                    value={doctorID ?? ""}
-                    onChange={(e) => handleDoctorChange(e.target.value)}
-                >
-                    <option value="">-- Select Doctor --</option>
-                    {doctors.map(d => (
-                        <option key={d.doctorID} value={d.doctorID}>
-                            Dr. {d.fullName}
-                        </option>
-                    ))}
-                </select>
+                <div className="card p-3">
 
-                <label><b>Date</b></label>
-                <input
-                    type="date"
-                    className="form-control mb-3"
-                    value={dateTime}
-                    onChange={(e) => setDateTime(e.target.value)}
-                />
+                    {/* DEPARTMENT */}
+                    <label><b>Department</b></label>
+                    <select
+                        className="form-control mb-3"
+                        value={departmentID ?? ""}
+                        onChange={(e) => handleDepartmentChange(e.target.value)}
+                    >
+                        <option value="">-- Select Department --</option>
+                        {departments.map(dep => (
+                            <option key={dep.departmentID} value={dep.departmentID}>
+                                {dep.departmentName}
+                            </option>
+                        ))}
+                    </select>
 
-                <label><b>Location</b></label>
-                <input
-                    type="text"
-                    className="form-control mb-3"
-                    value={location}
-                    disabled
-                />
+                    {/* DOCTOR */}
+                    <label><b>Doctor</b></label>
+                    <select
+                        className="form-control mb-3"
+                        value={doctorID ?? ""}
+                        onChange={(e) => handleDoctorChange(e.target.value)}
+                        disabled={!departmentID}
+                    >
+                        <option value="">-- Select Doctor --</option>
+                        {filteredDoctors.map(d => (
+                            <option key={d.doctorID} value={d.doctorID}>
+                                Dr. {d.fullName}
+                            </option>
+                        ))}
+                    </select>
 
-                <button className="btn btn-success" onClick={handleCreate}>
-                    Book Appointment
-                </button>
+                    {/* DATE */}
+                    <label><b>Date</b></label>
+                    <input
+                        type="date"
+                        className="form-control mb-3"
+                        value={dateTime}
+                        onChange={(e) => setDateTime(e.target.value)}
+                    />
+
+                    {/* LOCATION */}
+                    <label><b>Location</b></label>
+                    <input
+                        type="text"
+                        className="form-control mb-3"
+                        value={location}
+                        disabled
+                    />
+
+                    <button className="btn btn-success" onClick={handleCreate}>
+                        Book Appointment
+                    </button>
+                </div>
             </div>
-  </div>
+
             {/* ================= TABLE ================= */}
             <div className="card shadow mb-4">
-                <div className="card-header blueBg text-white ">
-                    <h5> Appointment </h5>
+                <div className="card-header blueBg text-white">
+                    <h5>Appointments</h5>
                 </div>
 
                 <table className="table table-bordered">
@@ -216,8 +258,6 @@ export default function MakeAppointment() {
                                 <td>{a.doctorName}</td>
                                 <td>{new Date(a.dateTime).toLocaleDateString()}</td>
                                 <td>{a.location}</td>
-
-                                {/* STATUS */}
                                 <td>
                                     <span className={`badge ${getBadgeClass(a.attendanceStatus)}`}>
                                         {getStatus(a.attendanceStatus)}

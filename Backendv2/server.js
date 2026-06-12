@@ -67,7 +67,7 @@ app.use("/news", require("./routes/news"));
 app.use("/rooms", require("./routes/rooms"));
 app.use("/testresult", require("./routes/testresult"));
 app.use("/treatmenttimeline", require("./routes/treatmenttimeline"));
-
+app.use("/departments", require("./routes/departments"));
 // Test route
 app.get("/", (req, res) => {
   res.send("Hospital Backend Running");
