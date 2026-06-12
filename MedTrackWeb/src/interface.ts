@@ -1,6 +1,6 @@
 export interface NurseProps {
     image?: string,
-    departmentID: number,
+    departmentID?: number,
     fullName: string,
     gender: string,
     dob: string,

@@ -14,9 +14,6 @@ export default function DoctorScreen() {
     const [doctorID, setDoctorID] = useState<number | null>(null);
     sessionStorage.setItem("doctorID", JSON.stringify(doctorID));
     const userID = getUserIDFromToken();
-    const url = `http://localhost:3000/doctors/by-user/${userID}`;
-    const roomsUrl = 'http://localhost:3000/rooms';
-    // const nurseID = sessionStorage.getItem("nurseID") || ""; // get nurseID
     const [count, setCount] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
@@ -39,26 +36,19 @@ export default function DoctorScreen() {
     }, [doctorID]);
     useEffect(() => {
         if (!userID) return;
-
-        axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
+        setLoading(true)
+        axios.get(`http://localhost:3000/doctors/by-user/${userID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
+                setUser(response.data);
                 setDoctorID(response.data.doctorID);
                 console.log("Doctor ID:", response.data.doctorID);
             })
-            .catch(error => console.error("Error fetching doctorID:", error));
+            .catch(error => console.error("Error fetching doctorID:", error))
+            .finally(() => setLoading(false)); // stop loading
     }, [userID]);
 
     useEffect(() => {
-        if (!doctorID) return;
-        setLoading(true)
-        axios.get(`http://localhost:3000/doctors/${doctorID}`, { headers: { Authorization: `Bearer ${token}` } })
-            .then(response => {
-                setUser(response.data);
-                console.log("Doctor Data:", response.data);
-            })
-            .catch(error => console.error("Error fetching doctor:", error));
-
-        axios.get(roomsUrl, { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`http://localhost:3000/rooms/department/${user?.departmentID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 setRooms(response.data);
                 console.log("Room Data:", response.data);
@@ -86,39 +76,33 @@ export default function DoctorScreen() {
                     nurseID={String(user?.nurseID)}
                     image={user?.image || ""}
                     fullName={user?.fullName || ""}
-                    gender={
-                        user?.gender == "1"
-                            ? "Male"
-                            : user?.gender == "2"
-                                ? "Female"
-                                : ""
-                    }
+                    gender={user?.gender == "1"
+                        ? "Male"
+                        : user?.gender == "2"
+                            ? "Female"
+                            : ""}
                     dob={user?.dob?.split("T")[0] || ""}
                     phone={user?.phone || ""}
                     CIC={Number(user?.CIC)}
                     address={user?.address || ""}
                     email={user?.email || ""}
-                    loading={loading}
-                />
+                    loading={loading} departmentID={0} />
             ) : (
                 <DoctorInformation
                     nurseID={String(user?.nurseID)}
                     image={user?.image || ""}
                     fullName={user?.fullName || ""}
-                    gender={
-                        user?.gender == "1"
-                            ? "Male"
-                            : user?.gender == "2"
-                                ? "Female"
-                                : ""
-                    }
+                    gender={user?.gender == "1"
+                        ? "Male"
+                        : user?.gender == "2"
+                            ? "Female"
+                            : ""}
                     dob={user?.dob?.split("T")[0] || ""}
                     phone={user?.phone || ""}
                     CIC={Number(user?.CIC)}
                     address={user?.address || ""}
                     email={user?.email || ""}
-                    loading={loading}
-                />
+                    loading={loading} departmentID={0} />
             )}
             <div className="col-lg-6 col-sm-12 ">
                 <div className="hasSchedule padding border whiteBg marginBottom dropShadow">
