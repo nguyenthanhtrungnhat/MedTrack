@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
 interface Patient {
-  CIC: number
+  CIC: string
   patientID: number
   fullName: string
 }
@@ -86,19 +86,29 @@ export default function PrescriptionForm() {
   }, [])
 
   useEffect(() => {
+    const keyword = patientSearch.toLowerCase().trim();
 
+    if (!keyword) {
+      setFilteredPatients([]);
+      return;
+    }
     const filtered = patients
       .filter(p => {
-        const keyword = patientSearch.toLowerCase().trim();
+        const name = p.fullName.toLowerCase();
+        const cic = p.CIC.toLowerCase();
 
-        return (
-          p.fullName.toLowerCase().includes(keyword) ||
-          p.CIC?.toString().includes(keyword)
-        );
+        return name.includes(keyword) || cic.includes(keyword);
+      })
+      .sort((a, b) => {
+        // prioritize name matches
+        const aName = a.fullName.toLowerCase().includes(keyword);
+        const bName = b.fullName.toLowerCase().includes(keyword);
+        return Number(bName) - Number(aName);
       })
       .slice(0, 10);
 
-  }, [patientSearch, patients])
+    setFilteredPatients(filtered);
+  }, [patientSearch, patients]);
 
   useEffect(() => {
 
