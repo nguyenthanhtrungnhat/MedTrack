@@ -136,6 +136,7 @@ CREATE TABLE medicalrecords (
   respiratoryRate INT,
   bloodPressure VARCHAR(255),
   urine VARCHAR(255),
+  patientID int DEFAULT NULL,
   sensorium INT,
   oxygenTherapy INT,
   currentCondition VARCHAR(100),
@@ -344,7 +345,8 @@ ADD CONSTRAINT fk_clinical_doctor FOREIGN KEY (doctorID) REFERENCES doctor(docto
 -- MEDICAL RECORDS
 ALTER TABLE medicalrecords
 ADD CONSTRAINT fk_medical_admission FOREIGN KEY (admissionID) REFERENCES admission(admissionID);
-
+ALTER TABLE medicalrecords
+ADD CONSTRAINT fk_medicalrecords_patient FOREIGN KEY (patientID) REFERENCES patient(patientID);
 -- DISCHARGE
 ALTER TABLE discharge_diagnosis
 ADD CONSTRAINT fk_discharge_admission FOREIGN KEY (admissionID) REFERENCES admission(admissionID),
