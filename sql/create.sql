@@ -171,36 +171,43 @@ CREATE TABLE testtype (
 -- TEST RESULT
 -- ======================================================
 CREATE TABLE testresult (
-  testResultID INT AUTO_INCREMENT PRIMARY KEY,
-  userID INT NOT NULL,
-  testTypeID INT NOT NULL,
-  doctorID INT NOT NULL,
-  title VARCHAR(255) NOT NULL,
-  datetime DATETIME NOT NULL,
-  testResultCode VARCHAR(50) NOT NULL UNIQUE,
-  remarks TEXT NULL,
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+    testResultID INT AUTO_INCREMENT PRIMARY KEY,
+
+    orderID INT NOT NULL,
+
+    title VARCHAR(255) NOT NULL,
+    datetime DATETIME NOT NULL,
+
+    testResultCode VARCHAR(50) NOT NULL UNIQUE,
+    remarks TEXT NULL,
+
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ======================================================
 -- TEST RESULT ITEMS
 -- ======================================================
+CREATE TABLE testtype_item (
+    testTypeItemID INT AUTO_INCREMENT PRIMARY KEY,
+
+    testTypeID INT NOT NULL,
+
+    parameterName VARCHAR(100) NOT NULL,
+    unit VARCHAR(30),
+    referenceRange VARCHAR(100)
+);
+
 CREATE TABLE testresult_item (
-  itemID INT AUTO_INCREMENT PRIMARY KEY,
-  testResultID INT NOT NULL,
-  parameterName VARCHAR(100) NOT NULL,
-  resultValue VARCHAR(50),
-  unit VARCHAR(30),
-  referenceRange VARCHAR(50),
-  abnormalFlag ENUM(
-    'Normal',
-    'High',
-    'Low',
-    'Critical'
-  ) DEFAULT 'Normal',
-  notes VARCHAR(500),
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+    itemID INT AUTO_INCREMENT PRIMARY KEY,
+    testResultID INT NOT NULL,
+    testTypeItemID INT NOT NULL,
+
+    resultValue VARCHAR(255),
+    unit VARCHAR(50),
+    referenceRange VARCHAR(100),
+    abnormalFlag VARCHAR(20)
+);
 -- ======================================================
 -- MEDICINES
 -- ======================================================
@@ -266,6 +273,25 @@ CREATE TABLE treatment_logs (
   instruction TEXT,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE doctororder (
+    orderID INT AUTO_INCREMENT PRIMARY KEY,
+
+    userID INT NOT NULL,
+    doctorID INT NOT NULL,
+    testTypeID INT NOT NULL,
+
+    diagnosisNote TEXT,
+
+    status ENUM(
+        'Pending',
+        'Sample Collected',
+        'Completed',
+        'Cancelled'
+    ) DEFAULT 'Pending',
+
+    orderDate DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ===================== ADD FOREIGN KEYS =====================
 ALTER TABLE `userrole`
 ADD CONSTRAINT `userrole_ibfk_1` FOREIGN KEY (`roleID`) REFERENCES `role` (`roleID`),
@@ -311,13 +337,15 @@ ADD CONSTRAINT `fk_schedule_request` FOREIGN KEY (`scheduleID`) REFERENCES `sche
 -- TEST RESULT FKs
 -- ======================================================
 ALTER TABLE testresult
-ADD CONSTRAINT fk_testresult_user FOREIGN KEY (userID) REFERENCES user(userID) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE testresult
-ADD CONSTRAINT fk_testresult_type FOREIGN KEY (testTypeID) REFERENCES testtype(testTypeID) ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE testresult
-ADD CONSTRAINT fk_testresult_doctor FOREIGN KEY (doctorID) REFERENCES doctor(doctorID) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE testresult_item
-ADD CONSTRAINT fk_testresult_item FOREIGN KEY (testResultID) REFERENCES testresult(testResultID) ON DELETE CASCADE ON UPDATE CASCADE;
+ADD CONSTRAINT fk_testresult_order
+FOREIGN KEY (orderID)
+REFERENCES doctororder(orderID);
+ALTER TABLE testtype_item
+ADD CONSTRAINT fk_testtype_item_testtype
+FOREIGN KEY (testTypeID)
+REFERENCES testtype(testTypeID)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 -- ======================================================
 -- PRESCRIPTION FKs
 -- ======================================================
@@ -339,3 +367,30 @@ ADD CONSTRAINT fk_treatment_sheet_doctor FOREIGN KEY (doctorID) REFERENCES docto
 SET NULL ON UPDATE CASCADE;
 ALTER TABLE treatment_logs
 ADD CONSTRAINT fk_treatment_logs_sheet FOREIGN KEY (sheetID) REFERENCES treatment_sheet(sheetID) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE doctororder
+ADD CONSTRAINT fk_doctororder_user
+FOREIGN KEY (userID)
+REFERENCES user(userID);
+
+ALTER TABLE doctororder
+ADD CONSTRAINT fk_doctororder_doctor
+FOREIGN KEY (doctorID)
+REFERENCES doctor(doctorID);
+
+ALTER TABLE doctororder
+ADD CONSTRAINT fk_doctororder_testtype
+FOREIGN KEY (testTypeID)
+REFERENCES testtype(testTypeID);
+
+ALTER TABLE testresult_item
+ADD CONSTRAINT fk_testresult_item_result
+FOREIGN KEY (testResultID)
+REFERENCES testresult(testResultID)
+ON DELETE CASCADE;
+
+ALTER TABLE testresult_item
+ADD CONSTRAINT fk_testresult_item_typeitem
+FOREIGN KEY (testTypeItemID)
+REFERENCES testtype_item(testTypeItemID)
+ON DELETE CASCADE;

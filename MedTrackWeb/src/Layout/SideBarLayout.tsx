@@ -119,14 +119,19 @@ export default function SideBarLayout() {
                                                     <i className="fa fa-caret-right"></i> TreatMent TimeLine
                                                 </Link>
                                             </li>
-                                             <li>
+                                            <li>
                                                 <Link to="/doctor/treatment" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> TreatMent DashBoard
                                                 </Link>
                                             </li>
-                                             <li>
+                                            <li>
                                                 <Link to="/doctor/assign-schedule" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Assign Schedule
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/doctor/doctor-order" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Create Test Order
                                                 </Link>
                                             </li>
 
@@ -159,12 +164,16 @@ export default function SideBarLayout() {
                                                     <i className="fa fa-caret-right"></i> Schedule
                                                 </Link>
                                             </li>
-                                             <li>
+                                            <li>
                                                 <Link to="/home/appointment-track" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Track Appointment
                                                 </Link>
                                             </li>
-                                            
+                                            <li>
+                                                <Link to="/home/submit-test-result" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Submit Test Result
+                                                </Link>
+                                            </li>
 
                                         </ul>
                                     )}

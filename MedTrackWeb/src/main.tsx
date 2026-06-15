@@ -43,6 +43,8 @@ import TreatmentDetail from './components/ORC/TreatmentDetail';
 import TestResultDetails from './Doctor/TestResultDetails';
 import DoctorAssignSchedule from './Doctor/DoctorAssignSchedule.tsx';
 import NurseAppointmentTracker from './Nurse/NurseAppointmentTracker.tsx';
+import DoctorOrderCreate from './Doctor/DoctorOrderCreate.tsx';
+import CreateTestResult from './Nurse/CreateTestResult.tsx';
 
 const router = createBrowserRouter([
   {
@@ -87,7 +89,8 @@ const router = createBrowserRouter([
           { path: "testresultlist", element: <TestResult /> },
           { path: "testresultlist/:id", element: <TestResultDetails /> },
           { path: "schedule", element: <Schedule /> },
-          { path: "appointment-track", element: <NurseAppointmentTracker /> }
+          { path: "appointment-track", element: <NurseAppointmentTracker /> },
+          { path: "submit-test-result", element: <CreateTestResult /> }
         ]
       },
       // Pages using SidebarLayoutV2
@@ -133,7 +136,8 @@ const router = createBrowserRouter([
           { path: "treatment", element: <TreatmentDashboard /> },
           { path: "treatment/:id", element: <TreatmentDetail /> },
           { path: "assign-schedule", element: <DoctorAssignSchedule /> },
-          { path: "prescriptions/:id", element: <PrescriptionDetail /> }
+          { path: "prescriptions/:id", element: <PrescriptionDetail /> },
+          { path: "doctor-order", element: <DoctorOrderCreate /> }
         ]
       },
       // Pages using SidebarLayoutV2

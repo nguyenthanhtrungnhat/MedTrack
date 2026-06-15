@@ -62,21 +62,24 @@ export interface SidebarInfoProps {
     fullName?: string;
 }
 export interface FormData {
-    patientID: string;
-    pulse: number | string;
-    spo2: number | string;
-    temperature: number | string;
-    oxygenTherapy: number | string;
-    bloodPressure: string;
-    height: number | string;
-    weight: number | string;
-    sensorium: number | string;
-    respiratoryRate: number | string;
-    urine: number | string;
-    heartRate: number | string;
-    hurtScale: number | string;
-    currentCondition: string;
-};
+  admissionID: string;
+
+  pulse: string;
+  spo2: string;
+  temperature: string;
+  oxygenTherapy: string;
+
+  bloodPressure: string;
+
+  sensorium: string;
+  respiratoryRate: string;
+  urine: string;
+
+  heartRate: string;
+  hurtScale: string;
+
+  currentCondition: string;
+}
 export interface Schedule {
     subject: string;
     working_hours: number;
@@ -106,42 +109,22 @@ export interface AppointmentProps {
     patientName?: string;         // optional if you want to show patient
 }
 
-// export interface TestResultProps {
-//   testResultID: number;
-//   userID: number;
-//   title: string;
-//   datetime: string;
-//   testResultCode: string;
-//   status: "Completed" | "Pending" | "Failed";
-//   type: string;
-//   username: string;
-// }
-
-// export interface Medicine {
-//   medicineID: number
-//   medicineName: string
-//   genericName: string
-//   dosageForm: string
-//   strength: string
-//   description: string
-//   isActive: number
-// }
 export interface TestResultProps {
-    testResultID: number;
+  testResultID: number;
+  orderID: number;
 
-    userID: number;
-    patientName: string;
-    patientCIC: string;
-    doctorID: number;
-    doctorName: string;
+  patientID: number;
+  patientName: string;
+  patientCIC: string;
 
-    title: string;
-    datetime: string;
+  doctorID: number;
+  doctorName: string;
 
-    testResultCode: string;
+  typeName: string;
 
-    testTypeID: number;
-    typeName: string;
+  title: string;
+  datetime: string;
+  testResultCode: string;
 }
 
 export interface TestResultItem {

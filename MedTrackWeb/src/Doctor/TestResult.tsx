@@ -6,16 +6,17 @@ import { useNavigate } from "react-router-dom";
 
 export default function TestResult() {
   const doctorID = sessionStorage.getItem("doctorID");
+  const token = sessionStorage.getItem("token");
+
   const [data, setData] = useState<TestResultProps[]>([]);
   const [loadingTest, setLoadingTest] = useState(true);
   const [error, setError] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedUserID, setSelectedUserID] =
-    useState<number | "all">("all");
 
-  const token = sessionStorage.getItem("token");
   const navigate = useNavigate();
+
+  const userID = getUserIDFromToken();
 
   const [sortConfig, setSortConfig] = useState<{
     key: "datetime" | "patientName";
@@ -25,22 +26,21 @@ export default function TestResult() {
     direction: "desc",
   });
 
-  const userID = getUserIDFromToken();
-
   useEffect(() => {
     setLoadingTest(true);
 
-    axios.get<TestResultProps[]>(
-      "http://localhost:3000/testresult",
-      {
-        params: {
-          doctorID,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    axios
+      .get<TestResultProps[]>(
+        "http://localhost:3000/testresult",
+        {
+          params: {
+            doctorID,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
         setData(response.data);
       })
@@ -50,75 +50,70 @@ export default function TestResult() {
       .finally(() => {
         setLoadingTest(false);
       });
-  }, [token]);
+  }, [doctorID, token]);
 
   if (!userID) {
     return (
       <p>
-        Please log in to view your nurse profile.
+        Please log in to view your doctor
+        profile.
       </p>
     );
   }
 
-  const uniqueUsers = useMemo(() => {
-    const map = new Map();
-
-    data.forEach((item) => {
-      map.set(item.userID, {
-        patientName: item.patientName,
-        patientCIC: item.patientCIC,
-      });
-    });
-
-    return Array.from(map, ([userID, value]) => ({
-      userID,
-      patientName: value.patientName,
-      patientCIC: value.patientCIC,
-    }));
-  }, [data]);
-
   const processedData = useMemo(() => {
     let filtered = [...data];
 
-    if (selectedUserID !== "all") {
-      filtered = filtered.filter(
-        (item) => item.userID === selectedUserID
-      );
-    }
-
     if (searchTerm.trim() !== "") {
-      const keyword = searchTerm.toLowerCase();
+      const keyword =
+        searchTerm.toLowerCase();
 
       filtered = filtered.filter(
-        (item) =>
+        (item: any) =>
           item.patientName
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(keyword) ||
-          (item.patientCIC || "")
-            .toLowerCase()
+          item.patientCIC
+            ?.toLowerCase()
+            .includes(keyword) ||
+          item.testResultCode
+            ?.toLowerCase()
             .includes(keyword)
       );
     }
-    filtered.sort((a, b) => {
+
+    filtered.sort((a: any, b: any) => {
       let valueA: string | number;
       let valueB: string | number;
 
       if (sortConfig.key === "datetime") {
-        valueA = new Date(a.datetime).getTime();
-        valueB = new Date(b.datetime).getTime();
+        valueA = new Date(
+          a.datetime
+        ).getTime();
+
+        valueB = new Date(
+          b.datetime
+        ).getTime();
       } else {
-        valueA = a.patientName.toLowerCase();
-        valueB = b.patientName.toLowerCase();
+        valueA =
+          a.patientName?.toLowerCase() ??
+          "";
+
+        valueB =
+          b.patientName?.toLowerCase() ??
+          "";
       }
 
       if (valueA < valueB) {
-        return sortConfig.direction === "asc"
+        return sortConfig.direction ===
+          "asc"
           ? -1
           : 1;
       }
 
       if (valueA > valueB) {
-        return sortConfig.direction === "asc"
+        return sortConfig.direction ===
+          "asc"
           ? 1
           : -1;
       }
@@ -129,7 +124,6 @@ export default function TestResult() {
     return filtered;
   }, [
     data,
-    selectedUserID,
     searchTerm,
     sortConfig,
   ]);
@@ -156,87 +150,83 @@ export default function TestResult() {
       </div>
 
       <div className="p-3 border-bottom bg-light">
-        <div className="row g-2">
+        <div className="row">
           <div className="col-md-4">
             <input
               type="text"
               className="form-control"
-              placeholder="Search by patient name or CIC..."
+              placeholder="Search by patient name, CIC or test code..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          <div className="col-md-4">
-            <select
-              className="form-select"
-              value={selectedUserID}
               onChange={(e) =>
-                setSelectedUserID(
-                  e.target.value === "all"
-                    ? "all"
-                    : Number(e.target.value)
-                )
+                setSearchTerm(e.target.value)
               }
-            >
-              <option value="all">
-                All Patients
-              </option>
-
-              {uniqueUsers.map((user) => (
-                <option
-                  key={user.userID}
-                  value={user.userID}
-                >
-                  {user.patientName} ({user.patientCIC})
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
       </div>
 
       <div className="table-responsive">
         <table className="table table-striped table-hover">
+
           <thead className="table-dark">
             <tr>
+
               <th
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor:
+                    "pointer",
+                }}
                 onClick={() =>
-                  handleSort("patientName")
+                  handleSort(
+                    "patientName"
+                  )
                 }
               >
                 Patient{" "}
                 {sortConfig.key ===
                   "patientName" &&
-                  (sortConfig.direction === "asc"
+                  (sortConfig.direction ===
+                    "asc"
                     ? "↑"
                     : "↓")}
               </th>
 
               <th>Doctor</th>
 
+              <th>
+                Test Type
+              </th>
+
               <th>Title</th>
 
               <th
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor:
+                    "pointer",
+                }}
                 onClick={() =>
-                  handleSort("datetime")
+                  handleSort(
+                    "datetime"
+                  )
                 }
               >
                 Date & Time{" "}
                 {sortConfig.key ===
                   "datetime" &&
-                  (sortConfig.direction === "asc"
+                  (sortConfig.direction ===
+                    "asc"
                     ? "↑"
                     : "↓")}
               </th>
 
-              <th>Test Code</th>
+              <th>
+                Test Code
+              </th>
 
-              <th>Test Type</th>
+              <th>
+                Action
+              </th>
 
-              <th>Action</th>
             </tr>
           </thead>
 
@@ -259,7 +249,8 @@ export default function TestResult() {
                   {error}
                 </td>
               </tr>
-            ) : processedData.length === 0 ? (
+            ) : processedData.length ===
+              0 ? (
               <tr>
                 <td
                   colSpan={7}
@@ -269,48 +260,77 @@ export default function TestResult() {
                 </td>
               </tr>
             ) : (
-              processedData.map((item) => (
-                <tr key={item.testResultID}>
-                  <td>
-                    {item.patientName}
-                    <br />
-                    <small className="text-muted">
-                      CIC: {item.patientCIC}
-                    </small>
-                  </td>
-
-                  <td>{item.doctorName}</td>
-
-                  <td>{item.title}</td>
-
-                  <td>
-                    {new Date(
-                      item.datetime
-                    ).toLocaleString()}
-                  </td>
-
-                  <td>
-                    {item.testResultCode}
-                  </td>
-
-                  <td>{item.typeName}</td>
-
-                  <td>
-                    <button
-                      className="btn btn-sm btn-primary"
-                      onClick={() =>
-                        navigate(
-                          `${item.testResultID}`
-                        )
+              processedData.map(
+                (item: any) => (
+                  <tr
+                    key={
+                      item.testResultID
+                    }
+                  >
+                    <td>
+                      {
+                        item.patientName
                       }
-                    >
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))
+
+                      <br />
+
+                      <small className="text-muted">
+                        CIC:{" "}
+                        {
+                          item.patientCIC
+                        }
+                      </small>
+                    </td>
+
+                    <td>
+                      {
+                        item.doctorName
+                      }
+                    </td>
+
+                    <td>
+                      {
+                        item.typeName
+                      }
+                    </td>
+
+                    <td>
+                      {
+                        item.title
+                      }
+                    </td>
+
+                    <td>
+                      {new Date(
+                        item.datetime
+                      ).toLocaleString()}
+                    </td>
+
+                    <td>
+                      {
+                        item.testResultCode
+                      }
+                    </td>
+
+                    <td>
+                      <button
+                        className="btn btn-sm btn-primary"
+                        onClick={() =>
+                          navigate(
+                            `${item.testResultID}`
+                          )
+                        }
+                      >
+                        View
+                        Details
+                      </button>
+                    </td>
+                  </tr>
+                )
+              )
             )}
           </tbody>
+
         </table>
       </div>
     </div>
