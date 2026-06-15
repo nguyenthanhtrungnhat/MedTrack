@@ -62,24 +62,21 @@ export interface SidebarInfoProps {
     fullName?: string;
 }
 export interface FormData {
-  admissionID: string;
-
-  pulse: string;
-  spo2: string;
-  temperature: string;
-  oxygenTherapy: string;
-
-  bloodPressure: string;
-
-  sensorium: string;
-  respiratoryRate: string;
-  urine: string;
-
-  heartRate: string;
-  hurtScale: string;
-
-  currentCondition: string;
-}
+    patientID: string;
+    pulse: number | string;
+    spo2: number | string;
+    temperature: number | string;
+    oxygenTherapy: number | string;
+    bloodPressure: string;
+    height: number | string;
+    weight: number | string;
+    sensorium: number | string;
+    respiratoryRate: number | string;
+    urine: number | string;
+    heartRate: number | string;
+    hurtScale: number | string;
+    currentCondition: string;
+};
 export interface Schedule {
     subject: string;
     working_hours: number;
