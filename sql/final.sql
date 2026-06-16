@@ -53,6 +53,7 @@ CREATE TABLE room (
   roomID INT NOT NULL AUTO_INCREMENT,
   departmentID INT,
   location VARCHAR(255),
+  capacity INT DEFAULT 6,
   PRIMARY KEY (roomID)
 );
 
@@ -89,10 +90,13 @@ CREATE TABLE patient (
   PRIMARY KEY (patientID)
 );
 
-CREATE TABLE roompatient (
+CREATE TABLE bed (
+  bedID INT NOT NULL AUTO_INCREMENT,
   roomID INT NOT NULL,
-  patientID INT NOT NULL,
-  PRIMARY KEY (roomID, patientID)
+  bedNumber VARCHAR(20) NOT NULL,
+  status VARCHAR(50) DEFAULT 'Empty',
+  patientID INT DEFAULT NULL,
+  PRIMARY KEY (bedID)
 );
 
 -- ======================================================
@@ -101,11 +105,19 @@ CREATE TABLE roompatient (
 CREATE TABLE admission (
   admissionID INT NOT NULL AUTO_INCREMENT,
   patientID INT NOT NULL,
+  doctorID INT DEFAULT NULL,
+  departmentID INT DEFAULT NULL,
+  admissionRecordCode VARCHAR(50) UNIQUE DEFAULT NULL,
+  priority VARCHAR(50) DEFAULT 'Normal',
+  advanceFee DECIMAL(10,2) DEFAULT 0,
+  advanceFeeStatus VARCHAR(20) DEFAULT 'Pending',
   admissionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   dischargeDate TIMESTAMP NULL,
   hospitalizationsDiagnosis VARCHAR(2000),
   summaryCondition VARCHAR(2000),
-  status VARCHAR(20) DEFAULT 'Admitted',
+  dischargeDiagnosis VARCHAR(2000) DEFAULT NULL,
+  dischargeCondition VARCHAR(2000) DEFAULT NULL,
+  status VARCHAR(50) DEFAULT 'Init',
   PRIMARY KEY (admissionID)
 );
 
@@ -126,13 +138,16 @@ CREATE TABLE clinical_examinations (
 
 CREATE TABLE medicalrecords (
   recordID INT NOT NULL AUTO_INCREMENT,
-  admissionID INT NOT NULL,
+  admissionID INT DEFAULT NULL,
   timeCreate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   heartRate INT,
   pulse INT,
-  painScale INT,
+  height DECIMAL(5,2),
+  weight DECIMAL(5,2),
+  hurtScale INT,
   temperature VARCHAR(255),
-  SPo2 VARCHAR(255),
+  SP02 VARCHAR(255),
+  healthStatus INT,
   respiratoryRate INT,
   bloodPressure VARCHAR(255),
   urine VARCHAR(255),
@@ -183,14 +198,24 @@ CREATE TABLE news (
 
 CREATE TABLE schedules (
   scheduleID INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(50),
-  date DATE,
-  start_at TIME,
-  working_hours INT,
-  nurseID INT NOT NULL,
-  roomID INT NOT NULL,
-  color VARCHAR(45),
+  name VARCHAR(255) DEFAULT NULL,
+  date VARCHAR(255) DEFAULT NULL,
+  start_at VARCHAR(255) DEFAULT NULL,
+  working_hours INT DEFAULT NULL,
+  nurseID INT DEFAULT NULL,
+  roomID INT DEFAULT NULL,
+  color VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (scheduleID)
+);
+
+CREATE TABLE scheduleRequest (
+  requestID INT NOT NULL AUTO_INCREMENT,
+  scheduleID INT NOT NULL,
+  newDate VARCHAR(255) NOT NULL,
+  reason TEXT,
+  status INT DEFAULT 0,
+  PRIMARY KEY (requestID),
+  FOREIGN KEY (scheduleID) REFERENCES schedules(scheduleID) ON DELETE CASCADE
 );
 
 -- ======================================================
@@ -329,13 +354,16 @@ ADD CONSTRAINT fk_room_department FOREIGN KEY (departmentID) REFERENCES departme
 ALTER TABLE patient
 ADD CONSTRAINT fk_patient_user FOREIGN KEY (userID) REFERENCES user(userID);
 
-ALTER TABLE roompatient
-ADD CONSTRAINT fk_roompatient_room FOREIGN KEY (roomID) REFERENCES room(roomID),
-ADD CONSTRAINT fk_roompatient_patient FOREIGN KEY (patientID) REFERENCES patient(patientID);
+-- BED
+ALTER TABLE bed
+ADD CONSTRAINT fk_bed_room FOREIGN KEY (roomID) REFERENCES room(roomID),
+ADD CONSTRAINT fk_bed_patient FOREIGN KEY (patientID) REFERENCES patient(patientID);
 
 -- ADMISSION
 ALTER TABLE admission
-ADD CONSTRAINT fk_admission_patient FOREIGN KEY (patientID) REFERENCES patient(patientID);
+ADD CONSTRAINT fk_admission_patient FOREIGN KEY (patientID) REFERENCES patient(patientID),
+ADD CONSTRAINT fk_admission_doctor FOREIGN KEY (doctorID) REFERENCES doctor(doctorID),
+ADD CONSTRAINT fk_admission_department FOREIGN KEY (departmentID) REFERENCES department(departmentID);
 
 -- CLINICAL
 ALTER TABLE clinical_examinations

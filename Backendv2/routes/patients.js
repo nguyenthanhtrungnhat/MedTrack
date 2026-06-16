@@ -11,9 +11,11 @@ router.get('/',verifyToken, (req, res) => getAllRecordsWithUser('patient', res))
 router.get('/patientByUserID/:userID', (req, res) => {
   const userID = req.params.userID;
   const query = `
-    SELECT p.*, u.*
+    SELECT p.*, u.*, a.admissionID, a.status as admissionStatus, a.admissionDate, a.hospitalizationsDiagnosis, a.summaryCondition, b.roomID, b.bedNumber
     FROM patient p
     JOIN user u ON p.userID = u.userID
+    LEFT JOIN admission a ON p.patientID = a.patientID AND a.status IN ('Init', 'In-treatment')
+    LEFT JOIN bed b ON p.patientID = b.patientID
     WHERE p.userID = ?;
   `;
   db.query(query, [userID], (err, results) => {
@@ -26,9 +28,11 @@ router.get('/patientByUserID/:userID', (req, res) => {
 router.get('/:patientID', verifyToken,(req, res) => {
   const { patientID } = req.params;
   const query = `
-    SELECT p.*, u.*
+    SELECT p.*, u.*, a.admissionID, a.status as admissionStatus, a.admissionDate, a.hospitalizationsDiagnosis, a.summaryCondition, b.roomID, b.bedNumber
     FROM patient p
     JOIN user u ON p.userID = u.userID
+    LEFT JOIN admission a ON p.patientID = a.patientID AND a.status IN ('Init', 'In-treatment')
+    LEFT JOIN bed b ON p.patientID = b.patientID
     WHERE p.patientID = ?
   `;
   db.query(query, [patientID], (err, results) => {

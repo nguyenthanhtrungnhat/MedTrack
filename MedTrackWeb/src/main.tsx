@@ -45,6 +45,9 @@ import DoctorAssignSchedule from './Doctor/DoctorAssignSchedule.tsx';
 import NurseAppointmentTracker from './Nurse/NurseAppointmentTracker.tsx';
 import DoctorOrderCreate from './Doctor/DoctorOrderCreate.tsx';
 import CreateTestResult from './Nurse/CreateTestResult.tsx';
+import AdmissionOrderCreate from './Doctor/AdmissionOrderCreate';
+import AdmissionManagement from './Nurse/AdmissionManagement';
+import DischargeManagement from './Nurse/DischargeManagement';
 
 const router = createBrowserRouter([
   {
@@ -90,7 +93,9 @@ const router = createBrowserRouter([
           { path: "testresultlist/:id", element: <TestResultDetails /> },
           { path: "schedule", element: <Schedule /> },
           { path: "appointment-track", element: <NurseAppointmentTracker /> },
-          { path: "submit-test-result", element: <CreateTestResult /> }
+          { path: "submit-test-result", element: <CreateTestResult /> },
+          { path: "admission-management", element: <AdmissionManagement /> },
+          { path: "discharge-management", element: <DischargeManagement /> }
         ]
       },
       // Pages using SidebarLayoutV2
@@ -137,7 +142,8 @@ const router = createBrowserRouter([
           { path: "treatment/:id", element: <TreatmentDetail /> },
           { path: "assign-schedule", element: <DoctorAssignSchedule /> },
           { path: "prescriptions/:id", element: <PrescriptionDetail /> },
-          { path: "doctor-order", element: <DoctorOrderCreate /> }
+          { path: "doctor-order", element: <DoctorOrderCreate /> },
+          { path: "admission-order", element: <AdmissionOrderCreate /> }
         ]
       },
       // Pages using SidebarLayoutV2

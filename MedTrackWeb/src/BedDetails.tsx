@@ -4,6 +4,7 @@ import PatientInformation from './PatientInformation';
 import { useEffect, useState } from 'react';
 import { PatientProps } from './interface';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function BedDetails() {
     const [user, setUser] = useState<PatientProps | null>(null);
@@ -11,14 +12,49 @@ export default function BedDetails() {
     const token = sessionStorage.getItem("token");
     const patientByIdUrl = `http://localhost:3000/patients/${patientID}`;
     const [loading, setLoading] = useState(true);
+    const roleID = sessionStorage.getItem("roleID");
+    const [showDischargeModal, setShowDischargeModal] = useState(false);
+    const [dischargeDiagnosis, setDischargeDiagnosis] = useState("");
+    const [dischargeCondition, setDischargeCondition] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+
     useEffect(() => {
+        loadUser();
+    }, [patientByIdUrl]);
+
+    const loadUser = () => {
         if (!patientID) return;
-        setLoading(true); // start loading
+        setLoading(true);
         axios.get(patientByIdUrl, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => setUser(response.data))
             .catch(error => console.error('Error fetching user:', error))
-            .finally(() => setLoading(false)); // stop loading
-    }, [patientByIdUrl]);
+            .finally(() => setLoading(false));
+    };
+
+    const handleDischargeSubmit = async () => {
+        if (!dischargeDiagnosis || !dischargeCondition) {
+            return toast.warning("Please fill in both diagnosis and condition");
+        }
+        if (!user?.admissionID) return toast.error("No active admission found");
+        
+        try {
+            setSubmitting(true);
+            await axios.put(`http://localhost:3000/admission/${user.admissionID}/discharge-order`, {
+                dischargeDiagnosis,
+                dischargeCondition
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.success("Discharge Order created!");
+            setShowDischargeModal(false);
+            loadUser(); // refresh patient data
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to create discharge order");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     return (
 
         <div className="row align-items-stretch">
@@ -104,12 +140,56 @@ export default function BedDetails() {
                     {user?.dischargeDiagnosis ? (
                         <p>{user.dischargeDiagnosis}</p>
                     ) : (
-                        <p className="placeholder-glow">
-                            <span className="placeholder col-6"></span>
-                        </p>
+                        <p className="text-muted">Not discharged yet.</p>
+                    )}
+
+                    {roleID === "1" && user?.admissionStatus === "In-treatment" && (
+                        <button className="btn btn-warning mt-auto" onClick={() => setShowDischargeModal(true)}>
+                            Create Discharge Order
+                        </button>
                     )}
                 </div>
             </div>
+
+            {/* Discharge Modal */}
+            {showDischargeModal && (
+                <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Create Discharge Order</h5>
+                                <button type="button" className="btn-close" onClick={() => setShowDischargeModal(false)}></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="mb-3">
+                                    <label>Discharge Diagnosis</label>
+                                    <textarea 
+                                        className="form-control" 
+                                        rows={3} 
+                                        value={dischargeDiagnosis} 
+                                        onChange={e => setDischargeDiagnosis(e.target.value)} 
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label>Discharge Condition</label>
+                                    <textarea 
+                                        className="form-control" 
+                                        rows={3} 
+                                        value={dischargeCondition} 
+                                        onChange={e => setDischargeCondition(e.target.value)} 
+                                    />
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button className="btn btn-secondary" onClick={() => setShowDischargeModal(false)}>Cancel</button>
+                                <button className="btn btn-primary" onClick={handleDischargeSubmit} disabled={submitting}>
+                                    {submitting ? "Submitting..." : "Submit Order"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

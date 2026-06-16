@@ -85,7 +85,7 @@ export default function SideBarLayoutV2() {
                                 <div className="padding">
 
                                     {roleID == "1" && (
-                                          <ul className='list-unstyled'>
+                                        <ul className='list-unstyled'>
                                             <li>
                                                 <Link to="/doctor/allappointment" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Appointments
@@ -120,14 +120,24 @@ export default function SideBarLayoutV2() {
                                                     <i className="fa fa-caret-right"></i> TreatMent TimeLine
                                                 </Link>
                                             </li>
-                                             <li>
+                                            <li>
                                                 <Link to="/doctor/treatment" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> TreatMent DashBoard
                                                 </Link>
                                             </li>
-                                             <li>
+                                            <li>
                                                 <Link to="/doctor/assign-schedule" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Assign Schedule
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/doctor/doctor-order" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Create Test Order
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/doctor/admission-order" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Create Admission Order
                                                 </Link>
                                             </li>
 
@@ -150,7 +160,7 @@ export default function SideBarLayoutV2() {
                                             </li>
 
                                             <li>
-                                                <Link to="/doctor/testresultlist" className="text-decoration-none">
+                                                <Link to="/home/testresultlist" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Test Result
                                                 </Link>
                                             </li>
@@ -158,6 +168,26 @@ export default function SideBarLayoutV2() {
                                             <li>
                                                 <Link to="/home/schedule" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Schedule
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/home/appointment-track" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Track Appointment
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/home/submit-test-result" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Submit Test Result
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/home/admission-management" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Admission Orders
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/home/discharge-management" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Discharge Orders
                                                 </Link>
                                             </li>
 
