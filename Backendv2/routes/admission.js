@@ -43,7 +43,7 @@ router.get('/paid', verifyToken, (req, res) => {
 
 // POST /admission  — Doctor creates Admission Order
 router.post('/', verifyToken, (req, res) => {
-  const { patientID, departmentID, priority, advanceFee, hospitalizationsDiagnosis, summaryCondition, expectedDate } = req.body;
+  const { patientID, departmentID, priority, advanceFee, hospitalizationsDiagnosis, summaryCondition, expectedDate, examID } = req.body;
   const userID = req.user.userID;
   
   if (!patientID || !departmentID || !advanceFee) {
@@ -67,7 +67,17 @@ router.post('/', verifyToken, (req, res) => {
     
     db.query(sql, [patientID, doctorID, departmentID, code, priority || 'Normal', advanceFee, expectedDate || new Date(), hospitalizationsDiagnosis, summaryCondition], (err, result) => {
       if (err) return res.status(500).json({ message: 'DB Error: ' + err.message, details: err });
-      res.status(201).json({ message: 'Admission Order Created', admissionID: result.insertId });
+      
+      const newAdmissionID = result.insertId;
+      
+      // If examID provided, link it to the admission
+      if (examID) {
+        db.query(`UPDATE clinical_examinations SET admissionID = ? WHERE examID = ?`, [newAdmissionID, examID], (errExam) => {
+           if (errExam) console.error("Failed to link exam to admission:", errExam);
+        });
+      }
+
+      res.status(201).json({ message: 'Admission Order Created', admissionID: newAdmissionID });
     });
   });
 });
@@ -92,7 +102,7 @@ router.put('/:id/advance-payment', verifyToken, (req, res) => {
         FROM bed b 
         JOIN room r ON b.roomID = r.roomID 
         WHERE r.departmentID = ? AND b.status = 'Empty' 
-        ORDER BY b.bedID ASC LIMIT 1
+        ORDER BY r.roomID ASC, b.bedID ASC LIMIT 1
       `;
       db.query(bedQuery, [adm.departmentID], (err2, bedResults) => {
         if (err2) return db.rollback(() => res.status(500).json({ message: 'Error finding bed', details: err2 }));
@@ -128,22 +138,37 @@ router.put('/:id/advance-payment', verifyToken, (req, res) => {
 // PUT /admission/:id/discharge-order — Doctor creates discharge order
 router.put('/:id/discharge-order', verifyToken, (req, res) => {
   const admissionID = req.params.id;
-  const { dischargeDiagnosis, dischargeCondition } = req.body;
+  const { diagnosisType, icdCode, diagnosisText, summary } = req.body;
+  const userID = req.user.userID;
 
-  if (!dischargeDiagnosis || !dischargeCondition) {
+  if (!diagnosisType || !diagnosisText) {
     return res.status(400).json({ message: 'Missing discharge details' });
   }
 
-  const sql = `
-    UPDATE admission 
-    SET dischargeDiagnosis = ?, dischargeCondition = ?, status = 'Pending Discharge Payment'
-    WHERE admissionID = ? AND status = 'In-treatment'
-  `;
+  // Get doctorID
+  db.query(`SELECT doctorID FROM doctor WHERE userID = ?`, [userID], (errDoc, docRes) => {
+     if (errDoc || docRes.length === 0) return res.status(403).json({ message: 'Not a doctor' });
+     const doctorID = docRes[0].doctorID;
 
-  db.query(sql, [dischargeDiagnosis, dischargeCondition, admissionID], (err, result) => {
-    if (err) return res.status(500).json({ error: 'DB Error', details: err.message });
-    if (result.affectedRows === 0) return res.status(404).json({ message: 'Admission not found or not in treatment' });
-    res.json({ message: 'Discharge Order created successfully' });
+     // Insert into discharge table
+     const insertDischarge = `INSERT INTO discharge (admissionID, doctorID, diagnosisType, icdCode, diagnosisText, summary) VALUES (?, ?, ?, ?, ?, ?)`;
+     db.query(insertDischarge, [admissionID, doctorID, diagnosisType, icdCode || null, diagnosisText, summary || null], (errIns, insRes) => {
+         if (errIns) return res.status(500).json({ message: 'Error inserting discharge', details: errIns.message });
+         
+         const dischargeID = insRes.insertId;
+
+         // Update admission
+         const sql = `
+           UPDATE admission 
+           SET dischargeID = ?, status = 'Pending Discharge Payment'
+           WHERE admissionID = ? AND status = 'In-treatment'
+         `;
+         db.query(sql, [dischargeID, admissionID], (err, result) => {
+           if (err) return res.status(500).json({ message: 'DB Error: ' + err.message, details: err });
+           if (result.affectedRows === 0) return res.status(400).json({ message: 'Invalid admission status or not found' });
+           res.json({ message: 'Discharge Order Created', dischargeID });
+         });
+     });
   });
 });
 

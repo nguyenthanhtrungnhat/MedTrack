@@ -22,8 +22,6 @@ export default function DailyCheckingForm() {
     temperature: "",
     oxygenTherapy: "",
     bloodPressure: "",
-    height: "",
-    weight: "",
     sensorium: "",
     respiratoryRate: "",
     urine: "",
@@ -84,8 +82,6 @@ export default function DailyCheckingForm() {
         const [sys, dia] = value.split("/").map(Number);
         return (isNaN(sys) || isNaN(dia) || sys < 30 || sys > 250 || dia < 20 || dia > 150)
           ? "Blood pressure must be SYS/DIA 30/20–250/150 mmHg." : "";
-      case "height": return (isNaN(num) || num < 30 || num > 250) ? "Height must be 30–250 cm." : "";
-      case "weight": return (isNaN(num) || num < 1 || num > 500) ? "Weight must be 1–500 kg." : "";
       case "sensorium": return (isNaN(num) || num < 1 || num > 15) ? "Sensorium must be 1–15." : "";
       case "respiratoryRate": return (isNaN(num) || num < 5 || num > 60) ? "Respiratory rate must be 5–60/min." : "";
       case "urine": return (isNaN(num) || num < 0 || num > 5000) ? "Urine output must be 0–5000 ml/h." : "";
@@ -120,8 +116,6 @@ export default function DailyCheckingForm() {
         patientID: parseInt(formData.patientID),
         heartRate: parseFloat(String(formData.heartRate)),
         pulse: parseFloat(String(formData.pulse)),
-        height: parseFloat(String(formData.height)),
-        weight: parseFloat(String(formData.weight)),
         hurtScale: parseFloat(String(formData.hurtScale)),
         temperature: parseFloat(String(formData.temperature)),
         currentCondition: formData.currentCondition,
@@ -142,8 +136,6 @@ export default function DailyCheckingForm() {
         temperature: "",
         oxygenTherapy: "",
         bloodPressure: "",
-        height: "",
-        weight: "",
         sensorium: "",
         respiratoryRate: "",
         urine: "",
@@ -275,36 +267,10 @@ export default function DailyCheckingForm() {
               />
               {touched.bloodPressure && errors.bloodPressure && <div className="invalid-feedback">{errors.bloodPressure}</div>}
             </div>
-            <div className="col">
-              <label>Height</label>
-              <input
-                name="height"
-                value={formData.height}
-                onChange={handleChange}
-                className={`form-control ${touched.height && errors.height ? "is-invalid" : ""}`}
-                type="number"
-                placeholder="cm"
-                required
-              />
-              {touched.height && errors.height && <div className="invalid-feedback">{errors.height}</div>}
-            </div>
           </div>
           <hr />
           {/* Weight & Sensorium */}
           <div className="row">
-            <div className="col">
-              <label>Weight</label>
-              <input
-                name="weight"
-                value={formData.weight}
-                onChange={handleChange}
-                className={`form-control ${touched.weight && errors.weight ? "is-invalid" : ""}`}
-                type="number"
-                placeholder="Kg"
-                required
-              />
-              {touched.weight && errors.weight && <div className="invalid-feedback">{errors.weight}</div>}
-            </div>
             <div className="col">
               <label>Sensorium</label>
               <input

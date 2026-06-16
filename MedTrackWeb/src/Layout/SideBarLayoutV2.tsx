@@ -137,7 +137,7 @@ export default function SideBarLayoutV2() {
                                             </li>
                                             <li>
                                                 <Link to="/doctor/admission-order" className="text-decoration-none">
-                                                    <i className="fa fa-caret-right"></i> Create Admission Order
+                                                    <i className="fa fa-caret-right"></i> Manage Admissions
                                                 </Link>
                                             </li>
 
@@ -156,6 +156,12 @@ export default function SideBarLayoutV2() {
                                             <li>
                                                 <Link to="/home/daily-checking" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Daily checking health
+                                                </Link>
+                                            </li>
+
+                                            <li>
+                                                <Link to="/home/clinical-exam" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Clinical Exam
                                                 </Link>
                                             </li>
 

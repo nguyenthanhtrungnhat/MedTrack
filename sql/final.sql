@@ -112,18 +112,17 @@ CREATE TABLE admission (
   advanceFee DECIMAL(10,2) DEFAULT 0,
   advanceFeeStatus VARCHAR(20) DEFAULT 'Pending',
   admissionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  dischargeDate TIMESTAMP NULL,
   hospitalizationsDiagnosis VARCHAR(2000),
   summaryCondition VARCHAR(2000),
-  dischargeDiagnosis VARCHAR(2000) DEFAULT NULL,
-  dischargeCondition VARCHAR(2000) DEFAULT NULL,
+  dischargeID INT DEFAULT NULL,
   status VARCHAR(50) DEFAULT 'Init',
   PRIMARY KEY (admissionID)
 );
 
 CREATE TABLE clinical_examinations (
   examID INT AUTO_INCREMENT PRIMARY KEY,
-  admissionID INT NOT NULL,
+  patientID INT NOT NULL,
+  admissionID INT DEFAULT NULL,
   doctorID INT NOT NULL,
   examDate DATETIME DEFAULT CURRENT_TIMESTAMP,
   height DECIMAL(5,2),
@@ -142,8 +141,6 @@ CREATE TABLE medicalrecords (
   timeCreate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   heartRate INT,
   pulse INT,
-  height DECIMAL(5,2),
-  weight DECIMAL(5,2),
   hurtScale INT,
   temperature VARCHAR(255),
   SP02 VARCHAR(255),
@@ -161,11 +158,11 @@ CREATE TABLE medicalrecords (
 -- ======================================================
 -- DISCHARGE
 -- ======================================================
-CREATE TABLE discharge_diagnosis (
-  diagnosisID INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE discharge (
+  dischargeID INT AUTO_INCREMENT PRIMARY KEY,
   admissionID INT NOT NULL,
   doctorID INT NOT NULL,
-  diagnosisType VARCHAR(50) DEFAULT 'Final',
+  diagnosisType VARCHAR(50),
   icdCode VARCHAR(20),
   diagnosisText TEXT,
   summary TEXT,
@@ -376,9 +373,8 @@ ADD CONSTRAINT fk_medical_admission FOREIGN KEY (admissionID) REFERENCES admissi
 ALTER TABLE medicalrecords
 ADD CONSTRAINT fk_medicalrecords_patient FOREIGN KEY (patientID) REFERENCES patient(patientID);
 -- DISCHARGE
-ALTER TABLE discharge_diagnosis
-ADD CONSTRAINT fk_discharge_admission FOREIGN KEY (admissionID) REFERENCES admission(admissionID),
-ADD CONSTRAINT fk_discharge_doctor FOREIGN KEY (doctorID) REFERENCES doctor(doctorID);
+ALTER TABLE discharge
+  ADD CONSTRAINT fk_discharge_doctor FOREIGN KEY (doctorID) REFERENCES doctor(doctorID);
 
 -- APPOINTMENT
 ALTER TABLE appointment

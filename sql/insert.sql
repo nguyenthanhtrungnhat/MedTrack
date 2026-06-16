@@ -184,10 +184,10 @@ INSERT INTO `bed` (`roomID`, `bedNumber`, `status`, `patientID`) VALUES
 
 -- ADMISSION
 INSERT INTO `admission` (
-    `admissionID`, `patientID`, `doctorID`, `departmentID`, `admissionRecordCode`, `priority`, `advanceFee`, `advanceFeeStatus`, `admissionDate`, `dischargeDate`, `hospitalizationsDiagnosis`, `summaryCondition`, `dischargeDiagnosis`, `dischargeCondition`, `status`
+    `admissionID`, `patientID`, `doctorID`, `departmentID`, `admissionRecordCode`, `priority`, `advanceFee`, `advanceFeeStatus`, `admissionDate`, `hospitalizationsDiagnosis`, `summaryCondition`, `dischargeID`, `status`
 ) VALUES 
-    (1, 1, 1, 1, 'BA-2026-001', 'Normal', 5000000, 'Paid', '2026-03-01 09:00:00', NULL, 'Hypertension', 'Patient stabilized after medication', NULL, NULL, 'In-treatment'),
-    (2, 2, 1, 1, 'BA-2026-002', 'Urgent', 10000000, 'Paid', '2026-03-02 11:00:00', NULL, 'Type 2 Diabetes', 'Condition improved with insulin therapy', NULL, NULL, 'In-treatment');
+    (1, 1, 1, 1, 'BA-2026-001', 'Normal', 5000000, 'Paid', '2026-03-01 09:00:00', 'Hypertension', 'Patient stabilized after medication', NULL, 'In-treatment'),
+    (2, 2, 1, 1, 'BA-2026-002', 'Urgent', 10000000, 'Paid', '2026-03-02 11:00:00', 'Type 2 Diabetes', 'Condition improved with insulin therapy', NULL, 'In-treatment');
 
 -- SCHEDULES
 INSERT INTO `schedules` (
@@ -555,8 +555,6 @@ INSERT INTO `medicalrecords` (
         `timeCreate`,
         `heartRate`,
         `pulse`,
-        `height`,
-        `weight`,
         `hurtScale`,
         `temperature`,
         `currentCondition`,
@@ -574,8 +572,6 @@ VALUES (
         '2026-03-02 08:20:00',
         90,
         85,
-        168,
-        70,
         4,
         '37.2',
         'High blood sugar symptoms',
@@ -593,8 +589,6 @@ VALUES (
         '2026-03-02 14:30:00',
         88,
         83,
-        168,
-        70,
         3,
         '37.0',
         'Insulin administered',
@@ -612,8 +606,6 @@ VALUES (
         '2026-03-03 09:10:00',
         86,
         82,
-        168,
-        70,
         3,
         '36.9',
         'Blood glucose improving',
@@ -631,8 +623,6 @@ VALUES (
         '2026-03-03 16:40:00',
         85,
         80,
-        168,
-        70,
         2,
         '36.8',
         'Patient stable',
@@ -650,8 +640,6 @@ VALUES (
         '2026-03-04 08:50:00',
         84,
         79,
-        168,
-        70,
         2,
         '36.8',
         'Condition improving',
@@ -669,8 +657,6 @@ VALUES (
         '2026-03-04 15:10:00',
         83,
         78,
-        168,
-        70,
         2,
         '36.7',
         'Glucose under control',
@@ -688,8 +674,6 @@ VALUES (
         '2026-03-05 09:30:00',
         82,
         77,
-        168,
-        70,
         1,
         '36.6',
         'Patient stable',
@@ -707,8 +691,6 @@ VALUES (
         '2026-03-05 13:20:00',
         81,
         76,
-        168,
-        70,
         1,
         '36.6',
         'No symptoms',
@@ -726,8 +708,6 @@ VALUES (
         '2026-03-06 08:40:00',
         80,
         75,
-        168,
-        70,
         1,
         '36.5',
         'Ready for discharge',
@@ -745,8 +725,6 @@ VALUES (
         '2026-03-06 14:10:00',
         79,
         74,
-        168,
-        70,
         0,
         '36.5',
         'Final check stable',
@@ -815,8 +793,6 @@ INSERT INTO `medicalrecords` (
         `timeCreate`,
         `heartRate`,
         `pulse`,
-        `height`,
-        `weight`,
         `hurtScale`,
         `temperature`,
         `currentCondition`,
@@ -834,8 +810,6 @@ VALUES (
         '2026-03-01 08:30:00',
         82,
         78,
-        175,
-        75,
         2,
         '36.7',
         'Stable condition',
@@ -853,8 +827,6 @@ VALUES (
         '2026-03-01 14:00:00',
         80,
         76,
-        175,
-        75,
         1,
         '36.8',
         'Patient resting',
@@ -872,8 +844,6 @@ VALUES (
         '2026-03-02 09:00:00',
         85,
         80,
-        175,
-        75,
         3,
         '37.1',
         'Mild headache',
@@ -891,8 +861,6 @@ VALUES (
         '2026-03-02 16:00:00',
         83,
         77,
-        175,
-        75,
         2,
         '36.9',
         'Improving condition',
@@ -910,8 +878,6 @@ VALUES (
         '2026-03-03 09:30:00',
         78,
         74,
-        175,
-        75,
         1,
         '36.6',
         'Stable after medication',
@@ -928,8 +894,6 @@ VALUES (
         106,
         '2026-03-03 15:20:00',
         79,
-        75,
-        175,
         75,
         1,
         '36.7',
@@ -948,8 +912,6 @@ VALUES (
         '2026-03-04 08:40:00',
         81,
         76,
-        175,
-        75,
         0,
         '36.6',
         'Patient feeling better',
@@ -966,8 +928,6 @@ VALUES (
         108,
         '2026-03-04 13:30:00',
         80,
-        75,
-        175,
         75,
         0,
         '36.7',
@@ -986,8 +946,6 @@ VALUES (
         '2026-03-05 09:10:00',
         77,
         73,
-        175,
-        75,
         0,
         '36.5',
         'Ready for discharge',
@@ -1005,8 +963,6 @@ VALUES (
         '2026-03-05 15:00:00',
         76,
         72,
-        175,
-        75,
         0,
         '36.5',
         'Final evaluation normal',
@@ -1865,23 +1821,23 @@ VALUES
 (16,'HI-2026-016','Relative N','0900000014',19,'https://i.pravatar.cc/300?img=34'),
 (17,'HI-2026-017','Relative O','0900000015',20,'https://i.pravatar.cc/300?img=35');
 
-INSERT INTO admission (patientID, admissionDate, dischargeDate, hospitalizationsDiagnosis, summaryCondition, dischargeDiagnosis, status)
+INSERT INTO admission (patientID, admissionDate, hospitalizationsDiagnosis, summaryCondition, dischargeID, status)
 VALUES
-(3,'2026-03-10','2026-03-14','Flu','Recovering','Stable', 'Archived'),
-(4,'2026-03-11','2026-03-15','Asthma','Under control','Stable', 'Archived'),
-(5,'2026-03-12','2026-03-16','Hypertension','Improving','Stable', 'Archived'),
-(6,'2026-03-13','2026-03-17','Diabetes','Stable','Controlled', 'Archived'),
-(7,'2026-03-14','2026-03-18','Infection','Recovering','Stable', 'Archived'),
-(8,'2026-03-15','2026-03-19','Fracture','Healing','Stable', 'Archived'),
-(9,'2026-03-16','2026-03-20','Migraine','Improving','Stable', 'Archived'),
-(10,'2026-03-17','2026-03-21','Allergy','Stable','Controlled', 'Archived'),
-(11,'2026-03-18','2026-03-22','Gastritis','Recovering','Stable', 'Archived'),
-(12,'2026-03-19','2026-03-23','Pneumonia','Improving','Stable', 'Archived'),
-(13,'2026-03-20','2026-03-24','Kidney issue','Stable','Controlled', 'Archived'),
-(14,'2026-03-21','2026-03-25','Back pain','Improving','Stable', 'Archived'),
-(15,'2026-03-22','2026-03-26','Heart check','Stable','Normal', 'Archived'),
-(16,'2026-03-23','2026-03-27','Diabetes','Stable','Controlled', 'Archived'),
-(17,'2026-03-24','2026-03-28','Flu','Recovering','Stable', 'Archived');
+(3,'2026-03-10','Flu','Recovering',NULL,'Archived'),
+(4,'2026-03-11','Asthma','Under control',NULL,'Archived'),
+(5,'2026-03-12','Hypertension','Improving',NULL,'Archived'),
+(6,'2026-03-13','Diabetes','Stable',NULL,'Archived'),
+(7,'2026-03-14','Infection','Recovering',NULL,'Archived'),
+(8,'2026-03-15','Fracture','Healing',NULL,'Archived'),
+(9,'2026-03-16','Migraine','Improving',NULL,'Archived'),
+(10,'2026-03-17','Allergy','Stable',NULL,'Archived'),
+(11,'2026-03-18','Gastritis','Recovering',NULL,'Archived'),
+(12,'2026-03-19','Pneumonia','Improving',NULL,'Archived'),
+(13,'2026-03-20','Kidney issue','Stable',NULL,'Archived'),
+(14,'2026-03-21','Back pain','Improving',NULL,'Archived'),
+(15,'2026-03-22','Heart check','Stable',NULL,'Archived'),
+(16,'2026-03-23','Diabetes','Stable',NULL,'Archived'),
+(17,'2026-03-24','Flu','Recovering',NULL,'Archived');
 
 INSERT INTO `user`
 (`userID`,`username`,`password`,`fullName`,`dob`,`phone`,`email`,`CIC`,`address`,`gender`) VALUES
@@ -1952,4 +1908,11 @@ INSERT INTO doctor (doctorID, departmentID, userID, office, image) VALUES
 (10,4,44,'109I','https://i.pravatar.cc/300?img=59'),
 (11,5,45,'110J','https://i.pravatar.cc/300?img=60');
 
-
+
+-- CLINICAL EXAMINATIONS
+INSERT INTO `clinical_examinations` (
+  `patientID`, `admissionID`, `doctorID`, `examDate`, `height`, `weight`, `bloodPressure`, `heartRate`, `temperature`, `generalCondition`, `symptoms`, `diagnosis`
+) VALUES
+(1, 1, 1, '2026-03-01 08:30:00', 168.00, 70.00, '120/80', 80, 37.0, 'Patient looks exhausted', 'Headache, fatigue', 'Hypertension'),
+(2, 2, 1, '2026-03-02 10:30:00', 170.00, 85.00, '130/85', 85, 37.2, 'Patient is sweating and dizzy', 'Dizziness, high blood sugar', 'Type 2 Diabetes'),
+(3, NULL, 1, '2026-06-16 09:00:00', 165.00, 60.00, '110/70', 75, 36.8, 'Normal', 'Cough, mild fever', 'Common Cold');

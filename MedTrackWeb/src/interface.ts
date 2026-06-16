@@ -41,8 +41,6 @@ export interface RecordProps {
     timeCreate: string,
     heartRate: number,
     pulse: number,
-    height: number,
-    weight: number,
     hurtScale: number,
     temperature: number,
     currentCondition: number,
@@ -68,8 +66,6 @@ export interface FormData {
     temperature: number | string;
     oxygenTherapy: number | string;
     bloodPressure: string;
-    height: number | string;
-    weight: number | string;
     sensorium: number | string;
     respiratoryRate: number | string;
     urine: number | string;
