@@ -143,6 +143,7 @@ export default function ShiftChange() {
                             className="form-control"
                             value={expectedDate}
                             onChange={(e) => setExpectedDate(e.target.value)}
+                            onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                         />
 
                         <label className="mt-3">Reason</label>

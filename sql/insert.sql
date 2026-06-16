@@ -129,9 +129,10 @@ VALUES (1, 2, 1),
     (5, 666, 5);
 -- ROOM table  
 INSERT INTO room (roomID, departmentID, location)
-VALUES (1, 1, '208B11'),
-    (2, 2, '301B10'),
-    (3, 3, '302A05');
+VALUES 
+    (1, 1, 'Room 101'), (2, 1, 'Room 102'), (3, 1, 'Room 103'),
+    (4, 2, 'Room 201'), (5, 2, 'Room 202'), (6, 2, 'Room 203'),
+    (7, 3, 'Room 301'), (8, 3, 'Room 302'), (9, 3, 'Room 303');
 -- NURSE
 INSERT INTO nurse (nurseID, departmentID, userID, image)
 VALUES (1, 1, 1, 'https://i.pravatar.cc/300?img=8');
@@ -148,11 +149,6 @@ VALUES (
 INSERT INTO patient (
         patientID,
         HI,
-        admissionDate,
-        dischargeDate,
-        hospitalizationsDiagnosis,
-        summaryCondition,
-        dischargeDiagnosis,
         relativeName,
         relativeNumber,
         userID,
@@ -161,11 +157,6 @@ INSERT INTO patient (
 VALUES (
         1,
         'HI-2026-001',
-        '2026-03-01 09:00:00',
-        '2026-03-05 16:00:00',
-        'Hypertension',
-        'Patient stabilized after medication',
-        'Controlled blood pressure',
         'Tran Van Minh',
         '0903123456',
         2,
@@ -174,20 +165,30 @@ VALUES (
     (
         2,
         'HI-2026-002',
-        '2026-03-02 11:00:00',
-        '2026-03-06 10:30:00',
-        'Type 2 Diabetes',
-        'Condition improved with insulin therapy',
-        'Stable glucose level',
         'Le Thi Huong',
         '0912345678',
         3,
         'https://i.pravatar.cc/300?img=15'
     );
--- ROOM PATIENT
-INSERT INTO `roompatient` (`roomID`, `patientID`)
-VALUES (1, 1),
-    (1, 2);
+-- BED
+INSERT INTO `bed` (`roomID`, `bedNumber`, `status`, `patientID`) VALUES
+    (1, 'Bed 1', 'In Use', 1), (1, 'Bed 2', 'In Use', 2), (1, 'Bed 3', 'Empty', NULL), (1, 'Bed 4', 'Empty', NULL), (1, 'Bed 5', 'Empty', NULL), (1, 'Bed 6', 'Empty', NULL),
+    (2, 'Bed 1', 'Empty', NULL), (2, 'Bed 2', 'Empty', NULL), (2, 'Bed 3', 'Empty', NULL), (2, 'Bed 4', 'Empty', NULL), (2, 'Bed 5', 'Empty', NULL), (2, 'Bed 6', 'Empty', NULL),
+    (3, 'Bed 1', 'Empty', NULL), (3, 'Bed 2', 'Empty', NULL), (3, 'Bed 3', 'Empty', NULL), (3, 'Bed 4', 'Empty', NULL), (3, 'Bed 5', 'Empty', NULL), (3, 'Bed 6', 'Empty', NULL),
+    (4, 'Bed 1', 'Empty', NULL), (4, 'Bed 2', 'Empty', NULL), (4, 'Bed 3', 'Empty', NULL), (4, 'Bed 4', 'Empty', NULL), (4, 'Bed 5', 'Empty', NULL), (4, 'Bed 6', 'Empty', NULL),
+    (5, 'Bed 1', 'Empty', NULL), (5, 'Bed 2', 'Empty', NULL), (5, 'Bed 3', 'Empty', NULL), (5, 'Bed 4', 'Empty', NULL), (5, 'Bed 5', 'Empty', NULL), (5, 'Bed 6', 'Empty', NULL),
+    (6, 'Bed 1', 'Empty', NULL), (6, 'Bed 2', 'Empty', NULL), (6, 'Bed 3', 'Empty', NULL), (6, 'Bed 4', 'Empty', NULL), (6, 'Bed 5', 'Empty', NULL), (6, 'Bed 6', 'Empty', NULL),
+    (7, 'Bed 1', 'Empty', NULL), (7, 'Bed 2', 'Empty', NULL), (7, 'Bed 3', 'Empty', NULL), (7, 'Bed 4', 'Empty', NULL), (7, 'Bed 5', 'Empty', NULL), (7, 'Bed 6', 'Empty', NULL),
+    (8, 'Bed 1', 'Empty', NULL), (8, 'Bed 2', 'Empty', NULL), (8, 'Bed 3', 'Empty', NULL), (8, 'Bed 4', 'Empty', NULL), (8, 'Bed 5', 'Empty', NULL), (8, 'Bed 6', 'Empty', NULL),
+    (9, 'Bed 1', 'Empty', NULL), (9, 'Bed 2', 'Empty', NULL), (9, 'Bed 3', 'Empty', NULL), (9, 'Bed 4', 'Empty', NULL), (9, 'Bed 5', 'Empty', NULL), (9, 'Bed 6', 'Empty', NULL);
+
+-- ADMISSION
+INSERT INTO `admission` (
+    `admissionID`, `patientID`, `doctorID`, `departmentID`, `admissionRecordCode`, `priority`, `advanceFee`, `advanceFeeStatus`, `admissionDate`, `dischargeDate`, `hospitalizationsDiagnosis`, `summaryCondition`, `dischargeDiagnosis`, `dischargeCondition`, `status`
+) VALUES 
+    (1, 1, 1, 1, 'BA-2026-001', 'Normal', 5000000, 'Paid', '2026-03-01 09:00:00', NULL, 'Hypertension', 'Patient stabilized after medication', NULL, NULL, 'In-treatment'),
+    (2, 2, 1, 1, 'BA-2026-002', 'Urgent', 10000000, 'Paid', '2026-03-02 11:00:00', NULL, 'Type 2 Diabetes', 'Condition improved with insulin therapy', NULL, NULL, 'In-treatment');
+
 -- SCHEDULES
 INSERT INTO `schedules` (
         `scheduleID`,
@@ -1846,25 +1847,41 @@ INSERT INTO userrole (userRoleID, roleID, userID) VALUES
 (16,3,16),(17,3,17),(18,3,18),(19,3,19),(20,3,20);
 
 INSERT INTO patient
-(patientID,HI,admissionDate,dischargeDate,
-hospitalizationsDiagnosis,summaryCondition,dischargeDiagnosis,
-relativeName,relativeNumber,userID,image)
+(patientID,HI,relativeName,relativeNumber,userID,image)
 VALUES
-(3,'HI-2026-003','2026-03-10','2026-03-14','Flu','Recovering','Stable','Relative A','0900000001',6,'https://i.pravatar.cc/300?img=21'),
-(4,'HI-2026-004','2026-03-11','2026-03-15','Asthma','Under control','Stable','Relative B','0900000002',7,'https://i.pravatar.cc/300?img=22'),
-(5,'HI-2026-005','2026-03-12','2026-03-16','Hypertension','Improving','Stable','Relative C','0900000003',8,'https://i.pravatar.cc/300?img=23'),
-(6,'HI-2026-006','2026-03-13','2026-03-17','Diabetes','Stable','Controlled','Relative D','0900000004',9,'https://i.pravatar.cc/300?img=24'),
-(7,'HI-2026-007','2026-03-14','2026-03-18','Infection','Recovering','Stable','Relative E','0900000005',10,'https://i.pravatar.cc/300?img=25'),
-(8,'HI-2026-008','2026-03-15','2026-03-19','Fracture','Healing','Stable','Relative F','0900000006',11,'https://i.pravatar.cc/300?img=26'),
-(9,'HI-2026-009','2026-03-16','2026-03-20','Migraine','Improving','Stable','Relative G','0900000007',12,'https://i.pravatar.cc/300?img=27'),
-(10,'HI-2026-010','2026-03-17','2026-03-21','Allergy','Stable','Controlled','Relative H','0900000008',13,'https://i.pravatar.cc/300?img=28'),
-(11,'HI-2026-011','2026-03-18','2026-03-22','Gastritis','Recovering','Stable','Relative I','0900000009',14,'https://i.pravatar.cc/300?img=29'),
-(12,'HI-2026-012','2026-03-19','2026-03-23','Pneumonia','Improving','Stable','Relative J','0900000010',15,'https://i.pravatar.cc/300?img=30'),
-(13,'HI-2026-013','2026-03-20','2026-03-24','Kidney issue','Stable','Controlled','Relative K','0900000011',16,'https://i.pravatar.cc/300?img=31'),
-(14,'HI-2026-014','2026-03-21','2026-03-25','Back pain','Improving','Stable','Relative L','0900000012',17,'https://i.pravatar.cc/300?img=32'),
-(15,'HI-2026-015','2026-03-22','2026-03-26','Heart check','Stable','Normal','Relative M','0900000013',18,'https://i.pravatar.cc/300?img=33'),
-(16,'HI-2026-016','2026-03-23','2026-03-27','Diabetes','Stable','Controlled','Relative N','0900000014',19,'https://i.pravatar.cc/300?img=34'),
-(17,'HI-2026-017','2026-03-24','2026-03-28','Flu','Recovering','Stable','Relative O','0900000015',20,'https://i.pravatar.cc/300?img=35');
+(3,'HI-2026-003','Relative A','0900000001',6,'https://i.pravatar.cc/300?img=21'),
+(4,'HI-2026-004','Relative B','0900000002',7,'https://i.pravatar.cc/300?img=22'),
+(5,'HI-2026-005','Relative C','0900000003',8,'https://i.pravatar.cc/300?img=23'),
+(6,'HI-2026-006','Relative D','0900000004',9,'https://i.pravatar.cc/300?img=24'),
+(7,'HI-2026-007','Relative E','0900000005',10,'https://i.pravatar.cc/300?img=25'),
+(8,'HI-2026-008','Relative F','0900000006',11,'https://i.pravatar.cc/300?img=26'),
+(9,'HI-2026-009','Relative G','0900000007',12,'https://i.pravatar.cc/300?img=27'),
+(10,'HI-2026-010','Relative H','0900000008',13,'https://i.pravatar.cc/300?img=28'),
+(11,'HI-2026-011','Relative I','0900000009',14,'https://i.pravatar.cc/300?img=29'),
+(12,'HI-2026-012','Relative J','0900000010',15,'https://i.pravatar.cc/300?img=30'),
+(13,'HI-2026-013','Relative K','0900000011',16,'https://i.pravatar.cc/300?img=31'),
+(14,'HI-2026-014','Relative L','0900000012',17,'https://i.pravatar.cc/300?img=32'),
+(15,'HI-2026-015','Relative M','0900000013',18,'https://i.pravatar.cc/300?img=33'),
+(16,'HI-2026-016','Relative N','0900000014',19,'https://i.pravatar.cc/300?img=34'),
+(17,'HI-2026-017','Relative O','0900000015',20,'https://i.pravatar.cc/300?img=35');
+
+INSERT INTO admission (patientID, admissionDate, dischargeDate, hospitalizationsDiagnosis, summaryCondition, dischargeDiagnosis, status)
+VALUES
+(3,'2026-03-10','2026-03-14','Flu','Recovering','Stable', 'Archived'),
+(4,'2026-03-11','2026-03-15','Asthma','Under control','Stable', 'Archived'),
+(5,'2026-03-12','2026-03-16','Hypertension','Improving','Stable', 'Archived'),
+(6,'2026-03-13','2026-03-17','Diabetes','Stable','Controlled', 'Archived'),
+(7,'2026-03-14','2026-03-18','Infection','Recovering','Stable', 'Archived'),
+(8,'2026-03-15','2026-03-19','Fracture','Healing','Stable', 'Archived'),
+(9,'2026-03-16','2026-03-20','Migraine','Improving','Stable', 'Archived'),
+(10,'2026-03-17','2026-03-21','Allergy','Stable','Controlled', 'Archived'),
+(11,'2026-03-18','2026-03-22','Gastritis','Recovering','Stable', 'Archived'),
+(12,'2026-03-19','2026-03-23','Pneumonia','Improving','Stable', 'Archived'),
+(13,'2026-03-20','2026-03-24','Kidney issue','Stable','Controlled', 'Archived'),
+(14,'2026-03-21','2026-03-25','Back pain','Improving','Stable', 'Archived'),
+(15,'2026-03-22','2026-03-26','Heart check','Stable','Normal', 'Archived'),
+(16,'2026-03-23','2026-03-27','Diabetes','Stable','Controlled', 'Archived'),
+(17,'2026-03-24','2026-03-28','Flu','Recovering','Stable', 'Archived');
 
 INSERT INTO `user`
 (`userID`,`username`,`password`,`fullName`,`dob`,`phone`,`email`,`CIC`,`address`,`gender`) VALUES
@@ -1935,20 +1952,4 @@ INSERT INTO doctor (doctorID, departmentID, userID, office, image) VALUES
 (10,4,44,'109I','https://i.pravatar.cc/300?img=59'),
 (11,5,45,'110J','https://i.pravatar.cc/300?img=60');
 
-
-INSERT INTO roompatient (roomID, patientID) VALUES
-(3,3),
-(2,4),
-(1,5),
-(3,6),
-(2,7),
-(3,8),
-(1,9),
-(2,10),
-(3,11),
-(1,12),
-(2,13),
-(3,14),
-(1,15),
-(2,16),
-(3,17);
+

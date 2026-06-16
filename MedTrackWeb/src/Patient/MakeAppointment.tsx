@@ -169,8 +169,6 @@ export default function MakeAppointment() {
     // ======================================================
     return (
         <div>
-            <ToastContainer position="top-right" autoClose={2000} />
-
             {/* ================= FORM ================= */}
             <div className="card shadow mb-4">
                 <div className="card-header blueBg text-white">
@@ -217,6 +215,7 @@ export default function MakeAppointment() {
                         className="form-control mb-3"
                         value={dateTime}
                         onChange={(e) => setDateTime(e.target.value)}
+                        onClick={(e) => (e.target as HTMLInputElement).showPicker()}
                     />
 
                     {/* LOCATION */}

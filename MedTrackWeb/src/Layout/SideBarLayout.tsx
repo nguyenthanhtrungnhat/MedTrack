@@ -134,6 +134,11 @@ export default function SideBarLayout() {
                                                     <i className="fa fa-caret-right"></i> Create Test Order
                                                 </Link>
                                             </li>
+                                            <li>
+                                                <Link to="/doctor/admission-order" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Create Admission Order
+                                                </Link>
+                                            </li>
 
                                         </ul>
                                     )}
@@ -172,6 +177,16 @@ export default function SideBarLayout() {
                                             <li>
                                                 <Link to="/home/submit-test-result" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Submit Test Result
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/home/admission-management" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Admission Orders
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/home/discharge-management" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> Discharge Orders
                                                 </Link>
                                             </li>
 
