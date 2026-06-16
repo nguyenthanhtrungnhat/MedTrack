@@ -5,8 +5,6 @@
     import ntImg from './images/respiratory-system.webp';
     import urineImg from './images/dark-urine.webp';
     import spo2Img from './images/oxygen-saturation.webp';
-    import weight from './images/scale.webp';
-    import height from './images/height.webp';
     import oxygenTherapy from './images/oxygen.webp';
     import painscale from './images/gauge.webp';
     import sensorium from './images/sensory.webp';
@@ -193,12 +191,6 @@
                                             {/* --- Show More Section --- */}
                                             {showMore && (
                                                 <>
-                                                    <div className="col-lg-6 col-sm-12 padding">
-                                                        {renderVital("Height", weight, "cm", "other", record?.height)}
-                                                    </div>
-                                                    <div className="col-lg-6 col-sm-12 padding">
-                                                        {renderVital("Weight", height, "kg", "other", record?.weight)}
-                                                    </div>
                                                     <div className="col-lg-6 col-sm-12 padding">
                                                         {renderVital("Sensorium", sensorium, "", "sensorium", record?.sensorium)}
                                                     </div>

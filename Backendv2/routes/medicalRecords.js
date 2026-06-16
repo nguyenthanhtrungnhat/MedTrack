@@ -10,10 +10,26 @@ router.get('/',verifyToken, (req, res) => getAllRecords('medicalrecords', res));
 // GET /medical-records/:patientID
 router.get('/:patientID',verifyToken, (req, res) => {
   const { patientID } = req.params;
-  db.query('SELECT * FROM medicalrecords WHERE patientID = ?', [patientID], (err, results) => {
+  
+  // Get active admissionID for this patient
+  const admQuery = `SELECT admissionID FROM admission WHERE patientID = ? AND status IN ('Init', 'In-treatment') ORDER BY admissionDate DESC LIMIT 1`;
+  
+  db.query(admQuery, [patientID], (err, admResults) => {
     if (err) return res.status(500).json({ error: 'Database error', details: err });
-    if (results.length === 0) return res.status(404).json({ error: 'No records found' });
-    res.json(results);
+    
+    let query = 'SELECT * FROM medicalrecords WHERE patientID = ? ORDER BY timeCreate DESC';
+    let params = [patientID];
+    
+    if (admResults.length > 0) {
+      query = 'SELECT * FROM medicalrecords WHERE patientID = ? AND admissionID = ? ORDER BY timeCreate DESC';
+      params = [patientID, admResults[0].admissionID];
+    }
+    
+    db.query(query, params, (err2, results) => {
+      if (err2) return res.status(500).json({ error: 'Database error', details: err2 });
+      if (results.length === 0) return res.status(404).json({ error: 'No records found' });
+      res.json(results);
+    });
   });
 });
 
@@ -32,7 +48,7 @@ router.get('/by-recordId/:recordID',verifyToken, (req, res) => {
 // POST /post-medical-records
 router.post('/', verifyToken, (req, res) => {
   const {
-    patientID, heartRate, pulse, height, weight, hurtScale,
+    patientID, admissionID, heartRate, pulse, hurtScale,
     temperature, currentCondition, SP02, healthStatus,
     respiratoryRate, bloodPressure, urine, oxygenTherapy, sensorium,
   } = req.body;
@@ -42,14 +58,14 @@ router.post('/', verifyToken, (req, res) => {
 
   const sql = `
     INSERT INTO medicalrecords 
-    (patientID, heartRate, pulse, height, weight, hurtScale, temperature,
+    (patientID, admissionID, heartRate, pulse, hurtScale, temperature,
      currentCondition, SP02, healthStatus, respiratoryRate, bloodPressure,
      urine, oxygenTherapy, sensorium) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(sql, [
-    patientID, heartRate, pulse, height, weight, hurtScale, temperature,
+    patientID, admissionID, heartRate, pulse, hurtScale, temperature,
     currentCondition, SP02, healthStatus, respiratoryRate, bloodPressure,
     urine, oxygenTherapy, sensorium,
   ], (err, result) => {

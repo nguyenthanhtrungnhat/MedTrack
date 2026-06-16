@@ -11,7 +11,7 @@ router.get("/", verifyToken, (req, res) => {
 
     const doctorID = req.query.doctorID;
 
-    const sql = `
+    let sql = `
         SELECT
             tr.testResultID,
             tr.orderID,
@@ -38,13 +38,17 @@ router.get("/", verifyToken, (req, res) => {
         JOIN doctor doc ON o.doctorID = doc.doctorID
         JOIN user d ON doc.userID = d.userID
         JOIN testtype tt ON o.testTypeID = tt.testTypeID
-
-        WHERE o.doctorID = ?
-
-        ORDER BY tr.datetime DESC
     `;
 
-    db.query(sql, [doctorID], (err, rows) => {
+    const params = [];
+    if (doctorID && doctorID !== 'null' && doctorID !== 'undefined') {
+        sql += ` WHERE o.doctorID = ? `;
+        params.push(doctorID);
+    }
+
+    sql += ` ORDER BY tr.datetime DESC `;
+
+    db.query(sql, params, (err, rows) => {
         if (err) return res.status(500).json(err);
         res.json(rows);
     });

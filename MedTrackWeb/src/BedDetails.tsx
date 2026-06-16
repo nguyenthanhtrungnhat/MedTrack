@@ -14,12 +14,16 @@ export default function BedDetails() {
     const [loading, setLoading] = useState(true);
     const roleID = sessionStorage.getItem("roleID");
     const [showDischargeModal, setShowDischargeModal] = useState(false);
-    const [dischargeDiagnosis, setDischargeDiagnosis] = useState("");
-    const [dischargeCondition, setDischargeCondition] = useState("");
+    const [diagnosisType, setDiagnosisType] = useState("");
+    const [icdCode, setIcdCode] = useState("");
+    const [diagnosisText, setDiagnosisText] = useState("");
+    const [summary, setSummary] = useState("");
     const [submitting, setSubmitting] = useState(false);
+    const [clinicalExam, setClinicalExam] = useState<any>(null);
 
     useEffect(() => {
         loadUser();
+        loadClinicalExam();
     }, [patientByIdUrl]);
 
     const loadUser = () => {
@@ -31,17 +35,30 @@ export default function BedDetails() {
             .finally(() => setLoading(false));
     };
 
+    const loadClinicalExam = () => {
+        if (!patientID) return;
+        axios.get(`http://localhost:3000/clinical-exams/patient/${patientID}`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(response => {
+                if (response.data && response.data.length > 0) {
+                    setClinicalExam(response.data[0]); // get latest
+                }
+            })
+            .catch(error => console.error('Error fetching clinical exam:', error));
+    };
+
     const handleDischargeSubmit = async () => {
-        if (!dischargeDiagnosis || !dischargeCondition) {
-            return toast.warning("Please fill in both diagnosis and condition");
+        if (!diagnosisType || !diagnosisText) {
+            return toast.warning("Please fill in diagnosis type and diagnosis text");
         }
         if (!user?.admissionID) return toast.error("No active admission found");
         
         try {
             setSubmitting(true);
             await axios.put(`http://localhost:3000/admission/${user.admissionID}/discharge-order`, {
-                dischargeDiagnosis,
-                dischargeCondition
+                diagnosisType,
+                icdCode,
+                diagnosisText,
+                summary
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -116,7 +133,25 @@ export default function BedDetails() {
             {/* Right column */}
             <div className="col-lg-6 col-sm-12 d-flex">
                 <div className="w-100 d-flex flex-column border whiteBg marginBottom dropShadow p-3">
-                    <h5 className="blueText">Diagnose</h5>
+                    <h5 className="blueText">Latest Clinical Exam</h5>
+                    {clinicalExam ? (
+                        <div className="row">
+                            <div className="col-md-6">
+                                <p><strong>Height:</strong> {clinicalExam.height} cm</p>
+                                <p><strong>Weight:</strong> {clinicalExam.weight} kg</p>
+                                <p><strong>Blood Pressure:</strong> {clinicalExam.bloodPressure}</p>
+                            </div>
+                            <div className="col-md-6">
+                                <p><strong>Heart Rate:</strong> {clinicalExam.heartRate} bpm</p>
+                                <p><strong>Temperature:</strong> {clinicalExam.temperature} °C</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-muted">No clinical exam data available.</p>
+                    )}
+                    <hr />
+
+                    <h5 className="blueText mt-2">Diagnose</h5>
 
                     <p className="blueText">Hospitalization diagnosis:</p>
                     {user?.hospitalizationsDiagnosis ? (
@@ -162,21 +197,41 @@ export default function BedDetails() {
                             </div>
                             <div className="modal-body">
                                 <div className="mb-3">
-                                    <label>Discharge Diagnosis</label>
-                                    <textarea 
+                                    <label>Diagnosis Type</label>
+                                    <input 
+                                        type="text"
                                         className="form-control" 
-                                        rows={3} 
-                                        value={dischargeDiagnosis} 
-                                        onChange={e => setDischargeDiagnosis(e.target.value)} 
+                                        value={diagnosisType} 
+                                        onChange={e => setDiagnosisType(e.target.value)} 
+                                        placeholder="e.g. Primary, Secondary..."
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label>Discharge Condition</label>
+                                    <label>ICD Code</label>
+                                    <input 
+                                        type="text"
+                                        className="form-control" 
+                                        value={icdCode} 
+                                        onChange={e => setIcdCode(e.target.value)} 
+                                        placeholder="e.g. J01.90"
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label>Diagnosis Text</label>
                                     <textarea 
                                         className="form-control" 
                                         rows={3} 
-                                        value={dischargeCondition} 
-                                        onChange={e => setDischargeCondition(e.target.value)} 
+                                        value={diagnosisText} 
+                                        onChange={e => setDiagnosisText(e.target.value)} 
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label>Summary of disease process & discharge instructions</label>
+                                    <textarea 
+                                        className="form-control" 
+                                        rows={3} 
+                                        value={summary} 
+                                        onChange={e => setSummary(e.target.value)} 
                                     />
                                 </div>
                             </div>
