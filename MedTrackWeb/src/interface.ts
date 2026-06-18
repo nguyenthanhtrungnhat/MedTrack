@@ -56,6 +56,8 @@ export interface RecordProps {
     nurseID: string,
     oxygenTherapy: number,
     sensorium: number
+    height?:number
+    weight?:number
 }
 export interface SidebarInfoProps {
     phone?: string | number;
