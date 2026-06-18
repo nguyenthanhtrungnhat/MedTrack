@@ -25,22 +25,21 @@ export default function TestResult() {
     key: "datetime",
     direction: "desc",
   });
-
+  const [showAll, setShowAll] = useState(false);
   useEffect(() => {
     setLoadingTest(true);
 
-    axios
-      .get<TestResultProps[]>(
-        "http://localhost:3000/testresult",
-        {
-          params: {
-            doctorID,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+    axios.get<TestResultProps[]>(
+      "http://localhost:3000/testresult",
+      {
+        params: showAll
+          ? {}
+          : { doctorID },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then((response) => {
         setData(response.data);
       })
@@ -50,7 +49,7 @@ export default function TestResult() {
       .finally(() => {
         setLoadingTest(false);
       });
-  }, [doctorID, token]);
+  }, [doctorID, token, showAll]);
 
   if (!userID) {
     return (
@@ -151,16 +150,34 @@ export default function TestResult() {
 
       <div className="p-3 border-bottom bg-light">
         <div className="row">
-          <div className="col-md-4">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search by patient name, CIC or test code..."
-              value={searchTerm}
-              onChange={(e) =>
-                setSearchTerm(e.target.value)
-              }
-            />
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="col-md-4">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by patient name, CIC or test code..."
+                value={searchTerm}
+                onChange={(e) =>
+                  setSearchTerm(e.target.value)
+                }
+              />
+            </div>
+
+            {doctorID && (
+              <button
+                className={`btn ${showAll
+                    ? "btn-outline-warning"
+                    : "btn-outline-success"
+                  }`}
+                onClick={() =>
+                  setShowAll(!showAll)
+                }
+              >
+                {showAll
+                  ? "Show Only My Results"
+                  : "Show All Results"}
+              </button>
+            )}
           </div>
         </div>
       </div>
