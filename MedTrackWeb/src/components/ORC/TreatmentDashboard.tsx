@@ -8,6 +8,9 @@ type SheetType = {
     patientCode: string;
     diagnosis: string;
     createdAt: string;
+
+    patientName?: string;
+    HI?: string;
 };
 
 export default function TreatmentDashboard() {
@@ -109,9 +112,17 @@ export default function TreatmentDashboard() {
                                 </div>
 
                                 {/* PATIENT */}
-                                <h5 className="fw-bold text-primary">
-                                    {s.patientCode}
-                                </h5>
+                                <div className="d-flex align-items-center gap-2">
+                                    <h5 className="fw-bold text-primary mb-0">
+                                        {s.patientName}
+                                    </h5>
+
+                                    {s.HI && (
+                                        <span className="badge bg-secondary">
+                                            {s.HI}
+                                        </span>
+                                    )}
+                                </div>
 
                                 {/* ADMISSION */}
                                 <p className="mb-1">

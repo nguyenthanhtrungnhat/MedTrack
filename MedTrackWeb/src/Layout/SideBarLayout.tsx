@@ -114,9 +114,14 @@ export default function SideBarLayout() {
                                                     <i className="fa fa-caret-right"></i> Prescription List
                                                 </Link>
                                             </li>
-                                            <li>
+                                            {/* <li>
                                                 <Link to="/doctor/treatmenttimeline" className="text-decoration-none">
-                                                    <i className="fa fa-caret-right"></i> TreatMent TimeLine
+                                                    <i className="fa fa-caret-right"></i> TreatMent Scan
+                                                </Link>
+                                            </li> */}
+                                            <li>
+                                                <Link to="/doctor/treatment-manual" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> TreatMent Form
                                                 </Link>
                                             </li>
                                             <li>

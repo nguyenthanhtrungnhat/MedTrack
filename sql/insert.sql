@@ -1696,3 +1696,5 @@ INSERT INTO `clinical_examinations` (
 (1, 1, 1, '2026-03-01 08:30:00', 168.00, 70.00, '120/80', 80, 37.0, 'Patient looks exhausted', 'Headache, fatigue', 'Hypertension'),
 (2, 2, 1, '2026-03-02 10:30:00', 170.00, 85.00, '130/85', 85, 37.2, 'Patient is sweating and dizzy', 'Dizziness, high blood sugar', 'Type 2 Diabetes'),
 (3, NULL, 1, '2026-06-16 09:00:00', 165.00, 60.00, '110/70', 75, 36.8, 'Normal', 'Cough, mild fever', 'Common Cold');
+
+-- TREATMENT TIMELINE

@@ -135,7 +135,7 @@ export default function ManageAdmissions() {
                                         <td>{exam.diagnosis}</td>
                                         <td>
                                             <button className="btn btn-primary btn-sm" onClick={() => handleSelectExam(exam)}>
-                                                Create Admission
+                                                View Detail
                                             </button>
                                         </td>
                                     </tr>

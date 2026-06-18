@@ -307,7 +307,7 @@ CREATE TABLE prescription_items (
 CREATE TABLE treatment_sheet (
   sheetID INT AUTO_INCREMENT PRIMARY KEY,
   patientID INT NOT NULL,
-  doctorID INT,
+  admissionID INT,
   admissionNumber VARCHAR(50),
   patientCode VARCHAR(50),
   diagnosis TEXT,
@@ -317,6 +317,7 @@ CREATE TABLE treatment_sheet (
 CREATE TABLE treatment_logs (
   logID INT AUTO_INCREMENT PRIMARY KEY,
   sheetID INT NOT NULL,
+  doctorID INT NOT NULL,
   logTime TIME,
   subjective TEXT,
   objective TEXT,
@@ -418,8 +419,19 @@ ADD CONSTRAINT fk_prescription_items_medicine FOREIGN KEY (medicineID) REFERENCE
 
 -- TREATMENT
 ALTER TABLE treatment_sheet
-ADD CONSTRAINT fk_treatment_patient FOREIGN KEY (patientID) REFERENCES patient(patientID),
-ADD CONSTRAINT fk_treatment_doctor FOREIGN KEY (doctorID) REFERENCES doctor(doctorID);
+ADD CONSTRAINT fk_treatment_patient
+    FOREIGN KEY (patientID)
+    REFERENCES patient(patientID),
+
+ADD CONSTRAINT fk_treatment_admission
+    FOREIGN KEY (admissionID)
+    REFERENCES admission(admissionID);
 
 ALTER TABLE treatment_logs
-ADD CONSTRAINT fk_treatment_logs_sheet FOREIGN KEY (sheetID) REFERENCES treatment_sheet(sheetID);
+ADD CONSTRAINT fk_treatment_logs_sheet
+    FOREIGN KEY (sheetID)
+    REFERENCES treatment_sheet(sheetID),
+
+ADD CONSTRAINT fk_treatment_logs_doctor
+    FOREIGN KEY (doctorID)
+    REFERENCES doctor(doctorID);

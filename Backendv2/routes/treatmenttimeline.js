@@ -1,277 +1,91 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
-const Tesseract = require("tesseract.js");
 
 const db = require("../config/db");
-
-const {
-  convertPdfToImage,
-  parseForm,
-  parseLogs,
-} = require("../utils/ocrHelpers");
 const verifyToken = require("../middleware/verifyToken");
 
-/* ================= MULTER ================= */
-const upload = multer({
-  dest: "uploads/temp/",
-});
-
-/* ================= OCR ================= */
-router.post("/ocr", upload.single("file"),verifyToken, async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({
-      error: "No file uploaded",
-    });
-  }
-
-  let filePath = req.file.path;
-  let convertedPath = null;
-
-  try {
-    // PDF -> IMAGE
-    if (req.file.mimetype === "application/pdf") {
-      convertedPath = await convertPdfToImage(filePath);
-      filePath = convertedPath;
-    }
-
-    // OCR
-    const result = await Tesseract.recognize(filePath, "eng");
-
-    const text = result.data.text;
-
-    const form = parseForm(text);
-    const logs = parseLogs(text);
-
-    res.json({
-      form,
-      logs,
-    });
-  } catch (err) {
-    console.error("OCR error:", err);
-
-    res.status(500).json({
-      error: "OCR failed",
-    });
-  } finally {
-    try {
-      if (req.file?.path) {
-        fs.unlink(req.file.path, () => {});
-      }
-
-      if (convertedPath) {
-        fs.unlink(convertedPath, () => {});
-      }
-    } catch (e) {
-      console.error("Cleanup error:", e);
-    }
-  }
-});
-
-/* ================= SAVE TREATMENT ================= */
-router.post("/",verifyToken, (req, res) => {
-  const {
-    admissionNumber,
-    patientCode,
-    diagnosis,
-    doctorID,
-    logs,
-  } = req.body;
-
-  if (!patientCode) {
-    return res.status(400).json({
-      error: "Missing patient code",
-    });
-  }
-
-  // FIND PATIENT
-  db.query(
-    "SELECT patientID FROM patient WHERE HI = ?",
-    [patientCode],
-    (err, rows) => {
-      if (err) {
-        console.error(err);
-
-        return res.status(500).json({
-          error: "Database error",
-        });
-      }
-
-      if (!rows.length) {
-        return res.status(404).json({
-          error: "Patient not found",
-        });
-      }
-
-      const patientID = rows[0].patientID;
-
-      // INSERT SHEET
-      db.query(
-        `
-        INSERT INTO treatment_sheet
-        (
-          patientID,
-          doctorID,
-          admissionNumber,
-          patientCode,
-          diagnosis
-        )
-        VALUES (?, ?, ?, ?, ?)
-        `,
-        [
-          patientID,
-          doctorID,
-          admissionNumber,
-          patientCode,
-          diagnosis,
-        ],
-        (err2, result) => {
-          if (err2) {
-            console.error(err2);
-
-            return res.status(500).json({
-              error: "Insert sheet failed",
-            });
-          }
-
-          const sheetID = result.insertId;
-
-          // NO LOGS
-          if (!Array.isArray(logs) || logs.length === 0) {
-            return res.json({
-              success: true,
-              sheetID,
-              logsInserted: 0,
-            });
-          }
-
-          let inserted = 0;
-
-          logs.forEach((log) => {
-            db.query(
-              `
-              INSERT INTO treatment_logs
-              (
-                sheetID,
-                logTime,
-                subjective,
-                objective,
-                assessment,
-                plan,
-                instruction
-              )
-              VALUES (?, ?, ?, ?, ?, ?, ?)
-              `,
-              [
-                sheetID,
-                log.logTime || null,
-                log.subjective || "",
-                log.objective || "",
-                log.assessment || "",
-                log.plan || "",
-                log.instruction || "",
-              ],
-              (err3) => {
-                if (err3) {
-                  console.error(err3);
-
-                  return res.status(500).json({
-                    error: "Insert logs failed",
-                  });
-                }
-
-                inserted++;
-
-                if (inserted === logs.length) {
-                  return res.json({
-                    success: true,
-                    sheetID,
-                    logsInserted: inserted,
-                  });
-                }
-              }
-            );
-          });
-        }
-      );
-    }
-  );
-});
-
 /* ================= GET ALL SHEETS ================= */
-router.get("/all",verifyToken, (req, res) => {
+router.get("/all", verifyToken, (req, res) => {
   db.query(
     `
-    SELECT *
-    FROM treatment_sheet
-    ORDER BY createdAt DESC
+    SELECT 
+        ts.sheetID,
+        ts.admissionNumber,
+        ts.patientCode,
+        ts.diagnosis,
+        ts.createdAt,
+        u.fullName AS patientName,
+        p.HI
+    FROM treatment_sheet ts
+    LEFT JOIN patient p ON ts.patientID = p.patientID
+    LEFT JOIN user u ON p.userID = u.userID
+    ORDER BY ts.createdAt DESC
     `,
     (err, rows) => {
-      if (err) {
-        return res.status(500).json({
-          error: err.message,
-        });
-      }
-
+      if (err) return res.status(500).json({ error: err.message });
       res.json(rows);
     }
   );
 });
 
 /* ================= GET LOGS ================= */
-router.get("/logs/:sheetID",verifyToken, (req, res) => {
+router.get("/logs/:sheetID", verifyToken, (req, res) => {
   db.query(
     `
-    SELECT *
-    FROM treatment_logs
-    WHERE sheetID = ?
-    ORDER BY logTime ASC
+    SELECT 
+        tl.*,
+        du.fullName AS doctorName
+    FROM treatment_logs tl
+    LEFT JOIN doctor d ON tl.doctorID = d.doctorID
+    LEFT JOIN user du ON d.userID = du.userID
+    WHERE tl.sheetID = ?
+    ORDER BY tl.logTime ASC
     `,
     [req.params.sheetID],
     (err, rows) => {
-      if (err) {
-        return res.status(500).json({
-          error: err.message,
-        });
-      }
-
+      if (err) return res.status(500).json({ error: err.message });
       res.json(rows);
     }
   );
 });
 
 /* ================= GET SINGLE SHEET ================= */
-router.get("/:id",verifyToken, (req, res) => {
-  const id = req.params.id;
-
+router.get("/:id", verifyToken, (req, res) => {
   const sql = `
     SELECT
-      ts.*,
-      tl.logTime,
-      tl.subjective,
-      tl.objective,
-      tl.assessment,
-      tl.plan,
-      tl.instruction
+        ts.sheetID,
+        ts.admissionNumber,
+        ts.patientCode,
+        ts.diagnosis,
+        ts.createdAt,
+
+        p.patientID,
+        p.HI,
+        u.fullName AS patientName,
+
+        tl.logID,
+        tl.doctorID,
+        du.fullName AS doctorName,
+        tl.logTime,
+        tl.subjective,
+        tl.objective,
+        tl.assessment,
+        tl.plan,
+        tl.instruction
+
     FROM treatment_sheet ts
-    LEFT JOIN treatment_logs tl
-      ON ts.sheetID = tl.sheetID
+    LEFT JOIN patient p ON ts.patientID = p.patientID
+    LEFT JOIN user u ON p.userID = u.userID
+    LEFT JOIN treatment_logs tl ON ts.sheetID = tl.sheetID
+    LEFT JOIN doctor d ON tl.doctorID = d.doctorID
+    LEFT JOIN user du ON d.userID = du.userID
     WHERE ts.sheetID = ?
     ORDER BY tl.logTime ASC
   `;
 
-  db.query(sql, [id], (err, rows) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
-
-    if (!rows.length) {
-      return res.status(404).json({
-        error: "Not found",
-      });
-    }
+  db.query(sql, [req.params.id], (err, rows) => {
+    if (err) return res.status(500).json(err);
+    if (!rows.length) return res.status(404).json({ error: "Not found" });
 
     const base = {
       sheetID: rows[0].sheetID,
@@ -279,20 +93,184 @@ router.get("/:id",verifyToken, (req, res) => {
       patientCode: rows[0].patientCode,
       diagnosis: rows[0].diagnosis,
       createdAt: rows[0].createdAt,
-      logs: [],
+      patientID: rows[0].patientID,
+      patientName: rows[0].patientName,
+      HI: rows[0].HI,
+      logs: rows
+        .filter((r) => r.logID)
+        .map((r) => ({
+          logID: r.logID,
+          doctorID: r.doctorID,
+          doctorName: r.doctorName,
+          logTime: r.logTime,
+          subjective: r.subjective,
+          objective: r.objective,
+          assessment: r.assessment,
+          plan: r.plan,
+          instruction: r.instruction,
+        })),
     };
-
-    base.logs = rows.map((r) => ({
-      logTime: r.logTime,
-      subjective: r.subjective,
-      objective: r.objective,
-      assessment: r.assessment,
-      plan: r.plan,
-      instruction: r.instruction,
-    }));
 
     res.json(base);
   });
+});
+
+/* ================= MANUAL CREATE LOG (FIXED) ================= */
+router.post("/manual", verifyToken, (req, res) => {
+  const { cic, diagnosis, log, doctorID } = req.body;
+
+  if (!doctorID) {
+    return res.status(400).json({ error: "Missing doctorID from UI" });
+  }
+
+  if (!cic) {
+    return res.status(400).json({ error: "Missing CIC" });
+  }
+
+  db.beginTransaction((err) => {
+    if (err) return res.status(500).json({ error: "Transaction error" });
+
+    db.query(
+      `SELECT patientID FROM patient WHERE HI = ?`,
+      [cic],
+      (err, patientRows) => {
+        if (err) return rollback(err);
+        if (!patientRows.length) return rollback("Patient not found", 404);
+
+        const patientID = patientRows[0].patientID;
+
+        db.query(
+          `
+          SELECT sheetID
+          FROM treatment_sheet
+          WHERE patientID = ?
+          ORDER BY createdAt DESC
+          LIMIT 1
+          `,
+          [patientID],
+          (err, sheetRows) => {
+            if (err) return rollback(err);
+
+            let sheetID = sheetRows.length ? sheetRows[0].sheetID : null;
+
+            const createSheet = (cb) => {
+              db.query(
+                `
+                INSERT INTO treatment_sheet
+                (patientID, admissionID, admissionNumber, patientCode, diagnosis)
+                VALUES (?, NULL, NULL, ?, ?)
+                `,
+                [patientID, cic, diagnosis || ""],
+                (err, result) => {
+                  if (err) return rollback(err);
+                  sheetID = result.insertId;
+                  cb();
+                }
+              );
+            };
+
+            const insertLog = () => {
+              if (!log) {
+                return db.commit(() =>
+                  res.json({
+                    success: true,
+                    sheetID,
+                    logsInserted: 0,
+                  })
+                );
+              }
+
+              db.query(
+                `
+                INSERT INTO treatment_logs
+                (sheetID, doctorID, logTime, subjective, objective, assessment, plan, instruction)
+                VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)
+                `,
+                [
+                  sheetID,
+                  doctorID, // ⭐ FROM UI
+                  log.subjective || "",
+                  log.objective || "",
+                  log.assessment || "",
+                  log.plan || "",
+                  log.instruction || "",
+                ],
+                (err) => {
+                  if (err) return rollback(err);
+
+                  db.commit(() =>
+                    res.json({
+                      success: true,
+                      sheetID,
+                      logsInserted: 1,
+                    })
+                  );
+                }
+              );
+            };
+
+            if (!sheetID) return createSheet(insertLog);
+            insertLog();
+          }
+        );
+      }
+    );
+  });
+
+  function rollback(err, status = 500) {
+    db.rollback(() => {
+      console.error(err);
+      res.status(status).json({
+        error: typeof err === "string" ? err : "Database error",
+      });
+    });
+  }
+});
+
+router.post("/:sheetID/log", verifyToken, (req, res) => {
+  const { sheetID } = req.params;
+
+  // ✅ lấy từ UI (frontend gửi lên)
+  const doctorID = req.body.doctorID;
+
+  const {
+    subjective = "",
+    objective = "",
+    assessment = "",
+    plan = "",
+    instruction = "",
+  } = req.body.log || {};
+
+  if (!doctorID) {
+    return res.status(400).json({ error: "Missing doctorID from UI" });
+  }
+
+  if (!sheetID) {
+    return res.status(400).json({ error: "Missing sheetID" });
+  }
+
+  db.query(
+    `INSERT INTO treatment_logs
+     (sheetID, doctorID, logTime, subjective, objective, assessment, plan, instruction)
+     VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)`,
+    [
+      sheetID,
+      doctorID,
+      subjective,
+      objective,
+      assessment,
+      plan,
+      instruction,
+    ],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      res.json({
+        success: true,
+        logID: result.insertId,
+      });
+    }
+  );
 });
 
 module.exports = router;
