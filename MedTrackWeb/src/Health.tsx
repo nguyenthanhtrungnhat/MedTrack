@@ -142,6 +142,7 @@
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="dropdown">
+                                            <h4 className="modal-title blueText p-2">   Vital Signs</h4>
                                             <button
                                                 type="button"
                                                 className={`btn btn-primary ${showMore ? 'active' : ''}`}
@@ -174,7 +175,8 @@
                                                     </li>
                                                 ))}
                                             </ul>
-
+                                            
+                                             
                                         </div>
 
                                     </div>
