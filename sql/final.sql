@@ -229,6 +229,7 @@ CREATE TABLE doctororder (
   orderID INT AUTO_INCREMENT PRIMARY KEY,
   userID INT NOT NULL,
   doctorID INT NOT NULL,
+  admissionID INT NOT NULL,
   testTypeID INT NOT NULL,
   diagnosisNote TEXT,
   status ENUM('Pending','Sample Collected','Completed','Cancelled') DEFAULT 'Pending',
@@ -390,6 +391,7 @@ ADD CONSTRAINT fk_schedule_room FOREIGN KEY (roomID) REFERENCES room(roomID);
 ALTER TABLE doctororder
 ADD CONSTRAINT fk_order_user FOREIGN KEY (userID) REFERENCES user(userID),
 ADD CONSTRAINT fk_order_doctor FOREIGN KEY (doctorID) REFERENCES doctor(doctorID),
+ADD CONSTRAINT fk_order_admission FOREIGN KEY (admissionID) REFERENCES admission(admissionID),
 ADD CONSTRAINT fk_order_testtype FOREIGN KEY (testTypeID) REFERENCES testtype(testTypeID);
 
 -- TEST RESULT

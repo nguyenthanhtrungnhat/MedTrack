@@ -2,6 +2,46 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 const verifyToken = require("../middleware/verifyToken");
+
+// ======================================================
+// GET ACTIVE ADMISSION BY PATIENT
+// ======================================================
+router.get(
+    "/active-admission/:patientID",
+    verifyToken,
+    (req, res) => {
+
+        const sql = `
+            SELECT *
+            FROM admission
+            WHERE patientID = ?
+              AND status IN ('Init','In-treatment')
+            ORDER BY admissionDate DESC
+            LIMIT 1
+        `;
+
+        db.query(
+            sql,
+            [req.params.patientID],
+            (err, rows) => {
+
+                if (err)
+                    return res.status(500).json(err);
+
+                if (!rows.length)
+                    return res.status(404).json({
+                        message: "No active admission found"
+                    });
+
+                res.json(rows[0]);
+            }
+        );
+    }
+);
+
+// ======================================================
+// GET PENDING ORDERS
+// ======================================================
 router.get("/pending", verifyToken, (req, res) => {
 
     const sql = `
@@ -9,10 +49,14 @@ router.get("/pending", verifyToken, (req, res) => {
             o.orderID,
             o.userID,
             o.doctorID,
+            o.admissionID,
             o.testTypeID,
             o.diagnosisNote,
             o.status,
             o.orderDate,
+
+            a.admissionRecordCode,
+            a.priority,
 
             p.fullName AS patientName,
             p.CIC,
@@ -22,6 +66,9 @@ router.get("/pending", verifyToken, (req, res) => {
             tt.typeName
 
         FROM doctororder o
+
+        JOIN admission a
+            ON o.admissionID = a.admissionID
 
         JOIN user p
             ON o.userID = p.userID
@@ -50,7 +97,9 @@ router.get("/pending", verifyToken, (req, res) => {
 
 });
 
-
+// ======================================================
+// FIND PATIENT BY CIC
+// ======================================================
 router.get("/cic/:cic", verifyToken, (req, res) => {
 
     const sql = `
@@ -83,13 +132,18 @@ router.get("/cic/:cic", verifyToken, (req, res) => {
     );
 });
 
-
-//Get all orders
+// ======================================================
+// GET ALL ORDERS
+// ======================================================
 router.get("/", verifyToken, (req, res) => {
 
     const sql = `
         SELECT
             o.*,
+
+            a.admissionRecordCode,
+            a.priority,
+            a.status AS admissionStatus,
 
             p.fullName AS patientName,
             p.CIC,
@@ -99,6 +153,9 @@ router.get("/", verifyToken, (req, res) => {
             tt.typeName
 
         FROM doctororder o
+
+        JOIN admission a
+            ON o.admissionID = a.admissionID
 
         JOIN user p
             ON o.userID = p.userID
@@ -126,7 +183,9 @@ router.get("/", verifyToken, (req, res) => {
 
 });
 
-//Get orders by doctor
+// ======================================================
+// GET ORDERS BY DOCTOR
+// ======================================================
 router.get("/doctor/:doctorID", verifyToken, (req, res) => {
 
     const doctorID = req.params.doctorID;
@@ -135,12 +194,18 @@ router.get("/doctor/:doctorID", verifyToken, (req, res) => {
         SELECT
             o.*,
 
+            a.admissionRecordCode,
+            a.priority,
+
             p.fullName AS patientName,
             p.CIC,
 
             tt.typeName
 
         FROM doctororder o
+
+        JOIN admission a
+            ON o.admissionID = a.admissionID
 
         JOIN user p
             ON o.userID = p.userID
@@ -164,7 +229,9 @@ router.get("/doctor/:doctorID", verifyToken, (req, res) => {
 
 });
 
-//Get orders by patient
+// ======================================================
+// GET ORDERS BY PATIENT
+// ======================================================
 router.get("/patient/:userID", verifyToken, (req, res) => {
 
     const userID = req.params.userID;
@@ -173,11 +240,17 @@ router.get("/patient/:userID", verifyToken, (req, res) => {
         SELECT
             o.*,
 
+            a.admissionRecordCode,
+            a.priority,
+
             d.fullName AS doctorName,
 
             tt.typeName
 
         FROM doctororder o
+
+        JOIN admission a
+            ON o.admissionID = a.admissionID
 
         JOIN doctor doc
             ON o.doctorID = doc.doctorID
@@ -204,21 +277,31 @@ router.get("/patient/:userID", verifyToken, (req, res) => {
 
 });
 
-//Create new doctor order
+// ======================================================
+// CREATE ORDER
+// ======================================================
 router.post("/", verifyToken, (req, res) => {
 
     const {
         userID,
         doctorID,
+        admissionID,
         testTypeID,
         diagnosisNote
     } = req.body;
+
+    if (!admissionID) {
+        return res.status(400).json({
+            message: "Admission is required"
+        });
+    }
 
     const sql = `
         INSERT INTO doctororder
         (
             userID,
             doctorID,
+            admissionID,
             testTypeID,
             diagnosisNote,
             status,
@@ -226,6 +309,7 @@ router.post("/", verifyToken, (req, res) => {
         )
         VALUES
         (
+            ?,
             ?,
             ?,
             ?,
@@ -240,6 +324,7 @@ router.post("/", verifyToken, (req, res) => {
         [
             userID,
             doctorID,
+            admissionID,
             testTypeID,
             diagnosisNote
         ],
@@ -258,7 +343,9 @@ router.post("/", verifyToken, (req, res) => {
 
 });
 
-//Update status
+// ======================================================
+// UPDATE STATUS
+// ======================================================
 router.put("/:id/status", verifyToken, (req, res) => {
 
     const { status } = req.body;
@@ -280,7 +367,9 @@ router.put("/:id/status", verifyToken, (req, res) => {
 
 });
 
-//Delete order
+// ======================================================
+// DELETE ORDER
+// ======================================================
 router.delete("/:id", verifyToken, (req, res) => {
 
     db.query(
@@ -299,6 +388,5 @@ router.delete("/:id", verifyToken, (req, res) => {
     );
 
 });
-
 
 module.exports = router;

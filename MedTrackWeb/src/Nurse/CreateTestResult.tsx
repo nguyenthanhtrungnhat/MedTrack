@@ -276,6 +276,7 @@ export default function CreateTestResult() {
                                 >
                                     #{order.orderID} -{" "}
                                     {order.patientName} -{" "}
+                                    {order.admissionRecordCode} -{" "}
                                     {order.typeName}
                                 </option>
                             ))}

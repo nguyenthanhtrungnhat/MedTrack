@@ -11,7 +11,7 @@ export default function DoctorOrderCreate() {
 
     const [searchCIC, setSearchCIC] = useState("");
     const [selectedPatient, setSelectedPatient] = useState<any>(null);
-
+    const [activeAdmission, setActiveAdmission] = useState<any>(null);
     const [testTypeID, setTestTypeID] = useState("");
     const [diagnosisNote, setDiagnosisNote] = useState("");
 
@@ -70,9 +70,32 @@ export default function DoctorOrderCreate() {
         );
     }, [patients, searchCIC]);
 
-    const handleSelectPatient = (patient: any) => {
+    const handleSelectPatient = async (patient: any) => {
+
         setSelectedPatient(patient);
         setSearchCIC(patient.CIC);
+
+        try {
+
+            const res = await axios.get(
+                `http://localhost:3000/doctororder/active-admission/${patient.patientID}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setActiveAdmission(res.data);
+
+        } catch {
+
+            setActiveAdmission(null);
+
+            toast.warning(
+                "Patient has no active admission"
+            );
+        }
     };
 
     const handleCreate = async () => {
@@ -81,7 +104,11 @@ export default function DoctorOrderCreate() {
                 "Please select a patient"
             );
         }
-
+        if (!activeAdmission) {
+            return toast.warning(
+                "Patient has no active admission"
+            );
+        }
         if (!testTypeID) {
             return toast.warning(
                 "Please select test type"
@@ -102,12 +129,14 @@ export default function DoctorOrderCreate() {
 
             await axios.post(
                 "http://localhost:3000/doctororder",
-                {
-                    userID: selectedPatient.userID,
-                    doctorID,
-                    testTypeID,
-                    diagnosisNote,
-                },
+              {
+    userID: selectedPatient.userID,
+    doctorID,
+    admissionID:
+        activeAdmission.admissionID,
+    testTypeID,
+    diagnosisNote,
+},
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -128,7 +157,7 @@ export default function DoctorOrderCreate() {
         } catch (error: any) {
             toast.error(
                 error?.response?.data?.message ||
-                    "Failed to create order"
+                "Failed to create order"
             );
         } finally {
             setLoading(false);
@@ -170,7 +199,7 @@ export default function DoctorOrderCreate() {
                     {!selectedPatient &&
                         searchCIC.trim() &&
                         filteredPatients.length >
-                            0 && (
+                        0 && (
                             <div className="border rounded mt-2">
                                 {filteredPatients.map(
                                     (p) => (
@@ -239,7 +268,26 @@ export default function DoctorOrderCreate() {
                         </div>
                     </div>
                 )}
+                {activeAdmission && (
+                    <div className="alert alert-success">
 
+                        <div>
+                            <b>Admission ID:</b>{" "}
+                            {activeAdmission.admissionID}
+                        </div>
+
+                        <div>
+                            <b>Status:</b>{" "}
+                            {activeAdmission.status}
+                        </div>
+
+                        <div>
+                            <b>Priority:</b>{" "}
+                            {activeAdmission.priority}
+                        </div>
+
+                    </div>
+                )}
                 {/* Test Type */}
                 <div className="mb-3">
                     <label className="form-label">

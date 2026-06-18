@@ -141,7 +141,7 @@ export default function TestResult() {
   };
 
   return (
-    <div className="card dropShadow">
+    <div className="card dropShadow mb-4">
       <div className="card-header blueBg text-white">
         <h5 className="mb-0">
           Test Result List
