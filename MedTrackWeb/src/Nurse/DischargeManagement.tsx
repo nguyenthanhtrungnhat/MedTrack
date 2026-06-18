@@ -28,7 +28,7 @@ export default function DischargeManagement() {
 
     const handleProcessPayment = async (admissionID: number) => {
         if (!window.confirm("Confirm payment received and discharge patient?")) return;
-        
+
         try {
             setProcessingId(admissionID);
             await axios.put(`http://localhost:3000/admission/${admissionID}/discharge-payment`, {}, {
@@ -44,63 +44,65 @@ export default function DischargeManagement() {
     };
 
     return (
-        <div className="card shadow mb-4">
-            <ToastContainer position="top-right" autoClose={2000} />
-            <div className="card-header py-3 d-flex flex-row align-items-center justify-content-between blueBg">
-                <h6 className="m-0 font-weight-bold text-white">Pending Discharges (Payment & Bed Clearance)</h6>
-            </div>
-            <div className="card-body">
-                {loading ? (
-                    <div className="text-center py-4">
-                        <div className="spinner-border text-primary" role="status"></div>
-                        <p className="mt-2">Loading pending discharges...</p>
-                    </div>
-                ) : pendingDischarges.length === 0 ? (
-                    <div className="text-center py-5 text-muted">
-                        <h5>No patients currently waiting for discharge.</h5>
-                    </div>
-                ) : (
-                    <div className="table-responsive">
-                        <table className="table table-bordered table-hover align-middle">
-                            <thead className="table-light">
-                                <tr>
-                                    <th>Admission Code</th>
-                                    <th>Patient Name</th>
-                                    <th>Room - Bed</th>
-                                    <th>Discharge Diagnosis</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {pendingDischarges.map((adm) => (
-                                    <tr key={adm.admissionID}>
-                                        <td><strong>{adm.admissionRecordCode}</strong></td>
-                                        <td>
-                                            {adm.fullName}
-                                            <br/>
-                                            <small className="text-muted">Phone: {adm.phone}</small>
-                                        </td>
-                                        <td>{adm.roomName} - Bed {adm.bedNumber}</td>
-                                        <td>
-                                            <span className="text-truncate d-inline-block" style={{ maxWidth: '200px' }}>
-                                                {adm.dischargeDiagnosis}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <button 
-                                                className="btn btn-success btn-sm w-100"
-                                                onClick={() => handleProcessPayment(adm.admissionID)}
-                                                disabled={processingId === adm.admissionID}
-                                            >
-                                                {processingId === adm.admissionID ? "Processing..." : "Confirm Payment & Discharge"}
-                                            </button>
-                                        </td>
+        <div className="mb-4 dropShadow">
+            <ToastContainer/>
+            <div className="card shadow">
+                <div className="card-header blueBg text-white ">
+                    <h5>Pending Discharges (Payment & Bed Clearance)</h5>
+                </div>
+                <div className="card-body">
+                    {loading ? (
+                        <div className="text-center py-4">
+                            <div className="spinner-border text-primary" role="status"></div>
+                            <p className="mt-2">Loading pending discharges...</p>
+                        </div>
+                    ) : pendingDischarges.length === 0 ? (
+                        <div className="text-center py-5 text-muted">
+                            <h5>No patients currently waiting for discharge.</h5>
+                        </div>
+                    ) : (
+                        <div className="table-responsive">
+                            <table className="table table-bordered table-hover align-middle">
+                                <thead className="table-light">
+                                    <tr>
+                                        <th>Admission Code</th>
+                                        <th>Patient Name</th>
+                                        <th>Room - Bed</th>
+                                        <th>Discharge Diagnosis</th>
+                                        <th>Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                                </thead>
+                                <tbody>
+                                    {pendingDischarges.map((adm) => (
+                                        <tr key={adm.admissionID}>
+                                            <td><strong>{adm.admissionRecordCode}</strong></td>
+                                            <td>
+                                                {adm.fullName}
+                                                <br />
+                                                <small className="text-muted">Phone: {adm.phone}</small>
+                                            </td>
+                                            <td>{adm.roomName} - Bed {adm.bedNumber}</td>
+                                            <td>
+                                                <span className="text-truncate d-inline-block" style={{ maxWidth: '200px' }}>
+                                                    {adm.dischargeDiagnosis}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button
+                                                    className="btn btn-success btn-sm w-100"
+                                                    onClick={() => handleProcessPayment(adm.admissionID)}
+                                                    disabled={processingId === adm.admissionID}
+                                                >
+                                                    {processingId === adm.admissionID ? "Processing..." : "Confirm Payment & Discharge"}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

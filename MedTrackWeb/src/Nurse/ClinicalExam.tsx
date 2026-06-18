@@ -18,7 +18,7 @@ export default function ClinicalExam() {
         symptoms: '',
         diagnosis: ''
     });
-    
+
     const [touched, setTouched] = useState<any>({});
     const [errors, setErrors] = useState<any>({});
 
@@ -64,7 +64,7 @@ export default function ClinicalExam() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!selectedPatient) {
             toast.warning("Please select a patient.");
             return;
@@ -108,100 +108,104 @@ export default function ClinicalExam() {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="mb-4 dropShadow">
             <ToastContainer />
-            <h2 className="mb-4">Clinical Examination (Nurse)</h2>
-            <div className="card shadow-sm p-4">
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3 position-relative">
-                        <label className="form-label fw-bold">Select Patient</label>
-                        <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder="Type to search patient by name or CIC..." 
-                            value={searchPatientTerm}
-                            onChange={(e) => {
-                                setSearchPatientTerm(e.target.value);
-                                setShowDropdown(true);
-                                setSelectedPatient(''); // clear selection if typing
-                            }}
-                            onFocus={() => setShowDropdown(true)}
-                        />
-                        {showDropdown && searchPatientTerm && (
-                            <ul className="list-group position-absolute w-100 shadow-sm" style={{ zIndex: 1000, maxHeight: '250px', overflowY: 'auto' }}>
-                                {patients
-                                    .filter(p => 
-                                        p.fullName?.toLowerCase().includes(searchPatientTerm.toLowerCase()) || 
-                                        p.CIC?.includes(searchPatientTerm)
-                                    )
-                                    .slice(0, 50)
-                                    .map(p => (
-                                    <li 
-                                        key={p.patientID} 
-                                        className="list-group-item list-group-item-action"
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={() => {
-                                            setSelectedPatient(p.patientID);
-                                            setSearchPatientTerm(`${p.fullName} (CIC: ${p.CIC})`);
-                                            setShowDropdown(false);
-                                        }}
-                                    >
-                                        {p.fullName} (CIC: {p.CIC})
-                                    </li>
-                                ))}
-                                {patients.filter(p => p.fullName?.toLowerCase().includes(searchPatientTerm.toLowerCase()) || p.CIC?.includes(searchPatientTerm)).length === 0 && (
-                                    <li className="list-group-item text-muted">No patients found</li>
-                                )}
-                            </ul>
-                        )}
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-3 mb-3">
-                            <label className="form-label">Height (cm)</label>
-                            <input type="number" step="0.1" name="height" className={`form-control ${touched.height && errors.height ? 'is-invalid' : ''}`} value={formData.height} onChange={handleChange} required />
-                            {touched.height && errors.height && <div className="invalid-feedback">{errors.height}</div>}
+            <div className="card shadow">
+                <div className="card-header blueBg text-white ">
+                    <h5>Clinical Examination (Nurse)</h5>
+                </div>
+                <div className="card-body">
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3 position-relative">
+                            <label className="form-label fw-bold">Select Patient</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Type to search patient by name or CIC..."
+                                value={searchPatientTerm}
+                                onChange={(e) => {
+                                    setSearchPatientTerm(e.target.value);
+                                    setShowDropdown(true);
+                                    setSelectedPatient(''); // clear selection if typing
+                                }}
+                                onFocus={() => setShowDropdown(true)}
+                            />
+                            {showDropdown && searchPatientTerm && (
+                                <ul className="list-group position-absolute w-100 shadow-sm" style={{ zIndex: 1000, maxHeight: '250px', overflowY: 'auto' }}>
+                                    {patients
+                                        .filter(p =>
+                                            p.fullName?.toLowerCase().includes(searchPatientTerm.toLowerCase()) ||
+                                            p.CIC?.includes(searchPatientTerm)
+                                        )
+                                        .slice(0, 50)
+                                        .map(p => (
+                                            <li
+                                                key={p.patientID}
+                                                className="list-group-item list-group-item-action"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={() => {
+                                                    setSelectedPatient(p.patientID);
+                                                    setSearchPatientTerm(`${p.fullName} (CIC: ${p.CIC})`);
+                                                    setShowDropdown(false);
+                                                }}
+                                            >
+                                                {p.fullName} (CIC: {p.CIC})
+                                            </li>
+                                        ))}
+                                    {patients.filter(p => p.fullName?.toLowerCase().includes(searchPatientTerm.toLowerCase()) || p.CIC?.includes(searchPatientTerm)).length === 0 && (
+                                        <li className="list-group-item text-muted">No patients found</li>
+                                    )}
+                                </ul>
+                            )}
                         </div>
-                        <div className="col-md-3 mb-3">
-                            <label className="form-label">Weight (kg)</label>
-                            <input type="number" step="0.1" name="weight" className={`form-control ${touched.weight && errors.weight ? 'is-invalid' : ''}`} value={formData.weight} onChange={handleChange} required />
-                            {touched.weight && errors.weight && <div className="invalid-feedback">{errors.weight}</div>}
+
+                        <div className="row">
+                            <div className="col-md-3 mb-3">
+                                <label className="form-label">Height (cm)</label>
+                                <input type="number" step="0.1" name="height" className={`form-control ${touched.height && errors.height ? 'is-invalid' : ''}`} value={formData.height} onChange={handleChange} required />
+                                {touched.height && errors.height && <div className="invalid-feedback">{errors.height}</div>}
+                            </div>
+                            <div className="col-md-3 mb-3">
+                                <label className="form-label">Weight (kg)</label>
+                                <input type="number" step="0.1" name="weight" className={`form-control ${touched.weight && errors.weight ? 'is-invalid' : ''}`} value={formData.weight} onChange={handleChange} required />
+                                {touched.weight && errors.weight && <div className="invalid-feedback">{errors.weight}</div>}
+                            </div>
+                            <div className="col-md-3 mb-3">
+                                <label className="form-label">Heart Rate (bpm)</label>
+                                <input type="number" name="heartRate" className={`form-control ${touched.heartRate && errors.heartRate ? 'is-invalid' : ''}`} value={formData.heartRate} onChange={handleChange} required />
+                                {touched.heartRate && errors.heartRate && <div className="invalid-feedback">{errors.heartRate}</div>}
+                            </div>
+                            <div className="col-md-3 mb-3">
+                                <label className="form-label">Temperature (°C)</label>
+                                <input type="number" step="0.1" name="temperature" className={`form-control ${touched.temperature && errors.temperature ? 'is-invalid' : ''}`} value={formData.temperature} onChange={handleChange} required />
+                                {touched.temperature && errors.temperature && <div className="invalid-feedback">{errors.temperature}</div>}
+                            </div>
                         </div>
-                        <div className="col-md-3 mb-3">
-                            <label className="form-label">Heart Rate (bpm)</label>
-                            <input type="number" name="heartRate" className={`form-control ${touched.heartRate && errors.heartRate ? 'is-invalid' : ''}`} value={formData.heartRate} onChange={handleChange} required />
-                            {touched.heartRate && errors.heartRate && <div className="invalid-feedback">{errors.heartRate}</div>}
+
+                        <div className="mb-3">
+                            <label className="form-label">Blood Pressure</label>
+                            <input type="text" name="bloodPressure" className={`form-control ${touched.bloodPressure && errors.bloodPressure ? 'is-invalid' : ''}`} placeholder="e.g., 120/80" value={formData.bloodPressure} onChange={handleChange} required />
+                            {touched.bloodPressure && errors.bloodPressure && <div className="invalid-feedback">{errors.bloodPressure}</div>}
                         </div>
-                        <div className="col-md-3 mb-3">
-                            <label className="form-label">Temperature (°C)</label>
-                            <input type="number" step="0.1" name="temperature" className={`form-control ${touched.temperature && errors.temperature ? 'is-invalid' : ''}`} value={formData.temperature} onChange={handleChange} required />
-                            {touched.temperature && errors.temperature && <div className="invalid-feedback">{errors.temperature}</div>}
+
+                        <div className="mb-3">
+                            <label className="form-label">General Condition</label>
+                            <textarea name="generalCondition" className="form-control" rows={2} value={formData.generalCondition} onChange={handleChange}></textarea>
                         </div>
-                    </div>
 
-                    <div className="mb-3">
-                        <label className="form-label">Blood Pressure</label>
-                        <input type="text" name="bloodPressure" className={`form-control ${touched.bloodPressure && errors.bloodPressure ? 'is-invalid' : ''}`} placeholder="e.g., 120/80" value={formData.bloodPressure} onChange={handleChange} required />
-                        {touched.bloodPressure && errors.bloodPressure && <div className="invalid-feedback">{errors.bloodPressure}</div>}
-                    </div>
+                        <div className="mb-3">
+                            <label className="form-label">Symptoms</label>
+                            <textarea name="symptoms" className="form-control" rows={3} value={formData.symptoms} onChange={handleChange}></textarea>
+                        </div>
 
-                    <div className="mb-3">
-                        <label className="form-label">General Condition</label>
-                        <textarea name="generalCondition" className="form-control" rows={2} value={formData.generalCondition} onChange={handleChange}></textarea>
-                    </div>
+                        <div className="mb-3">
+                            <label className="form-label">Initial Diagnosis</label>
+                            <textarea name="diagnosis" className="form-control" rows={3} value={formData.diagnosis} onChange={handleChange}></textarea>
+                        </div>
 
-                    <div className="mb-3">
-                        <label className="form-label">Symptoms</label>
-                        <textarea name="symptoms" className="form-control" rows={3} value={formData.symptoms} onChange={handleChange}></textarea>
-                    </div>
-
-                    <div className="mb-3">
-                        <label className="form-label">Initial Diagnosis</label>
-                        <textarea name="diagnosis" className="form-control" rows={3} value={formData.diagnosis} onChange={handleChange}></textarea>
-                    </div>
-
-                    <button type="submit" className="btn btn-primary w-100">Submit Clinical Exam</button>
-                </form>
+                        <button type="submit" className="btn btn-primary w-100">Submit Clinical Exam</button>
+                    </form>
+                </div>
             </div>
         </div>
     );

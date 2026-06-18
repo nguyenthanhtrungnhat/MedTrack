@@ -225,7 +225,7 @@ export default function CreateTestResult() {
         } catch (err: any) {
             toast.error(
                 err.response?.data?.message ||
-                    "Failed to save"
+                "Failed to save"
             );
         }
     };
@@ -234,186 +234,185 @@ export default function CreateTestResult() {
     // UI
     // =========================
     return (
-        <div className="card shadow">
+        <div className="mb-4 dropShadow">
             <ToastContainer />
+            <div className="card shadow">
+                <div className="card-header blueBg text-white ">
+                    <h5>Submit Test Result</h5>
+                </div>
 
-            <div className="card-header blueBg text-white">
-                <h5>Create Test Result</h5>
-            </div>
+                <div className="card-body">
+                    {/* ORDER SELECT */}
+                    <div className="mb-3">
+                        <label>Doctor Order</label>
+                        <select
+                            className="form-select"
+                            value={selectedOrder?.orderID || ""}
+                            onChange={(e) => {
+                                const order = orders.find(
+                                    (x) =>
+                                        Number(x.orderID) ===
+                                        Number(e.target.value)
+                                );
 
-            <div className="card-body">
-                {/* ORDER SELECT */}
-                <div className="mb-3">
-                    <label>Doctor Order</label>
-                    <select
-                        className="form-select"
-                        value={selectedOrder?.orderID || ""}
-                        onChange={(e) => {
-                            const order = orders.find(
-                                (x) =>
-                                    Number(x.orderID) ===
-                                    Number(e.target.value)
-                            );
+                                setSelectedOrder(order || null);
+                                setItems([]);
+                                setTitle("");
 
-                            setSelectedOrder(order || null);
-                            setItems([]);
-                            setTitle("");
+                                if (!order) return;
 
-                            if (!order) return;
-
-                            setTitle(order.typeName || "");
-                            loadTestItems(order.testTypeID);
-                        }}
-                    >
-                        <option value="">
-                            Select Order
-                        </option>
-
-                        {orders.map((order) => (
-                            <option
-                                key={order.orderID}
-                                value={order.orderID}
-                            >
-                                #{order.orderID} -{" "}
-                                {order.patientName} -{" "}
-                                {order.typeName}
+                                setTitle(order.typeName || "");
+                                loadTestItems(order.testTypeID);
+                            }}
+                        >
+                            <option value="">
+                                Select Order
                             </option>
-                        ))}
-                    </select>
-                </div>
 
-                {/* INFO */}
-                {selectedOrder && (
-                    <div className="alert alert-info">
-                        <b>Patient:</b>{" "}
-                        {selectedOrder.patientName}
-                        <br />
-                        <b>Test:</b>{" "}
-                        {selectedOrder.typeName}
-                        <br />
-                        <b>Diagnosis:</b>{" "}
-                        {selectedOrder.diagnosisNote}
-                    </div>
-                )}
-
-                {/* TITLE */}
-                <div className="mb-3">
-                    <label>Title</label>
-                    <input
-                        className="form-control"
-                        value={title}
-                        onChange={(e) =>
-                            setTitle(e.target.value)
-                        }
-                    />
-                </div>
-
-                {/* REMARKS */}
-                <div className="mb-3">
-                    <label>Remarks</label>
-                    <textarea
-                        className="form-control"
-                        rows={3}
-                        value={remarks}
-                        onChange={(e) =>
-                            setRemarks(e.target.value)
-                        }
-                    />
-                </div>
-
-                <hr />
-
-                {/* ITEMS */}
-                <h6>Test Parameters</h6>
-
-                {items.length === 0 && (
-                    <div className="alert alert-warning">
-                        No parameters loaded
-                    </div>
-                )}
-
-                {items.map((item, index) => (
-                    <div
-                        key={index}
-                        className="border rounded p-3 mb-3"
-                    >
-                        <div className="row">
-                            <div className="col-md-3">
-                                <input
-                                    className="form-control"
-                                    value={item.parameterName}
-                                    readOnly
-                                />
-                            </div>
-
-                            <div className="col-md-2">
-                                <input
-                                    className={`form-control ${
-                                        errors[index]
-                                            ? "border-danger"
-                                            : ""
-                                    }`}
-                                    placeholder="Value"
-                                    value={item.resultValue}
-                                    onChange={(e) =>
-                                        updateItem(
-                                            index,
-                                            "resultValue",
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                                {errors[index] && (
-                                    <small className="text-danger">
-                                        {errors[index]}
-                                    </small>
-                                )}
-                            </div>
-
-                            <div className="col-md-2">
-                                <input
-                                    className="form-control"
-                                    value={item.unit}
-                                    readOnly
-                                />
-                            </div>
-
-                            <div className="col-md-2">
-                                <input
-                                    className="form-control"
-                                    value={
-                                        item.referenceRange
-                                    }
-                                    readOnly
-                                />
-                            </div>
-
-                            <div className="col-md-3">
-                                <span
-                                    className={`badge ${
-                                        item.abnormalFlag ===
-                                        "High"
-                                            ? "bg-danger"
-                                            : item.abnormalFlag ===
-                                              "Low"
-                                            ? "bg-warning text-dark"
-                                            : "bg-success"
-                                    }`}
+                            {orders.map((order) => (
+                                <option
+                                    key={order.orderID}
+                                    value={order.orderID}
                                 >
-                                    {item.abnormalFlag}
-                                </span>
+                                    #{order.orderID} -{" "}
+                                    {order.patientName} -{" "}
+                                    {order.typeName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* INFO */}
+                    {selectedOrder && (
+                        <div className="alert alert-info">
+                            <b>Patient:</b>{" "}
+                            {selectedOrder.patientName}
+                            <br />
+                            <b>Test:</b>{" "}
+                            {selectedOrder.typeName}
+                            <br />
+                            <b>Diagnosis:</b>{" "}
+                            {selectedOrder.diagnosisNote}
+                        </div>
+                    )}
+
+                    {/* TITLE */}
+                    <div className="mb-3">
+                        <label>Title</label>
+                        <input
+                            className="form-control"
+                            value={title}
+                            onChange={(e) =>
+                                setTitle(e.target.value)
+                            }
+                        />
+                    </div>
+
+                    {/* REMARKS */}
+                    <div className="mb-3">
+                        <label>Remarks</label>
+                        <textarea
+                            className="form-control"
+                            rows={3}
+                            value={remarks}
+                            onChange={(e) =>
+                                setRemarks(e.target.value)
+                            }
+                        />
+                    </div>
+
+                    <hr />
+
+                    {/* ITEMS */}
+                    <h6>Test Parameters</h6>
+
+                    {items.length === 0 && (
+                        <div className="alert alert-warning">
+                            No parameters loaded
+                        </div>
+                    )}
+
+                    {items.map((item, index) => (
+                        <div
+                            key={index}
+                            className="border rounded p-3 mb-3"
+                        >
+                            <div className="row">
+                                <div className="col-md-3">
+                                    <input
+                                        className="form-control"
+                                        value={item.parameterName}
+                                        readOnly
+                                    />
+                                </div>
+
+                                <div className="col-md-2">
+                                    <input
+                                        className={`form-control ${errors[index]
+                                                ? "border-danger"
+                                                : ""
+                                            }`}
+                                        placeholder="Value"
+                                        value={item.resultValue}
+                                        onChange={(e) =>
+                                            updateItem(
+                                                index,
+                                                "resultValue",
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                    {errors[index] && (
+                                        <small className="text-danger">
+                                            {errors[index]}
+                                        </small>
+                                    )}
+                                </div>
+
+                                <div className="col-md-2">
+                                    <input
+                                        className="form-control"
+                                        value={item.unit}
+                                        readOnly
+                                    />
+                                </div>
+
+                                <div className="col-md-2">
+                                    <input
+                                        className="form-control"
+                                        value={
+                                            item.referenceRange
+                                        }
+                                        readOnly
+                                    />
+                                </div>
+
+                                <div className="col-md-3">
+                                    <span
+                                        className={`badge ${item.abnormalFlag ===
+                                                "High"
+                                                ? "bg-danger"
+                                                : item.abnormalFlag ===
+                                                    "Low"
+                                                    ? "bg-warning text-dark"
+                                                    : "bg-success"
+                                            }`}
+                                    >
+                                        {item.abnormalFlag}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
 
-                {/* SUBMIT */}
-                <button
-                    className="btn btn-success"
-                    onClick={handleSubmit}
-                >
-                    Save Test Result
-                </button>
+                    {/* SUBMIT */}
+                    <button
+                        className="btn btn-success"
+                        onClick={handleSubmit}
+                    >
+                        Save Test Result
+                    </button>
+                </div>
             </div>
         </div>
     );
