@@ -34,6 +34,8 @@ export interface PatientProps {
     dischargeDate?: string;
     CIC?: number;
     username?: string;
+    admissionID?:number;
+    admissionStatus?:string;
 }
 
 export interface RecordProps {
