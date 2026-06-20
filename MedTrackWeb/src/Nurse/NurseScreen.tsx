@@ -43,7 +43,7 @@ export default function NurseScreen() {
             try {
                 // Schedule count
                 const scheduleRes = await API.get(
-                    `/schedules/nurse/${user.nurseID}`
+                    `/schedules/nurse/${user.nurseID}/week`
                 );
 
                 setCount(
@@ -121,7 +121,7 @@ export default function NurseScreen() {
                     <div className="row medicineScheduleDetail">
                         <div className="col-lg-6 col-sm-6 d-flex justify-content-center mb-2">
                             <div className="border border-success square170-250 padding20 d-flex flex-column justify-content-between">
-                                <h5 className="medSche greenText mb-3">Assigned Task</h5>
+                                <h5 className="medSche greenText mb-3">Assigned Task This Week</h5>
                                 <div className="d-flex align-items-center mb-3">
                                     <p className="size25 greenText mb-0 me-auto">{count}</p>
                                     <i

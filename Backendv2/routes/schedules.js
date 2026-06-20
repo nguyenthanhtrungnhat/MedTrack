@@ -277,4 +277,27 @@ router.delete("/:id", verifyToken, (req, res) => {
   );
 });
 
+router.get("/nurse/:nurseID/week", verifyToken, (req, res) => {
+  const nurseID = req.params.nurseID;
+
+  const sql = `
+    SELECT
+      scheduleID,
+      name,
+      date,
+      start_at,
+      working_hours,
+      color,
+      roomID
+    FROM schedules
+    WHERE nurseID = ?
+      AND YEARWEEK(date, 1) = YEARWEEK(CURDATE(), 1)
+    ORDER BY date, start_at
+  `;
+
+  db.query(sql, [nurseID], (err, rows) => {
+    if (err) return res.status(500).json(err);
+    res.json(rows);
+  });
+});
 module.exports = router;
