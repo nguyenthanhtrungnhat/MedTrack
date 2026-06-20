@@ -171,6 +171,7 @@ export default function ManageAdmissions() {
                                     <div className="mb-2">
                                         <label className="form-label fw-bold">Department</label>
                                         <select
+                                            required
                                             className="form-select"
                                             value={departmentID}
                                             onChange={(e) => setDepartmentID(e.target.value)}
@@ -187,6 +188,7 @@ export default function ManageAdmissions() {
                                     <div className="mb-2">
                                         <label className="form-label fw-bold">Advance Fee (VND)</label>
                                         <input
+                                            required
                                             type="number"
                                             className="form-control"
                                             value={advanceFee}
@@ -210,6 +212,7 @@ export default function ManageAdmissions() {
                                     <div className="mb-2">
                                         <label className="form-label fw-bold">Expected Admission Date</label>
                                         <input
+                                            required
                                             type="datetime-local"
                                             className="form-control"
                                             value={expectedDate}
@@ -220,6 +223,7 @@ export default function ManageAdmissions() {
                                     <div className="mb-2">
                                         <label className="form-label fw-bold">Hospitalization Diagnosis</label>
                                         <textarea
+                                            required
                                             className="form-control"
                                             rows={2}
                                             value={hospitalizationsDiagnosis}
@@ -230,6 +234,7 @@ export default function ManageAdmissions() {
                                     <div className="mb-2">
                                         <label className="form-label fw-bold">Summary Condition</label>
                                         <textarea
+                                            required
                                             className="form-control"
                                             rows={2}
                                             value={summaryCondition}
