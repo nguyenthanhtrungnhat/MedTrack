@@ -70,6 +70,7 @@ export default function DoctorScreen() {
 
     return (
         <div className="row">
+            
             {loading ? (
                 <DoctorInformation
                     nurseID={String(user?.nurseID)}

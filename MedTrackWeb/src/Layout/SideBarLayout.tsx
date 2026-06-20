@@ -23,7 +23,7 @@ export default function SideBarLayout() {
         if (!userID) return;
 
         API
-            .get(`http://localhost:3000/users/basic/${userID}`)
+            .get(`/users/basic/${userID}`)
             .then((res) => {
                 if (res && res.data) {
                     setInfo(res.data);
@@ -38,7 +38,7 @@ export default function SideBarLayout() {
 
     const handleLogout = () => {
         sessionStorage.clear();
-        toast.success("Logged out successfully!", { position: "top-right" });
+        toast.success("Logged out successfully!");
         navigate("/");
     };
 

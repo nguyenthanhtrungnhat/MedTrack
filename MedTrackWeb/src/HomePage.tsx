@@ -5,6 +5,7 @@ import prom3 from './images/Asset-4.webp';
 import prom4 from './images/Asset-5.webp';
 import Introduce from './Introduce';
 import API from "./api";
+import { ToastContainer } from 'react-toastify';
 export default function HomePage() {
     const [news, setNews] = useState<any[]>([]);
     const token = sessionStorage.getItem("token");
@@ -21,6 +22,7 @@ export default function HomePage() {
     }, []);
     return (
         <>
+        <ToastContainer/>
             <div className="container-fluid pt-5 mt-5">
                 <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel">
                     <div className="carousel-indicators">

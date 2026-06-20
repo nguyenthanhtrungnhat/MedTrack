@@ -3,7 +3,6 @@ import { jwtDecode } from "jwt-decode"; // fixed import syntax
 import logo from "../images/logo.webp";
 import { Link } from "react-router-dom";
 import PatientSearch from "../components/search/PatientSearch";
-import Noti from "../Noti";
 
 const getUserRoleFromToken = () => {
     const token = sessionStorage.getItem("token");
