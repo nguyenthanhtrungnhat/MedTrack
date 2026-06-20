@@ -263,7 +263,7 @@ router.put('/:id/discharge-order', verifyToken, (req, res) => {
 // GET /admission/pending-discharge — Nurse views patients waiting to be discharged
 router.get('/pending-discharge', verifyToken, (req, res) => {
   const sql = `
-    SELECT a.*, p.image, u.fullName, u.dob, u.phone, d.fullName as doctorName, dp.departmentName, b.roomID, b.bedNumber, r.location as roomName
+    SELECT a.*, p.image, u.fullName, u.dob, u.phone, d.fullName as doctorName, dp.departmentName, b.roomID, b.bedNumber, r.location as roomName, ds.diagnosisText as dischargeDiagnosis
     FROM admission a
     JOIN patient p ON a.patientID = p.patientID
     JOIN user u ON p.userID = u.userID
@@ -272,6 +272,7 @@ router.get('/pending-discharge', verifyToken, (req, res) => {
     JOIN department dp ON a.departmentID = dp.departmentID
     LEFT JOIN bed b ON p.patientID = b.patientID
     LEFT JOIN room r ON b.roomID = r.roomID
+    LEFT JOIN discharge ds ON a.dischargeID = ds.dischargeID
     WHERE a.status = 'Pending Discharge Payment'
     ORDER BY a.admissionDate ASC
   `;

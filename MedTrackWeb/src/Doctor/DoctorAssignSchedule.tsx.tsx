@@ -276,7 +276,7 @@ export default function DoctorAssignSchedule() {
 
         <Modal.Body>
           <Row>
-            <Col md={6}>
+            <Col md={4}>
               <Form.Label>Task</Form.Label>
               <Form.Select
                 value={form.name}
@@ -298,7 +298,7 @@ export default function DoctorAssignSchedule() {
               </Form.Select>
             </Col>
 
-            <Col md={6}>
+            <Col md={4}>
               <Form.Label>Nurse</Form.Label>
               <Form.Select
                 value={form.nurseID}
@@ -310,6 +310,23 @@ export default function DoctorAssignSchedule() {
                 {nurses.map(n => (
                   <option key={n.nurseID} value={n.nurseID}>
                     {n.fullName}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+
+            <Col md={4}>
+              <Form.Label>Room</Form.Label>
+              <Form.Select
+                value={form.roomID}
+                onChange={(e) =>
+                  setForm({ ...form, roomID: e.target.value })
+                }
+              >
+                <option value="">Select Room</option>
+                {rooms.map((r: any) => (
+                  <option key={r.roomID} value={r.roomID}>
+                    {r.location}
                   </option>
                 ))}
               </Form.Select>
