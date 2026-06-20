@@ -1,34 +1,45 @@
+// src/api.ts
+
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: "http://localhost:3000",
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 
 // ================= REQUEST INTERCEPTOR =================
-API.interceptors.request.use((config) => {
-    const token = sessionStorage.getItem("token");
+API.interceptors.request.use(
+    (config) => {
+        const token = sessionStorage.getItem("token");
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
 
-    return config;
-});
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
 // ================= RESPONSE INTERCEPTOR =================
 API.interceptors.response.use(
     (response) => response,
     (error) => {
+        const status = error?.response?.status;
         const code = error?.response?.data?.code;
 
         if (
-            error?.response?.status === 401 &&
-            (code === "TOKEN_EXPIRED" || code === "INVALID_TOKEN")
+            status === 401 &&
+            (code === "TOKEN_EXPIRED" ||
+                code === "INVALID_TOKEN")
         ) {
-            // 🔥 clear session toàn bộ
             sessionStorage.clear();
 
-            alert("Session expired. Please login again.");
+            alert(
+                "Your session has expired. Please login again."
+            );
 
             window.location.href = "/login";
         }
