@@ -1,69 +1,34 @@
 import { useEffect, useState } from "react";
 import API from "../api";
 
-import {
-  Calendar,
-  momentLocalizer,
-  View,
-} from "react-big-calendar";
-
+import { Calendar, momentLocalizer, View } from "react-big-calendar";
 import moment from "moment";
 
-import {
-  Modal,
-  Button,
-  Form,
-  Row,
-  Col,
-} from "react-bootstrap";
-
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
-const TASK_OPTIONS = [
-  {
-    name: "Medication Round",
-    color: "#dc3545", // Red
-  },
-  {
-    name: "Vital Signs Check",
-    color: "#0d6efd", // Blue
-  },
-  {
-    name: "Patient Admission",
-    color: "#198754", // Green
-  },
-  {
-    name: "Patient Discharge",
-    color: "#fd7e14", // Orange
-  },
-  {
-    name: "Blood Sample Collection",
-    color: "#6f42c1", // Purple
-  },
-  {
-    name: "IV Therapy",
-    color: "#20c997", // Teal
-  },
-  {
-    name: "Wound Care",
-    color: "#e83e8c", // Pink
-  },
-  {
-    name: "ECG Monitoring",
-    color: "#6610f2", // Indigo
-  },
-  {
-    name: "Emergency Support",
-    color: "#000000", // Black
-  },
-  {
-    name: "General Ward Duty",
-    color: "#6c757d", // Gray
-  },
-];
 
 const localizer = momentLocalizer(moment);
+
+const TASK_OPTIONS = [
+  { name: "Medication Round", color: "#dc3545" },
+  { name: "Vital Signs Check", color: "#0d6efd" },
+  { name: "Patient Admission", color: "#198754" },
+  { name: "Patient Discharge", color: "#fd7e14" },
+  { name: "Blood Sample Collection", color: "#6f42c1" },
+  { name: "IV Therapy", color: "#20c997" },
+  { name: "Wound Care", color: "#e83e8c" },
+  { name: "ECG Monitoring", color: "#6610f2" },
+  { name: "Emergency Support", color: "#000000" },
+  { name: "General Ward Duty", color: "#6c757d" },
+];
+
+type RoomType = {
+  roomID: number;
+  location: string;
+  departmentID: number;
+};
 
 type NurseType = {
   nurseID: number;
@@ -86,16 +51,14 @@ type ScheduleType = {
 export default function DoctorAssignSchedule() {
   const [events, setEvents] = useState<any[]>([]);
   const [nurses, setNurses] = useState<NurseType[]>([]);
-
+  const [rooms, setRooms] = useState<RoomType[]>([]);
   const [showModal, setShowModal] = useState(false);
 
-  const [editingID, setEditingID] =
-    useState<number | null>(null);
-
+  const [editingID, setEditingID] = useState<number | null>(null);
   const [date, setDate] = useState(new Date());
+  const [view, setView] = useState<View>("week");
 
-  const [view, setView] =
-    useState<View>("week");
+  const departmentID = sessionStorage.getItem("departmentID");
 
   const [form, setForm] = useState({
     name: "",
@@ -110,162 +73,107 @@ export default function DoctorAssignSchedule() {
   useEffect(() => {
     loadSchedules();
     loadNurses();
+    loadRooms();
   }, []);
-
 
   const loadNurses = async () => {
     try {
-      const res = await API.get(
-        "/schedules/nurses"
-      );
-
+      const res = await API.get("/schedules/nurses");
       setNurses(res.data);
     } catch (err) {
       console.error(err);
     }
   };
 
+  const loadRooms = async () => {
+    if (!departmentID) return;
+    try {
+      const res = await API.get(`/rooms/department/${departmentID}`);
+      setRooms(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load rooms");
+    }
+  };
+
+  // 🔥 FULL FIX HERE
   const loadSchedules = async () => {
     try {
-      const res = await API.get(
-        "/schedules"
-      );
+      const res = await API.get("/schedules");
 
-      const mapped = res.data.map(
-        (s: ScheduleType) => {
-          const start = new Date(
-            `${s.date.split("T")[0]}T${s.start_at}`
-          );
+      const mapped = res.data.flatMap((s: ScheduleType) => {
+        const start = moment(
+          `${s.date} ${s.start_at}`,
+          "YYYY-MM-DD HH:mm:ss"
+        );
 
-          const end = new Date(start);
+        const end = moment(start).add(
+          Number(s.working_hours),
+          "hours"
+        );
 
-          end.setHours(
-            end.getHours() +
-            Number(s.working_hours)
-          );
+        const base = {
+          id: s.scheduleID,
+          title: `${s.fullName} - ${s.name}`,
+          resource: s,
+        };
 
-          return {
-            id: s.scheduleID,
-            title: `${s.fullName} - ${s.name}`,
-            start,
-            end,
-            resource: s,
-          };
+        // normal case (same day)
+        if (end.isSame(start, "day")) {
+          return [
+            {
+              ...base,
+              start: start.toDate(),
+              end: end.toDate(),
+            },
+          ];
         }
-      );
+
+        // cross midnight → SPLIT EVENT
+        return [
+          {
+            ...base,
+            start: start.toDate(),
+            end: start.clone().endOf("day").toDate(),
+          },
+          {
+            ...base,
+            start: start.clone().add(1, "day").startOf("day").toDate(),
+            end: end.toDate(),
+          },
+        ];
+      });
 
       setEvents(mapped);
     } catch (err) {
       console.error(err);
-      toast.error(
-        "Failed to load schedules"
-      );
+      toast.error("Failed to load schedules");
     }
   };
 
-  const resetForm = () => {
-    setEditingID(null);
-
-    setForm({
-      name: "",
-      date: "",
-      start_at: "",
-      working_hours: 8,
-      nurseID: "",
-      roomID: "",
-      color: "#3174ad",
-    });
-  };
-
-  const openCreate = () => {
-    resetForm();
-    setShowModal(true);
-  };
-
-  const openEdit = (event: any) => {
-    const s = event.resource;
-
-    setEditingID(s.scheduleID);
-
-    setForm({
-      name: s.name,
-      date: s.date.split("T")[0],
-      start_at: s.start_at.substring(
-        0,
-        5
-      ),
-      working_hours: s.working_hours,
-      nurseID: String(s.nurseID),
-      roomID: String(s.roomID),
-      color: s.color || "#3174ad",
-    });
-
-    setShowModal(true);
-  };
-
-  const handleSelectSlot = ({
-    start,
-  }: any) => {
-    resetForm();
-
-    setForm({
-      name: "",
-      date: moment(start).format(
-        "YYYY-MM-DD"
-      ),
-      start_at: moment(start).format(
-        "HH:mm"
-      ),
-      working_hours: 8,
-      nurseID: "",
-      roomID: "",
-      color: "#3174ad",
-    });
-
-    setShowModal(true);
-  };
-
   const saveSchedule = async () => {
-    if (
-      !form.name ||
-      !form.nurseID ||
-      !form.roomID
-    ) {
-      toast.warning(
-        "Please fill all required fields"
-      );
+    if (!form.name || !form.nurseID || !form.roomID) {
+      toast.warning("Please fill all required fields");
       return;
     }
 
     try {
       const payload = {
         ...form,
+        start_at: `${form.start_at}:00`,
         nurseID: Number(form.nurseID),
         roomID: Number(form.roomID),
       };
 
       if (editingID) {
-        await API.put(
-          `/schedules/${editingID}`,
-          payload
-        );
-
-        toast.success(
-          "Schedule updated"
-        );
+        await API.put(`/schedules/${editingID}`, payload);
+        toast.success("Updated");
       } else {
-        await API.post(
-          "/schedules",
-          payload
-        );
-
-        toast.success(
-          "Schedule created"
-        );
+        await API.post("/schedules", payload);
+        toast.success("Created");
       }
 
       setShowModal(false);
-
       loadSchedules();
     } catch (err) {
       console.error(err);
@@ -275,23 +183,12 @@ export default function DoctorAssignSchedule() {
 
   const deleteSchedule = async () => {
     if (!editingID) return;
-
-    if (
-      !window.confirm(
-        "Delete this schedule?"
-      )
-    )
-      return;
+    if (!window.confirm("Delete this schedule?")) return;
 
     try {
-      await API.delete(
-        `/schedules/${editingID}`
-      );
-
+      await API.delete(`/schedules/${editingID}`);
       toast.success("Deleted");
-
       setShowModal(false);
-
       loadSchedules();
     } catch (err) {
       console.error(err);
@@ -299,38 +196,17 @@ export default function DoctorAssignSchedule() {
     }
   };
 
-  const handleTaskChange = (taskName: string) => {
-    const selected = TASK_OPTIONS.find(
-      t => t.name === taskName
-    );
-
-    if (!selected) return;
-
-    setForm({
-      ...form,
-      name: selected.name,
-      color: selected.color
-    });
-  };
   return (
     <div className="card shadow-sm mb-4">
-      <div className="card-header blueBg text-white d-flex justify-content-between align-items-center">
-        <h5 className="mb-0">
-          Nurse Schedule Management
-        </h5>
+      <div className="card-header blueBg text-white d-flex justify-content-between">
+        <h5>Nurse Schedule Management</h5>
 
-        <Button
-          variant="light"
-          onClick={openCreate}
-        >
+        <Button onClick={() => setShowModal(true)}>
           + Add Schedule
         </Button>
       </div>
 
-      <div
-        className="p-3"
-        style={{ height: 850 }}
-      >
+      <div style={{ height: 850 }} className="p-3">
         <Calendar
           localizer={localizer}
           events={events}
@@ -340,109 +216,99 @@ export default function DoctorAssignSchedule() {
           endAccessor="end"
           selectable
           popup
-          views={[
-            "month",
-            "week",
-            "day",
-            "agenda",
-          ]}
-          onNavigate={(newDate) =>
-            setDate(newDate)
-          }
-          onView={(newView) =>
-            setView(newView)
-          }
-          onSelectEvent={openEdit}
-          onSelectSlot={
-            handleSelectSlot
-          }
+          views={["month", "week", "day", "agenda"]}
+
+          onNavigate={(d) => setDate(d)}
+          onView={(v) => setView(v)}
+          onSelectEvent={(e: any) => {
+            const s = e.resource;
+            setEditingID(s.scheduleID);
+            setForm({
+              name: s.name,
+              date: s.date.split("T")[0],
+              start_at: s.start_at.substring(0, 5),
+              working_hours: s.working_hours,
+              nurseID: String(s.nurseID),
+              roomID: String(s.roomID),
+              color: s.color || "#3174ad",
+            });
+            setShowModal(true);
+          }}
+
+          onSelectSlot={(slot: any) => {
+            setEditingID(null);
+            setForm({
+              name: "",
+              date: moment(slot.start).format("YYYY-MM-DD"),
+              start_at: moment(slot.start).format("HH:mm"),
+              working_hours: 8,
+              nurseID: "",
+              roomID: "",
+              color: "#3174ad",
+            });
+            setShowModal(true);
+          }}
+
+          step={30}
+          timeslots={2}
+
+          min={moment().startOf("day").toDate()}
+          max={moment().endOf("day").toDate()}
+
           eventPropGetter={(event) => ({
             style: {
-              backgroundColor:
-                event.resource.color ||
-                "#3174ad",
-              borderRadius: "5px",
+              backgroundColor: event.resource.color || "#3174ad",
+              borderRadius: "6px",
               border: "none",
+              padding: "2px",
+              fontSize: "12px",
             },
           })}
         />
       </div>
 
-      <Modal
-        show={showModal}
-        onHide={() =>
-          setShowModal(false)
-        }
-        size="lg"
-      >
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>
-            {editingID
-              ? "Edit Schedule"
-              : "Create Schedule"}
+            {editingID ? "Edit Schedule" : "Create Schedule"}
           </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <Row>
             <Col md={6}>
-              <Form.Label>
-                Schedule Name
-              </Form.Label>
-
+              <Form.Label>Task</Form.Label>
               <Form.Select
                 value={form.name}
                 onChange={(e) => {
-                  const selectedTask = TASK_OPTIONS.find(
-                    t => t.name === e.target.value
-                  );
-
+                  const t = TASK_OPTIONS.find(x => x.name === e.target.value);
                   setForm({
                     ...form,
                     name: e.target.value,
-                    color: selectedTask?.color || "#3174ad",
+                    color: t?.color || "#3174ad",
                   });
                 }}
               >
-                <option value="">
-                  Select Task
-                </option>
-
-                {TASK_OPTIONS.map((task) => (
-                  <option
-                    key={task.name}
-                    value={task.name}
-                  >
-                    {task.name}
+                <option value="">Select Task</option>
+                {TASK_OPTIONS.map(t => (
+                  <option key={t.name} value={t.name}>
+                    {t.name}
                   </option>
                 ))}
               </Form.Select>
             </Col>
 
             <Col md={6}>
-              <Form.Label>
-                Nurse
-              </Form.Label>
-
+              <Form.Label>Nurse</Form.Label>
               <Form.Select
                 value={form.nurseID}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
-                    nurseID:
-                      e.target.value,
-                  })
+                  setForm({ ...form, nurseID: e.target.value })
                 }
               >
-                <option value="">
-                  Select Nurse
-                </option>
-
-                {nurses.map((n) => (
-                  <option
-                    key={n.nurseID}
-                    value={n.nurseID}
-                  >
+                <option value="">Select Nurse</option>
+                {nurses.map(n => (
+                  <option key={n.nurseID} value={n.nurseID}>
                     {n.fullName}
                   </option>
                 ))}
@@ -453,74 +319,35 @@ export default function DoctorAssignSchedule() {
           <Row className="mt-3">
             <Col md={4}>
               <Form.Label>Date</Form.Label>
-
               <Form.Control
                 type="date"
                 value={form.date}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
-                    date: e.target.value,
-                  })
+                  setForm({ ...form, date: e.target.value })
                 }
               />
             </Col>
 
             <Col md={4}>
-              <Form.Label>
-                Start Time
-              </Form.Label>
-
+              <Form.Label>Start</Form.Label>
               <Form.Control
                 type="time"
                 value={form.start_at}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
-                    start_at:
-                      e.target.value,
-                  })
+                  setForm({ ...form, start_at: e.target.value })
                 }
               />
             </Col>
 
             <Col md={4}>
-              <Form.Label>
-                Hours
-              </Form.Label>
-
+              <Form.Label>Hours</Form.Label>
               <Form.Control
                 type="number"
-                value={
-                  form.working_hours
-                }
+                value={form.working_hours}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    working_hours:
-                      Number(
-                        e.target.value
-                      ),
-                  })
-                }
-              />
-            </Col>
-          </Row>
-
-          <Row className="mt-3">
-            <Col md={6}>
-              <Form.Label>
-                Room ID
-              </Form.Label>
-
-              <Form.Control
-                type="number"
-                value={form.roomID}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    roomID:
-                      e.target.value,
+                    working_hours: Number(e.target.value),
                   })
                 }
               />
@@ -530,27 +357,16 @@ export default function DoctorAssignSchedule() {
 
         <Modal.Footer>
           {editingID && (
-            <Button
-              variant="danger"
-              onClick={deleteSchedule}
-            >
+            <Button variant="danger" onClick={deleteSchedule}>
               Delete
             </Button>
           )}
 
-          <Button
-            variant="secondary"
-            onClick={() =>
-              setShowModal(false)
-            }
-          >
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
             Close
           </Button>
 
-          <Button
-            variant="primary"
-            onClick={saveSchedule}
-          >
+          <Button variant="primary" onClick={saveSchedule}>
             Save
           </Button>
         </Modal.Footer>
@@ -558,4 +374,3 @@ export default function DoctorAssignSchedule() {
     </div>
   );
 }
-

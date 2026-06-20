@@ -54,6 +54,12 @@ export default function DoctorScreen() {
             })
             .catch(error => console.error("Error fetching rooms:", error))
             .finally(() => setLoading(false)); // stop loading
+        if (user?.departmentID) {
+            sessionStorage.setItem(
+                "departmentID",
+                user.departmentID.toString()
+            );
+        }
     }, [doctorID]);
 
     const [pendingShiftRequestCount, setPendingShiftRequestCount] = useState<number>(0);
@@ -70,7 +76,7 @@ export default function DoctorScreen() {
 
     return (
         <div className="row">
-            
+
             {loading ? (
                 <DoctorInformation
                     nurseID={String(user?.nurseID)}

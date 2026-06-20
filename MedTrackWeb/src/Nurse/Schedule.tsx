@@ -5,23 +5,27 @@ import {
   Event,
   View,
 } from "react-big-calendar";
+
 import {
   format,
   parse,
   startOfWeek,
   getDay,
 } from "date-fns";
+
 import { enUS } from "date-fns/locale";
 import API from "../api";
+
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../css/Schedule.css";
+
 import {
   Modal,
   Button,
   Badge,
 } from "react-bootstrap";
-import ErrorPage from "../ErrorPage";
 
+import ErrorPage from "../ErrorPage";
 
 const locales = {
   "en-US": enUS,
@@ -45,112 +49,59 @@ interface ScheduleEvent extends Event {
 }
 
 export default function Schedule() {
-  const nurseID = Number(
-    sessionStorage.getItem("nurseID")
-  );
+  const nurseID = Number(sessionStorage.getItem("nurseID"));
 
-  const token =
-    sessionStorage.getItem("token");
+  const [events, setEvents] = useState<ScheduleEvent[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null);
 
-  const [events, setEvents] = useState<
-    ScheduleEvent[]
-  >([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [view, setView] = useState<View>("week");
 
-  const [error, setError] = useState<
-    string | null
-  >(null);
-
-  const [selectedEvent, setSelectedEvent] =
-    useState<ScheduleEvent | null>(null);
-
-  const [currentDate, setCurrentDate] =
-    useState(new Date());
-
-  const [view, setView] =
-    useState<View>("week");
-
-  const parseEventDate = (
-    dateStr: string,
-    timeStr: string
-  ) => {
-    const dateOnly =
-      dateStr.split("T")[0];
-
-    const [h, m, s] = timeStr
-      .split(":")
+  // ✅ FIX: SAFE LOCAL DATE PARSER (NO UTC SHIFT)
+  const parseEventDate = (dateStr: string, timeStr: string) => {
+    const [year, month, day] = dateStr
+      .split("T")[0]
+      .split("-")
       .map(Number);
 
-    const date = new Date(dateOnly);
+    const [h, m, s = 0] = timeStr.split(":").map(Number);
 
-    date.setHours(
-      h || 0,
-      m || 0,
-      s || 0,
-      0
-    );
-
-    return date;
+    return new Date(year, month - 1, day, h, m, s);
   };
 
   const fetchSchedules = async () => {
     if (!nurseID) {
-      setError(
-        "No nurse ID found in sessionStorage"
-      );
+      setError("No nurse ID found in sessionStorage");
       return;
     }
 
     try {
-      const res = await API.get(
-        `/schedules/nurse/${nurseID}`
-      );
+      const res = await API.get(`/schedules/nurse/${nurseID}`);
 
-      const mapped: ScheduleEvent[] =
-        res.data.map((item: any) => {
-          const start = parseEventDate(
-            item.date,
-            item.start_at
-          );
+      const mapped: ScheduleEvent[] = res.data.map((item: any) => {
+        const start = parseEventDate(item.date, item.start_at);
 
-          const end = new Date(start);
+        const end = new Date(start);
+        end.setHours(end.getHours() + Number(item.working_hours));
 
-          end.setHours(
-            end.getHours() +
-            item.working_hours
-          );
-
-          return {
-            id: item.scheduleID,
-
-            title: item.name,
-
-            subject: item.name,
-
-            room:
-              item.location || "N/A",
-
-            nurseID,
-
-            color:
-              item.color ||
-              "#3174ad",
-
-            start,
-            end,
-          };
-        });
+        return {
+          id: item.scheduleID,
+          title: item.name,
+          subject: item.name,
+          room: item.location || "N/A",
+          nurseID,
+          color: item.color || "#3174ad",
+          start,
+          end,
+        };
+      });
 
       setEvents(mapped);
-
       setError(null);
     } catch (err: any) {
       console.error(err);
-
-      setError(
-        err.message ||
-        "Failed to load schedules"
-      );
-
+      setError(err.message || "Failed to load schedules");
       setEvents([]);
     }
   };
@@ -159,9 +110,7 @@ export default function Schedule() {
     fetchSchedules();
   }, [nurseID]);
 
-  const handleSelectEvent = (
-    event: ScheduleEvent
-  ) => {
+  const handleSelectEvent = (event: ScheduleEvent) => {
     setSelectedEvent(event);
   };
 
@@ -169,23 +118,14 @@ export default function Schedule() {
     setSelectedEvent(null);
   };
 
-  const eventStyleGetter = (
-    event: ScheduleEvent
-  ) => {
+  const eventStyleGetter = (event: ScheduleEvent) => {
     return {
       style: {
-        backgroundColor:
-          event.color ||
-          "#3174ad",
-
+        backgroundColor: event.color || "#3174ad",
         color: "#fff",
-
         border: "none",
-
         borderRadius: "8px",
-
         fontSize: "12px",
-
         padding: "2px 6px",
       },
     };
@@ -195,9 +135,7 @@ export default function Schedule() {
     <div className="mb-3">
       <div className="radius10 shadow-sm">
         <div className="p-2 ps-3 radius10b0 blueBg text-white">
-          <h5 className="mb-0">
-            My Schedule
-          </h5>
+          <h5 className="mb-0">My Schedule</h5>
         </div>
       </div>
 
@@ -213,88 +151,53 @@ export default function Schedule() {
               endAccessor="end"
               date={currentDate}
               view={view}
-              onNavigate={(date) =>
-                setCurrentDate(date)
-              }
-              onView={(newView) =>
-                setView(newView)
-              }
-              toolbar
+              onNavigate={(date) => setCurrentDate(date)}
+              onView={(newView) => setView(newView)}
               selectable
               popup
-              views={[
-                "month",
-                "week",
-                "day",
-                "agenda",
-              ]}
+              views={["month", "week", "day", "agenda"]}
               defaultView="week"
-              style={{
-                height: "80vh",
-              }}
-              eventPropGetter={
-                eventStyleGetter
-              }
-              onSelectEvent={
-                handleSelectEvent
-              }
+              style={{ height: "80vh" }}
+              eventPropGetter={eventStyleGetter}
+              onSelectEvent={handleSelectEvent}
             />
 
+            {/* ================= MODAL ================= */}
             <Modal
               show={!!selectedEvent}
               onHide={handleCloseModal}
               centered
             >
               <Modal.Header closeButton>
-                <Modal.Title>
-                  Schedule Detail
-                </Modal.Title>
+                <Modal.Title>Schedule Detail</Modal.Title>
               </Modal.Header>
 
               <Modal.Body>
                 {selectedEvent && (
                   <>
-                    <p>
-                      <strong>
-                        Task:
-                      </strong>
-                    </p>
-
+                    <p><strong>Task:</strong></p>
                     <Badge bg="primary">
-                      {
-                        selectedEvent.subject
-                      }
+                      {selectedEvent.subject}
                     </Badge>
 
                     <hr />
 
                     <p>
-                      <strong>
-                        Room:
-                      </strong>{" "}
-                      {
-                        selectedEvent.room
-                      }
+                      <strong>Room:</strong> {selectedEvent.room}
                     </p>
 
                     <p>
-                      <strong>
-                        Start:
-                      </strong>{" "}
+                      <strong>Start:</strong>{" "}
                       {selectedEvent.start?.toLocaleString()}
                     </p>
 
                     <p>
-                      <strong>
-                        End:
-                      </strong>{" "}
+                      <strong>End:</strong>{" "}
                       {selectedEvent.end?.toLocaleString()}
                     </p>
 
                     <p>
-                      <strong>
-                        Duration:
-                      </strong>{" "}
+                      <strong>Duration:</strong>{" "}
                       {(
                         (selectedEvent.end!.getTime() -
                           selectedEvent.start!.getTime()) /
@@ -307,12 +210,7 @@ export default function Schedule() {
               </Modal.Body>
 
               <Modal.Footer>
-                <Button
-                  variant="secondary"
-                  onClick={
-                    handleCloseModal
-                  }
-                >
+                <Button variant="secondary" onClick={handleCloseModal}>
                   Close
                 </Button>
               </Modal.Footer>
