@@ -8,11 +8,10 @@ import API from "./api";
 import { ToastContainer } from 'react-toastify';
 export default function HomePage() {
     const [news, setNews] = useState<any[]>([]);
-    const token = sessionStorage.getItem("token");
 
     useEffect(() => {
         // Call your API
-        API.get('/news', { headers: { Authorization: `Bearer ${token}` } }) // adjust to your actual endpoint
+        API.get('/news') // adjust to your actual endpoint
             .then((res) => {
                 setNews(res.data);
             })

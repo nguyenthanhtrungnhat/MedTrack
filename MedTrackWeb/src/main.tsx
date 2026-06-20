@@ -50,17 +50,9 @@ import AdmissionManagement from './Nurse/AdmissionManagement';
 import DischargeManagement from './Nurse/DischargeManagement';
 import ClinicalExam from './Nurse/ClinicalExam';
 import ManualTreatmentPage from './components/ORC/ManualTreatmentPage.tsx';
-import ErrorPage from "./ErrorPage";
 
 const router = createBrowserRouter([
-  {
-    path: "/error",
-    element: <ErrorPage />,
-  },
-  {
-    path: "*",
-    element: <ErrorPage />,
-  },
+
   {
     path: "/",
     children: [{
