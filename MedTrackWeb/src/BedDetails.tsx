@@ -29,8 +29,11 @@ export default function BedDetails() {
     const loadUser = () => {
         if (!patientID) return;
         setLoading(true);
-        axios.get(patientByIdUrl, { headers: { Authorization: `Bearer ${token}` } })
-            .then(response => setUser(response.data))
+        axios.get(`http://localhost:3000/patients/${patientID}`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(response => {
+                console.log("Patient Information",response.data);
+                setUser(response.data);
+            })
             .catch(error => console.error('Error fetching user:', error))
             .finally(() => setLoading(false));
     };
@@ -51,7 +54,7 @@ export default function BedDetails() {
             return toast.warning("Please fill in diagnosis type and diagnosis text");
         }
         if (!user?.admissionID) return toast.error("No active admission found");
-        
+
         try {
             setSubmitting(true);
             await axios.put(`http://localhost:3000/admission/${user.admissionID}/discharge-order`, {
@@ -198,40 +201,40 @@ export default function BedDetails() {
                             <div className="modal-body">
                                 <div className="mb-3">
                                     <label>Diagnosis Type</label>
-                                    <input 
+                                    <input
                                         type="text"
-                                        className="form-control" 
-                                        value={diagnosisType} 
-                                        onChange={e => setDiagnosisType(e.target.value)} 
+                                        className="form-control"
+                                        value={diagnosisType}
+                                        onChange={e => setDiagnosisType(e.target.value)}
                                         placeholder="e.g. Primary, Secondary..."
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label>ICD Code</label>
-                                    <input 
+                                    <input
                                         type="text"
-                                        className="form-control" 
-                                        value={icdCode} 
-                                        onChange={e => setIcdCode(e.target.value)} 
+                                        className="form-control"
+                                        value={icdCode}
+                                        onChange={e => setIcdCode(e.target.value)}
                                         placeholder="e.g. J01.90"
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label>Diagnosis Text</label>
-                                    <textarea 
-                                        className="form-control" 
-                                        rows={3} 
-                                        value={diagnosisText} 
-                                        onChange={e => setDiagnosisText(e.target.value)} 
+                                    <textarea
+                                        className="form-control"
+                                        rows={3}
+                                        value={diagnosisText}
+                                        onChange={e => setDiagnosisText(e.target.value)}
                                     />
                                 </div>
                                 <div className="mb-3">
                                     <label>Summary of disease process & discharge instructions</label>
-                                    <textarea 
-                                        className="form-control" 
-                                        rows={3} 
-                                        value={summary} 
-                                        onChange={e => setSummary(e.target.value)} 
+                                    <textarea
+                                        className="form-control"
+                                        rows={3}
+                                        value={summary}
+                                        onChange={e => setSummary(e.target.value)}
                                     />
                                 </div>
                             </div>
