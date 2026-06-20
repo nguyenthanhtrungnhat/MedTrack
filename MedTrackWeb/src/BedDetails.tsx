@@ -1,11 +1,10 @@
-import axios from 'axios';
 import './css/AllDesign.css';
 import PatientInformation from './PatientInformation';
 import { useEffect, useState } from 'react';
 import { PatientProps } from './interface';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+import API from "./api";
 export default function BedDetails() {
     const [user, setUser] = useState<PatientProps | null>(null);
     const { patientID } = useParams();
@@ -29,7 +28,7 @@ export default function BedDetails() {
     const loadUser = () => {
         if (!patientID) return;
         setLoading(true);
-        axios.get(`http://localhost:3000/patients/${patientID}`, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(`/patients/${patientID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 console.log("Patient Information",response.data);
                 setUser(response.data);
@@ -40,7 +39,7 @@ export default function BedDetails() {
 
     const loadClinicalExam = () => {
         if (!patientID) return;
-        axios.get(`http://localhost:3000/clinical-exams/patient/${patientID}`, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(`/clinical-exams/patient/${patientID}`, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 if (response.data && response.data.length > 0) {
                     setClinicalExam(response.data[0]); // get latest
@@ -57,7 +56,7 @@ export default function BedDetails() {
 
         try {
             setSubmitting(true);
-            await axios.put(`http://localhost:3000/admission/${user.admissionID}/discharge-order`, {
+            await API.put(`/admission/${user.admissionID}/discharge-order`, {
                 diagnosisType,
                 icdCode,
                 diagnosisText,

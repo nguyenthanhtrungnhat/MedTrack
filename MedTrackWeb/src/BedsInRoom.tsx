@@ -1,21 +1,20 @@
 import './css/AllDesign.css';
 import Bed from './Bed';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import API from "./api";
 import { useState, useEffect } from 'react';
-import { PatientProps } from './interface';
 export default function BedsInRoom() {
     const { roomID } = useParams();
     const [beds, setBeds] = useState<any[]>([]);
     const token = sessionStorage.getItem("token");
-    const url = `http://localhost:3000/rooms/${roomID}/beds`;
+    const url = `/rooms/${roomID}/beds`;
     
     useEffect(() => {
         loadBeds();
     }, [roomID]);
 
     const loadBeds = () => {
-        axios.get(url, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(url, { headers: { Authorization: `Bearer ${token}` } })
             .then(response => {
                 setBeds(response.data);
                 console.log("Beds Data:", response.data);

@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: "http://localhost:3000",
 });
 
-// ================= REQUEST INTERCEPTOR =================
+// REQUEST
 API.interceptors.request.use((config) => {
     const token = sessionStorage.getItem("token");
 
@@ -15,22 +15,34 @@ API.interceptors.request.use((config) => {
     return config;
 });
 
-// ================= RESPONSE INTERCEPTOR =================
+// RESPONSE
 API.interceptors.response.use(
     (response) => response,
     (error) => {
-        const code = error?.response?.data?.code;
+        const status = error?.response?.status;
 
-        if (
-            error?.response?.status === 401 &&
-            (code === "TOKEN_EXPIRED" || code === "INVALID_TOKEN")
-        ) {
-            // 🔥 clear session toàn bộ
+        // Token hết hạn
+        if (status === 401) {
             sessionStorage.clear();
-
-            alert("Session expired. Please login again.");
-
             window.location.href = "/login";
+            return Promise.reject(error);
+        }
+
+        // Các lỗi server
+        if (
+            status === 500 ||
+            status === 502 ||
+            status === 503 ||
+            status === 504
+        ) {
+            window.location.href = "/error";
+            return Promise.reject(error);
+        }
+
+        // Backend tắt / mất mạng / timeout
+        if (!error.response) {
+            window.location.href = "/error";
+            return Promise.reject(error);
         }
 
         return Promise.reject(error);

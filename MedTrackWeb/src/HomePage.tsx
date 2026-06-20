@@ -4,14 +4,14 @@ import prom2 from './images/Asset-3.webp';
 import prom3 from './images/Asset-4.webp';
 import prom4 from './images/Asset-5.webp';
 import Introduce from './Introduce';
-import axios from 'axios';
+import API from "./api";
 export default function HomePage() {
     const [news, setNews] = useState<any[]>([]);
     const token = sessionStorage.getItem("token");
 
     useEffect(() => {
         // Call your API
-        axios.get('http://localhost:3000/news', { headers: { Authorization: `Bearer ${token}` } }) // adjust to your actual endpoint
+        API.get('/news', { headers: { Authorization: `Bearer ${token}` } }) // adjust to your actual endpoint
             .then((res) => {
                 setNews(res.data);
             })

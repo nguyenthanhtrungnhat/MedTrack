@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { toast } from "react-toastify";
-
+import API from "./api";
 export default function Bed(props: any) {
     const { bedID, bedNumber, status, patientID, fullName, image, CIC, HI, onAssignSuccess } = props;
     const navigate = useNavigate();
@@ -28,7 +27,7 @@ export default function Bed(props: any) {
         if (status === "Empty" && roleID === "2") {
             // Load paid admissions
             try {
-                const res = await axios.get("http://localhost:3000/admission/paid", {
+                const res = await API.get("/admission/paid", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setPaidAdmissions(res.data);
@@ -45,7 +44,7 @@ export default function Bed(props: any) {
         if (!adm) return;
 
         try {
-            await axios.put(`http://localhost:3000/rooms/beds/${bedID}/assign`, {
+            await API.put(`/rooms/beds/${bedID}/assign`, {
                 patientID: adm.patientID,
                 admissionID: adm.admissionID
             }, {
