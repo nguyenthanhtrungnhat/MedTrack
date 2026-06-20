@@ -294,7 +294,7 @@ router.put('/:id/discharge-payment', verifyToken, (req, res) => {
       const patientID = results[0].patientID;
 
       // 1. Update Admission
-      const updateAdm = `UPDATE admission SET status = 'Discharged', dischargeDate = NOW() WHERE admissionID = ?`;
+      const updateAdm = `UPDATE admission SET status = 'Discharged' WHERE admissionID = ?`;
       db.query(updateAdm, [admissionID], (err2) => {
         if (err2) return db.rollback(() => res.status(500).json({ error: 'Update admission failed', details: err2.message }));
 
