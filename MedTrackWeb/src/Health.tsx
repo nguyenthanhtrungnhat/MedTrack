@@ -222,7 +222,7 @@ export default function Health() {
                                         {showMore && (
                                             <>
                                                 <div className="col-lg-6 col-sm-12 padding">
-                                                    {renderVital("Urine", urineImg, "ml", "other", record?.urine)}
+                                                    {renderVital("Urine Output", urineImg, "ml", "other", record?.urine)}
                                                 </div>
                                                 <div className="col-lg-6 col-sm-12 padding">
                                                     {renderVital("SpO₂", spo2Img, "%", "spO2", record?.SP02)}
