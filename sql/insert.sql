@@ -1697,4 +1697,36 @@ INSERT INTO `clinical_examinations` (
 (2, 2, 1, '2026-03-02 10:30:00', 170.00, 85.00, '130/85', 85, 37.2, 'Patient is sweating and dizzy', 'Dizziness, high blood sugar', 'Type 2 Diabetes'),
 (3, NULL, 1, '2026-06-16 09:00:00', 165.00, 60.00, '110/70', 75, 36.8, 'Normal', 'Cough, mild fever', 'Common Cold');
 
--- TREATMENT TIMELINE
+-- DEPARTMENT 4 (Pediatrics)
+INSERT INTO room (roomID, departmentID, location)
+VALUES 
+(10, 4, 'Room 401'),
+(11, 4, 'Room 402'),
+(12, 4, 'Room 403');
+
+-- DEPARTMENT 5 (Emergency)
+INSERT INTO room (roomID, departmentID, location)
+VALUES 
+(13, 5, 'Room 501'),
+(14, 5, 'Room 502'),
+(15, 5, 'Room 503');
+
+INSERT INTO bed (roomID, bedNumber, status, patientID) VALUES
+(10, 'Bed 1', 'Empty', NULL), (10, 'Bed 2', 'Empty', NULL), (10, 'Bed 3', 'Empty', NULL),
+(10, 'Bed 4', 'Empty', NULL), (10, 'Bed 5', 'Empty', NULL), (10, 'Bed 6', 'Empty', NULL),
+
+(11, 'Bed 1', 'Empty', NULL), (11, 'Bed 2', 'Empty', NULL), (11, 'Bed 3', 'Empty', NULL),
+(11, 'Bed 4', 'Empty', NULL), (11, 'Bed 5', 'Empty', NULL), (11, 'Bed 6', 'Empty', NULL),
+
+(12, 'Bed 1', 'Empty', NULL), (12, 'Bed 2', 'Empty', NULL), (12, 'Bed 3', 'Empty', NULL),
+(12, 'Bed 4', 'Empty', NULL), (12, 'Bed 5', 'Empty', NULL), (12, 'Bed 6', 'Empty', NULL);
+
+INSERT INTO bed (roomID, bedNumber, status, patientID) VALUES
+(13, 'Bed 1', 'Empty', NULL), (13, 'Bed 2', 'Empty', NULL), (13, 'Bed 3', 'Empty', NULL),
+(13, 'Bed 4', 'Empty', NULL), (13, 'Bed 5', 'Empty', NULL), (13, 'Bed 6', 'Empty', NULL),
+
+(14, 'Bed 1', 'Empty', NULL), (14, 'Bed 2', 'Empty', NULL), (14, 'Bed 3', 'Empty', NULL),
+(14, 'Bed 4', 'Empty', NULL), (14, 'Bed 5', 'Empty', NULL), (14, 'Bed 6', 'Empty', NULL),
+
+(15, 'Bed 1', 'Empty', NULL), (15, 'Bed 2', 'Empty', NULL), (15, 'Bed 3', 'Empty', NULL),
+(15, 'Bed 4', 'Empty', NULL), (15, 'Bed 5', 'Empty', NULL), (15, 'Bed 6', 'Empty', NULL);

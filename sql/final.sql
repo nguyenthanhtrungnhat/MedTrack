@@ -15,7 +15,7 @@ CREATE TABLE user (
   fullName VARCHAR(255),
   dob DATE,
   phone VARCHAR(15),
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
   CIC VARCHAR(20),
   address VARCHAR(100),
   gender INT,
@@ -203,16 +203,6 @@ CREATE TABLE schedules (
   roomID INT DEFAULT NULL,
   color VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (scheduleID)
-);
-
-CREATE TABLE scheduleRequest (
-  requestID INT NOT NULL AUTO_INCREMENT,
-  scheduleID INT NOT NULL,
-  newDate VARCHAR(255) NOT NULL,
-  reason TEXT,
-  status INT DEFAULT 0,
-  PRIMARY KEY (requestID),
-  FOREIGN KEY (scheduleID) REFERENCES schedules(scheduleID) ON DELETE CASCADE
 );
 
 -- ======================================================

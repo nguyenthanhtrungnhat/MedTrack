@@ -181,16 +181,16 @@
     border-radius: 10px 10px 0 0;
 }
 
-.radius10{
+.radius10 {
     border-radius: 10px;
 }
 
-.radius10b0{
-      border-radius: 10px 10px 0 0;
+.radius10b0 {
+    border-radius: 10px 10px 0 0;
 }
 
-.radius10t0{
-      border-radius:0 0 10px 10px ;
+.radius10t0 {
+    border-radius: 0 0 10px 10px;
 }
 
 .announceHead {
@@ -496,6 +496,13 @@
         max-height: 660px;
         /* smaller banner on desktop */
     }
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 45vh;
+    /* responsive height */
+    object-fit: cover;
 }
 
 /* Fixed Size Box */
