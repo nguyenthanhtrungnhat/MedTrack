@@ -7,7 +7,7 @@ export default function ManageAdmissions() {
 
     const [exams, setExams] = useState<any[]>([]);
     const [departments, setDepartments] = useState<any[]>([]);
-    
+
     const [selectedExam, setSelectedExam] = useState<any>(null);
 
     const [departmentID, setDepartmentID] = useState("");
@@ -90,7 +90,7 @@ export default function ManageAdmissions() {
             setDiagnosis("");
             setCondition("");
             setSelectedExam(null);
-            
+
             // Refresh list
             loadExams();
         } catch (error: any) {
@@ -102,50 +102,56 @@ export default function ManageAdmissions() {
     };
 
     return (
-        <div className="container mt-4">
-            <ToastContainer />
-            <h2 className="mb-4">Manage Admissions</h2>
-            <div className="card shadow-sm p-4">
-                <h5 className="mb-3 text-primary">Pending Clinical Exams</h5>
-                {exams.length === 0 ? (
-                    <p className="text-muted">No pending exams waiting for admission.</p>
-                ) : (
-                    <div className="table-responsive">
-                        <table className="table table-hover align-middle">
-                            <thead className="table-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Patient</th>
-                                    <th>CIC</th>
-                                    <th>Init Diagnosis</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {exams.map(exam => (
-                                    <tr key={exam.examID}>
-                                        <td>{new Date(exam.examDate).toLocaleString()}</td>
-                                        <td>
-                                            <div className="d-flex align-items-center">
-                                                <img src={exam.image} alt={exam.fullName} className="rounded-circle me-2" width="40" height="40" />
-                                                <span>{exam.fullName}</span>
-                                            </div>
-                                        </td>
-                                        <td>{exam.CIC}</td>
-                                        <td>{exam.diagnosis}</td>
-                                        <td>
-                                            <button className="btn btn-primary btn-sm" onClick={() => handleSelectExam(exam)}>
-                                                View Detail
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
+        <div>
+            <div className="card shadow-sm dropShadow  mb-3 border-0">
+                <ToastContainer />
+                <div className="card-header blueBg text-white">
+                    <h5 className="mb-0">Manage Admissions</h5>
+                </div>
 
+                <div className="card shadow-sm h-100 p-4">
+                    <h5 className="mb-3 text-primary">Pending Clinical Exams</h5>
+                    {exams.length === 0 ? (
+                        <p className="text-muted">No pending exams waiting for admission.</p>
+                    ) : (
+                        <div className="table-responsive">
+                            <table className="table table-hover align-middle">
+                                <thead className="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Patient</th>
+                                        <th>CIC</th>
+                                        <th>Init Diagnosis</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {exams.map(exam => (
+                                        <tr key={exam.examID}>
+                                            <td>{new Date(exam.examDate).toLocaleString()}</td>
+                                            <td>
+                                                <div className="d-flex align-items-center">
+                                                    <img src={exam.image} alt={exam.fullName} className="rounded-circle me-2" width="40" height="40" />
+                                                    <span>{exam.fullName}</span>
+                                                </div>
+                                            </td>
+                                            <td>{exam.CIC}</td>
+                                            <td>{exam.diagnosis}</td>
+                                            <td>
+                                                <button className="btn btn-primary btn-sm" onClick={() => handleSelectExam(exam)}>
+                                                    View Detail
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+
+
+            </div>
             {/* Modal for creating admission */}
             {showModal && selectedExam && (
                 <div className="modal show d-block" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
@@ -167,7 +173,7 @@ export default function ManageAdmissions() {
                                 </div>
                                 <div className="col-md-6 border-start">
                                     <h6 className="text-info border-bottom pb-2">Admission Info</h6>
-                                    
+
                                     <div className="mb-2">
                                         <label className="form-label fw-bold">Department</label>
                                         <select
