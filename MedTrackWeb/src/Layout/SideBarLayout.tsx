@@ -3,7 +3,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import axios from "axios";
+import API from "../api";
 import getUserIDFromToken from "../components/getUserIDFromToken";
 
 export default function SideBarLayout() {
@@ -12,7 +12,6 @@ export default function SideBarLayout() {
     const roleID = sessionStorage.getItem("roleID");
     const { pathname } = useLocation();
     const navigate = useNavigate();
-    const token = sessionStorage.getItem("token");
     const userID = getUserIDFromToken();
 
     useEffect(() => {
@@ -23,8 +22,8 @@ export default function SideBarLayout() {
     useEffect(() => {
         if (!userID) return;
 
-        axios
-            .get(`http://localhost:3000/users/basic/${userID}`, { headers: { Authorization: `Bearer ${token}` } })
+        API
+            .get(`http://localhost:3000/users/basic/${userID}`)
             .then((res) => {
                 if (res && res.data) {
                     setInfo(res.data);
