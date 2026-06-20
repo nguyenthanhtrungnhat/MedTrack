@@ -45,7 +45,7 @@ router.get('/paid', verifyToken, (req, res) => {
 router.post('/', verifyToken, (req, res) => {
   const { patientID, departmentID, priority, advanceFee, hospitalizationsDiagnosis, summaryCondition, expectedDate, examID } = req.body;
   const userID = req.user.userID;
-  
+
   if (!patientID || !departmentID || !advanceFee) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
@@ -53,9 +53,9 @@ router.post('/', verifyToken, (req, res) => {
   // Find doctorID from userID
   db.query(`SELECT doctorID FROM doctor WHERE userID = ?`, [userID], (errDoc, docRes) => {
     if (errDoc || docRes.length === 0) return res.status(403).json({ message: 'User is not a valid doctor' });
-    
+
     const doctorID = docRes[0].doctorID;
-    
+
     // Generate a random Admission Code
     const code = `BA-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
 
@@ -64,16 +64,16 @@ router.post('/', verifyToken, (req, res) => {
       (patientID, doctorID, departmentID, admissionRecordCode, priority, advanceFee, advanceFeeStatus, admissionDate, hospitalizationsDiagnosis, summaryCondition, status) 
       VALUES (?, ?, ?, ?, ?, ?, 'Unpaid', ?, ?, ?, 'Pending Payment')
     `;
-    
+
     db.query(sql, [patientID, doctorID, departmentID, code, priority || 'Normal', advanceFee, expectedDate || new Date(), hospitalizationsDiagnosis, summaryCondition], (err, result) => {
       if (err) return res.status(500).json({ message: 'DB Error: ' + err.message, details: err });
-      
+
       const newAdmissionID = result.insertId;
-      
+
       // If examID provided, link it to the admission
       if (examID) {
         db.query(`UPDATE clinical_examinations SET admissionID = ? WHERE examID = ?`, [newAdmissionID, examID], (errExam) => {
-           if (errExam) console.error("Failed to link exam to admission:", errExam);
+          if (errExam) console.error("Failed to link exam to admission:", errExam);
         });
       }
 
@@ -92,7 +92,7 @@ router.put('/:id/advance-payment', verifyToken, (req, res) => {
     // 1. Check admission and get departmentID & patientID
     db.query(`SELECT departmentID, patientID, status FROM admission WHERE admissionID = ?`, [admissionID], (err1, results) => {
       if (err1 || results.length === 0) return db.rollback(() => res.status(404).json({ message: 'Admission not found' }));
-      
+
       const adm = results[0];
       if (adm.status !== 'Pending Payment') return db.rollback(() => res.status(400).json({ message: 'Admission is already paid or in different state' }));
 
@@ -106,7 +106,7 @@ router.put('/:id/advance-payment', verifyToken, (req, res) => {
       `;
       db.query(bedQuery, [adm.departmentID], (err2, bedResults) => {
         if (err2) return db.rollback(() => res.status(500).json({ message: 'Error finding bed', details: err2 }));
-        
+
         if (bedResults.length === 0) {
           // If no bed, we can't complete the flow.
           return db.rollback(() => res.status(400).json({ message: 'No empty beds available in this department. Cannot admit patient.' }));
@@ -138,38 +138,126 @@ router.put('/:id/advance-payment', verifyToken, (req, res) => {
 // PUT /admission/:id/discharge-order — Doctor creates discharge order
 router.put('/:id/discharge-order', verifyToken, (req, res) => {
   const admissionID = req.params.id;
-  const { diagnosisType, icdCode, diagnosisText, summary } = req.body;
+  const { diagnosisType, diagnosisText, summary } = req.body;
   const userID = req.user.userID;
 
   if (!diagnosisType || !diagnosisText) {
-    return res.status(400).json({ message: 'Missing discharge details' });
+    return res.status(400).json({
+      message: 'Missing discharge details'
+    });
   }
 
-  // Get doctorID
-  db.query(`SELECT doctorID FROM doctor WHERE userID = ?`, [userID], (errDoc, docRes) => {
-     if (errDoc || docRes.length === 0) return res.status(403).json({ message: 'Not a doctor' });
-     const doctorID = docRes[0].doctorID;
+  // Get doctorID from logged-in user
+  db.query(
+    `SELECT doctorID FROM doctor WHERE userID = ?`,
+    [userID],
+    (errDoc, docRes) => {
 
-     // Insert into discharge table
-     const insertDischarge = `INSERT INTO discharge (admissionID, doctorID, diagnosisType, icdCode, diagnosisText, summary) VALUES (?, ?, ?, ?, ?, ?)`;
-     db.query(insertDischarge, [admissionID, doctorID, diagnosisType, icdCode || null, diagnosisText, summary || null], (errIns, insRes) => {
-         if (errIns) return res.status(500).json({ message: 'Error inserting discharge', details: errIns.message });
-         
-         const dischargeID = insRes.insertId;
+      if (errDoc) {
+        return res.status(500).json({
+          message: 'Database error',
+          details: errDoc.message
+        });
+      }
 
-         // Update admission
-         const sql = `
-           UPDATE admission 
-           SET dischargeID = ?, status = 'Pending Discharge Payment'
-           WHERE admissionID = ? AND status = 'In-treatment'
-         `;
-         db.query(sql, [dischargeID, admissionID], (err, result) => {
-           if (err) return res.status(500).json({ message: 'DB Error: ' + err.message, details: err });
-           if (result.affectedRows === 0) return res.status(400).json({ message: 'Invalid admission status or not found' });
-           res.json({ message: 'Discharge Order Created', dischargeID });
-         });
-     });
-  });
+      if (docRes.length === 0) {
+        return res.status(403).json({
+          message: 'Not a doctor'
+        });
+      }
+
+      const doctorID = docRes[0].doctorID;
+
+      // Create discharge WITHOUT icdCode first
+      const insertDischarge = `
+        INSERT INTO discharge
+        (
+          admissionID,
+          doctorID,
+          diagnosisType,
+          diagnosisText,
+          summary
+        )
+        VALUES (?, ?, ?, ?, ?)
+      `;
+
+      db.query(
+        insertDischarge,
+        [
+          admissionID,
+          doctorID,
+          diagnosisType,
+          diagnosisText,
+          summary || null
+        ],
+        (errIns, insRes) => {
+
+          if (errIns) {
+            return res.status(500).json({
+              message: 'Error inserting discharge',
+              details: errIns.message
+            });
+          }
+
+          const dischargeID = insRes.insertId;
+
+          // Auto-generate unique ICD code
+          const icdCode = `ICD-${String(dischargeID).padStart(6, '0')}`;
+
+          // Save ICD code
+          db.query(
+            `UPDATE discharge SET icdCode = ? WHERE dischargeID = ?`,
+            [icdCode, dischargeID],
+            (errIcd) => {
+
+              if (errIcd) {
+                return res.status(500).json({
+                  message: 'Failed to generate ICD code',
+                  details: errIcd.message
+                });
+              }
+
+              // Update admission status
+              const updateAdmission = `
+                UPDATE admission
+                SET dischargeID = ?,
+                    status = 'Pending Discharge Payment'
+                WHERE admissionID = ?
+                  AND status = 'In-treatment'
+              `;
+
+              db.query(
+                updateAdmission,
+                [dischargeID, admissionID],
+                (errUpdate, result) => {
+
+                  if (errUpdate) {
+                    return res.status(500).json({
+                      message: 'DB Error',
+                      details: errUpdate.message
+                    });
+                  }
+
+                  if (result.affectedRows === 0) {
+                    return res.status(400).json({
+                      message: 'Invalid admission status or admission not found'
+                    });
+                  }
+
+                  res.json({
+                    success: true,
+                    message: 'Discharge Order Created',
+                    dischargeID,
+                    icdCode
+                  });
+                }
+              );
+            }
+          );
+        }
+      );
+    }
+  );
 });
 
 // GET /admission/pending-discharge — Nurse views patients waiting to be discharged
@@ -202,7 +290,7 @@ router.put('/:id/discharge-payment', verifyToken, (req, res) => {
 
     db.query(`SELECT patientID FROM admission WHERE admissionID = ? AND status = 'Pending Discharge Payment'`, [admissionID], (err1, results) => {
       if (err1 || results.length === 0) return db.rollback(() => res.status(404).json({ message: 'Admission not found or invalid status' }));
-      
+
       const patientID = results[0].patientID;
 
       // 1. Update Admission

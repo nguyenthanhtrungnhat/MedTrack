@@ -163,7 +163,7 @@ CREATE TABLE discharge (
   admissionID INT NOT NULL,
   doctorID INT NOT NULL,
   diagnosisType VARCHAR(50),
-  icdCode VARCHAR(20),
+  icdCode VARCHAR(20) UNIQUE,
   diagnosisText TEXT,
   summary TEXT,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP

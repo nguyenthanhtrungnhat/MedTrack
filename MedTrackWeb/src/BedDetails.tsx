@@ -12,7 +12,6 @@ export default function BedDetails() {
     const roleID = sessionStorage.getItem("roleID");
     const [showDischargeModal, setShowDischargeModal] = useState(false);
     const [diagnosisType, setDiagnosisType] = useState("");
-    const [icdCode, setIcdCode] = useState("");
     const [diagnosisText, setDiagnosisText] = useState("");
     const [summary, setSummary] = useState("");
     const [submitting, setSubmitting] = useState(false);
@@ -56,7 +55,6 @@ export default function BedDetails() {
             setSubmitting(true);
             await API.put(`/admission/${user.admissionID}/discharge-order`, {
                 diagnosisType,
-                icdCode,
                 diagnosisText,
                 summary
             });
@@ -200,16 +198,6 @@ export default function BedDetails() {
                                         value={diagnosisType}
                                         onChange={e => setDiagnosisType(e.target.value)}
                                         placeholder="e.g. Primary, Secondary..."
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label>ICD Code</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={icdCode}
-                                        onChange={e => setIcdCode(e.target.value)}
-                                        placeholder="e.g. J01.90"
                                     />
                                 </div>
                                 <div className="mb-3">

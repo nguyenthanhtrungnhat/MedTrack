@@ -20,6 +20,48 @@ import {
 import { toast } from "react-toastify";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
+const TASK_OPTIONS = [
+  {
+    name: "Medication Round",
+    color: "#dc3545", // Red
+  },
+  {
+    name: "Vital Signs Check",
+    color: "#0d6efd", // Blue
+  },
+  {
+    name: "Patient Admission",
+    color: "#198754", // Green
+  },
+  {
+    name: "Patient Discharge",
+    color: "#fd7e14", // Orange
+  },
+  {
+    name: "Blood Sample Collection",
+    color: "#6f42c1", // Purple
+  },
+  {
+    name: "IV Therapy",
+    color: "#20c997", // Teal
+  },
+  {
+    name: "Wound Care",
+    color: "#e83e8c", // Pink
+  },
+  {
+    name: "ECG Monitoring",
+    color: "#6610f2", // Indigo
+  },
+  {
+    name: "Emergency Support",
+    color: "#000000", // Black
+  },
+  {
+    name: "General Ward Duty",
+    color: "#6c757d", // Gray
+  },
+];
 
 const localizer = momentLocalizer(moment);
 
@@ -99,7 +141,7 @@ export default function DoctorAssignSchedule() {
 
           end.setHours(
             end.getHours() +
-              Number(s.working_hours)
+            Number(s.working_hours)
           );
 
           return {
@@ -257,6 +299,19 @@ export default function DoctorAssignSchedule() {
     }
   };
 
+  const handleTaskChange = (taskName: string) => {
+    const selected = TASK_OPTIONS.find(
+      t => t.name === taskName
+    );
+
+    if (!selected) return;
+
+    setForm({
+      ...form,
+      name: selected.name,
+      color: selected.color
+    });
+  };
   return (
     <div className="card shadow-sm mb-4">
       <div className="card-header blueBg text-white d-flex justify-content-between align-items-center">
@@ -335,15 +390,33 @@ export default function DoctorAssignSchedule() {
                 Schedule Name
               </Form.Label>
 
-              <Form.Control
+              <Form.Select
                 value={form.name}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const selectedTask = TASK_OPTIONS.find(
+                    t => t.name === e.target.value
+                  );
+
                   setForm({
                     ...form,
                     name: e.target.value,
-                  })
-                }
-              />
+                    color: selectedTask?.color || "#3174ad",
+                  });
+                }}
+              >
+                <option value="">
+                  Select Task
+                </option>
+
+                {TASK_OPTIONS.map((task) => (
+                  <option
+                    key={task.name}
+                    value={task.name}
+                  >
+                    {task.name}
+                  </option>
+                ))}
+              </Form.Select>
             </Col>
 
             <Col md={6}>
@@ -447,24 +520,6 @@ export default function DoctorAssignSchedule() {
                   setForm({
                     ...form,
                     roomID:
-                      e.target.value,
-                  })
-                }
-              />
-            </Col>
-
-            <Col md={6}>
-              <Form.Label>
-                Color
-              </Form.Label>
-
-              <Form.Control
-                type="color"
-                value={form.color}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    color:
                       e.target.value,
                   })
                 }
