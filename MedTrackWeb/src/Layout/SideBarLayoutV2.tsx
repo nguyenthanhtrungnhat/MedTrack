@@ -39,7 +39,7 @@ export default function SideBarLayoutV2() {
 
     const handleLogout = () => {
         sessionStorage.clear();
-        toast.success("Logged out successfully!", { position: "top-right" });
+        toast.success("Logged out successfully!");
         navigate("/");
     };
 
