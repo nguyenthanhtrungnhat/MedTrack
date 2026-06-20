@@ -198,6 +198,9 @@ export default function Health() {
                                                 <div className="col-lg-6 col-sm-12 padding">
                                                     {renderVital("Pain Scale", painscale, "/10", "painScale", record?.hurtScale)}
                                                 </div>
+                                                <div className="col-lg-6 col-sm-12 padding">
+                                                    {renderVital("Oxygen Therapy", oxygenTherapy, "", "oxygenTherapy", record?.oxygenTherapy)}
+                                                </div>
                                             </>
                                         )}
                                     </div>
@@ -227,9 +230,7 @@ export default function Health() {
                                                 <div className="col-lg-6 col-sm-12 padding">
                                                     {renderVital("Heart Rate", heartRate, "bpm", "heartRate", record?.heartRate)}
                                                 </div>
-                                                <div className="col-lg-6 col-sm-12 padding">
-                                                    {renderVital("Oxygen Therapy", oxygenTherapy, "", "oxygenTherapy", record?.oxygenTherapy)}
-                                                </div>
+
                                             </>
                                         )}
                                     </div>
