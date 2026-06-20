@@ -11,7 +11,7 @@ router.get('/',verifyToken, (req, res) => getAllRecords('medicalrecords', res));
 router.get('/:patientID', verifyToken, (req, res) => {
     const { patientID } = req.params;
 
-    console.log("PatientID:", patientID);
+    // console.log("PatientID:", patientID);
 
     const sql = `
         SELECT *
@@ -32,8 +32,8 @@ router.get('/:patientID', verifyToken, (req, res) => {
             return res.status(500).json(err);
         }
 
-        console.log("Records found:", results.length);
-        console.log(results);
+        // console.log("Records found:", results.length);
+        // console.log(results);
 
         res.json(results);
     });

@@ -40,23 +40,6 @@ router.get('/patientByUserID/:userID', (req, res) => {
 });
 
 // GET /patients/:patientID
-// router.get('/:patientID', verifyToken,(req, res) => {
-//   const { patientID } = req.params;
-//   const query = `
-//     SELECT p.*, u.*, a.admissionID, a.status as admissionStatus, a.admissionDate, a.hospitalizationsDiagnosis, a.summaryCondition, b.roomID, b.bedNumber, d.diagnosisText as dischargeDiagnosis
-//     FROM patient p
-//     JOIN user u ON p.userID = u.userID
-//     LEFT JOIN admission a ON p.patientID = a.patientID AND a.status IN ('Init', 'In-treatment')
-//     LEFT JOIN bed b ON p.patientID = b.patientID
-//     LEFT JOIN discharge d ON a.dischargeID = d.dischargeID
-//     WHERE p.patientID = ?
-//   `;
-//   db.query(query, [patientID], (err, results) => {
-//     if (err) return res.status(500).json({ error: 'Database error', details: err });
-//     if (results.length === 0) return res.status(404).json({ error: 'Patient not found' });
-//     res.json(results[0]);
-//   });
-// });
 router.get('/:patientID', verifyToken, (req, res) => {
   const { patientID } = req.params;
 

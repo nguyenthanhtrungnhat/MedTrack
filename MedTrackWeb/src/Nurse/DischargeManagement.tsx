@@ -3,7 +3,6 @@ import API from "../api";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function DischargeManagement() {
-    const token = sessionStorage.getItem("token");
     const [pendingDischarges, setPendingDischarges] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [processingId, setProcessingId] = useState<number | null>(null);

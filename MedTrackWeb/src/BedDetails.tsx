@@ -8,8 +8,6 @@ import API from "./api";
 export default function BedDetails() {
     const [user, setUser] = useState<PatientProps | null>(null);
     const { patientID } = useParams();
-    const token = sessionStorage.getItem("token");
-    const patientByIdUrl = `http://localhost:3000/patients/${patientID}`;
     const [loading, setLoading] = useState(true);
     const roleID = sessionStorage.getItem("roleID");
     const [showDischargeModal, setShowDischargeModal] = useState(false);
@@ -23,14 +21,14 @@ export default function BedDetails() {
     useEffect(() => {
         loadUser();
         loadClinicalExam();
-    }, [patientByIdUrl]);
+    }, [patientID]);
 
     const loadUser = () => {
         if (!patientID) return;
         setLoading(true);
         API.get(`/patients/${patientID}`)
             .then(response => {
-                console.log("Patient Information",response.data);
+                console.log("Patient Information", response.data);
                 setUser(response.data);
             })
             .catch(error => console.error('Error fetching user:', error))
@@ -80,29 +78,27 @@ export default function BedDetails() {
                 <div className="w-100 d-flex flex-column border whiteBg marginBottom dropShadow p-3">
 
                     {loading ? (
-                        <PatientInformation
-                            patientID={user?.patientID}
-                            image={user?.image || ""}
-                            fullName={user?.fullName || ""}
-                            gender={
-                                user?.gender == "1"
-                                    ? "Male"
-                                    : user?.gender == "2"
-                                        ? "Female"
-                                        : ""
-                            }
-                            dob={user?.dob?.split("T")[0] || ""}
-                            phone={user?.phone || ""}
-                            CIC={Number(user?.CIC)}
-                            address={user?.address || ""}
-                            email={user?.email || ""}
-                            HI={user?.HI || ""}
-                            admissionDate={user?.admissionDate?.split("T")[0] || ""}
-                            relativeName={user?.relativeName || ""}
-                            relativeNumber={Number(user?.relativeNumber) || ""}
-                            loading={loading}
-                        />
+                        <div>
+                            <p className="placeholder-glow">
+                                <span className="placeholder col-8"></span>
+                            </p>
 
+                            <p className="placeholder-glow">
+                                <span className="placeholder col-6"></span>
+                            </p>
+
+                            <p className="placeholder-glow">
+                                <span className="placeholder col-10"></span>
+                            </p>
+
+                            <p className="placeholder-glow">
+                                <span className="placeholder col-7"></span>
+                            </p>
+
+                            <p className="placeholder-glow">
+                                <span className="placeholder col-9"></span>
+                            </p>
+                        </div>
                     ) : (
                         <PatientInformation
                             patientID={user?.patientID}
@@ -123,8 +119,8 @@ export default function BedDetails() {
                             HI={user?.HI || ""}
                             admissionDate={user?.admissionDate?.split("T")[0] || ""}
                             relativeName={user?.relativeName || ""}
-                            relativeNumber={Number(user?.relativeNumber) || ""}
-                            loading={loading}
+                            relativeNumber={user?.relativeNumber || ""}
+                            loading={false}
                         />
                     )}
                 </div>
