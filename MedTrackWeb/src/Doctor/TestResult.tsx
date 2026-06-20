@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import axios from "axios";
+import API from "../api";
 import { TestResultProps } from "../interface";
 import getUserIDFromToken from "../components/getUserIDFromToken";
 import { useNavigate } from "react-router-dom";
@@ -29,15 +29,12 @@ export default function TestResult() {
   useEffect(() => {
     setLoadingTest(true);
 
-    axios.get<TestResultProps[]>(
-      "http://localhost:3000/testresult",
+    API.get<TestResultProps[]>(
+      "/testresult",
       {
         params: showAll
           ? {}
-          : { doctorID },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          : { doctorID }
       }
     )
       .then((response) => {

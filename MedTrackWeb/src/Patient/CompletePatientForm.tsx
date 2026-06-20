@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../api";
 import QRScanner from "../QRScanner";
 import getUserIDFromToken from "../components/getUserIDFromToken";
 
@@ -67,14 +67,13 @@ export default function CompletePatientForm({ onCompleted }: { onCompleted?: () 
                 return;
             }
 
-            const res = await axios.put(
-                `http://localhost:3000/api/patient/complete`,
+            const res = await API.put(
+                `/api/patient/complete`,
                 {
                     ...form,
                     CIC: form.CIC,
                     userID,
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
+                }
             );
 
             // ✅ Check status explicitly

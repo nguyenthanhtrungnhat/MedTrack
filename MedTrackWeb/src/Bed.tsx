@@ -27,9 +27,7 @@ export default function Bed(props: any) {
         if (status === "Empty" && roleID === "2") {
             // Load paid admissions
             try {
-                const res = await API.get("/admission/paid", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const res = await API.get("/admission/paid");
                 setPaidAdmissions(res.data);
                 setShowModal(true);
             } catch (err) {
@@ -47,8 +45,6 @@ export default function Bed(props: any) {
             await API.put(`/rooms/beds/${bedID}/assign`, {
                 patientID: adm.patientID,
                 admissionID: adm.admissionID
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
             toast.success(`Patient ${adm.fullName} assigned to bed ${bedNumber} successfully!`);
             setShowModal(false);

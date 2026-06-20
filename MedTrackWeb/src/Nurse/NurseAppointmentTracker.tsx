@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast, ToastContainer } from "react-toastify";
 
 interface Doctor {
@@ -16,8 +16,6 @@ interface Appointment {
 }
 
 export default function NurseAppointmentTracker() {
-    const token = sessionStorage.getItem("token");
-
     const [doctors, setDoctors] = useState<Doctor[]>([]);
     const [doctorID, setDoctorID] = useState<number | null>(null);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -26,10 +24,8 @@ export default function NurseAppointmentTracker() {
     // LOAD DOCTORS
     // ======================================================
     useEffect(() => {
-        axios
-            .get("http://localhost:3000/doctors", {
-                headers: { Authorization: `Bearer ${token}` }
-            })
+        API
+            .get("/doctors")
             .then(res => setDoctors(res.data))
             .catch(() => toast.error("Failed to load doctors"));
     }, []);
@@ -45,11 +41,8 @@ export default function NurseAppointmentTracker() {
 
     const loadAppointments = async () => {
         try {
-            const res = await axios.get(
-                `http://localhost:3000/appointments/all-appointment/doctor/${doctorID}`,
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
+            const res = await API.get(
+                `/appointments/all-appointment/doctor/${doctorID}`
             );
             setAppointments(res.data);
         } catch {
@@ -78,12 +71,9 @@ export default function NurseAppointmentTracker() {
     // ======================================================
     const updateStatus = async (id: number, status: number) => {
     try {
-        await axios.put(
-            `http://localhost:3000/appointments/check-in/${id}`,
-            { status },
-            {
-                headers: { Authorization: `Bearer ${token}` }
-            }
+        await API.put(
+            `/appointments/check-in/${id}`,
+            { status }
         );
 
         if (status === 1) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from "../api";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -45,9 +45,7 @@ export default function ClinicalExam() {
 
     useEffect(() => {
         // Fetch all patients to populate dropdown
-        axios.get('http://localhost:3000/patients', {
-            headers: { Authorization: `Bearer ${token}` }
-        }).then(res => {
+        API.get('/patients').then(res => {
             setPatients(res.data);
         }).catch(err => {
             toast.error("Failed to load patients");
@@ -89,11 +87,9 @@ export default function ClinicalExam() {
         }
 
         try {
-            await axios.post('http://localhost:3000/clinical-exams', {
+            await API.post('/clinical-exams', {
                 patientID: parseInt(selectedPatient),
                 ...formData
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
             toast.success("Clinical Examination submitted successfully!");
             setFormData({

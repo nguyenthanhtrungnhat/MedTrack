@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import API from "../../api";
 import { useParams, useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import '../../css/PrescriptionPrint.css'
@@ -26,8 +26,6 @@ interface Prescription {
 }
 
 export default function PrescriptionDetail() {
-    const token = sessionStorage.getItem("token");
-
     const { id } = useParams()
     const navigate = useNavigate()
 
@@ -46,9 +44,7 @@ export default function PrescriptionDetail() {
 
         try {
 
-            const res = await axios.get(
-                `http://localhost:3000/prescriptions/${id}`
-                , { headers: { Authorization: `Bearer ${token}` } })
+            const res = await API.get(`http://localhost:3000/prescriptions/${id}`)
 
             const data = res.data
 

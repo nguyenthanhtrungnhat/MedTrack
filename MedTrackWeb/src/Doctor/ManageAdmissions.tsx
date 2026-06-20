@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function ManageAdmissions() {
-    const token = sessionStorage.getItem("token");
-
     const [exams, setExams] = useState<any[]>([]);
     const [departments, setDepartments] = useState<any[]>([]);
 
@@ -27,9 +25,8 @@ export default function ManageAdmissions() {
 
     const loadExams = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/clinical-exams/pending", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await API.get("/clinical-exams/pending"
+            );
             setExams(res.data);
         } catch {
             toast.error("Failed to load pending clinical exams");
@@ -38,9 +35,7 @@ export default function ManageAdmissions() {
 
     const loadDepartments = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/departments", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await API.get("/departments");
             setDepartments(res.data);
         } catch {
             toast.error("Failed to load departments");
@@ -65,8 +60,8 @@ export default function ManageAdmissions() {
             setLoading(true);
             const loadingToast = toast.loading("Creating Admission Order...");
 
-            await axios.post(
-                "http://localhost:3000/admission",
+            await API.post(
+                "/admission",
                 {
                     patientID: selectedExam.patientID,
                     departmentID,
@@ -76,8 +71,7 @@ export default function ManageAdmissions() {
                     hospitalizationsDiagnosis,
                     summaryCondition,
                     examID: selectedExam.examID
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
+                }
             );
 
             toast.dismiss(loadingToast);

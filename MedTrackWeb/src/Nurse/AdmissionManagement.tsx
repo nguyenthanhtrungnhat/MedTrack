@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function AdmissionManagement() {
@@ -18,9 +18,7 @@ export default function AdmissionManagement() {
     const loadPendingAdmissions = async () => {
         try {
             setLoading(true);
-            const res = await axios.get("http://localhost:3000/admission/pending", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await API.get("/admission/pending");
             setAdmissions(res.data);
         } catch (error) {
             toast.error("Failed to load admission orders");
@@ -38,9 +36,7 @@ export default function AdmissionManagement() {
         if (!selectedAdmission) return;
         try {
             const toastId = toast.loading("Processing payment...");
-            await axios.put(`http://localhost:3000/admission/${selectedAdmission.admissionID}/advance-payment`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await API.put(`/admission/${selectedAdmission.admissionID}/advance-payment`, {});
             toast.dismiss(toastId);
             toast.success("Payment successful! Admission is now Paid.");
             setShowModal(false);
@@ -52,6 +48,7 @@ export default function AdmissionManagement() {
 
     return (
         <div>
+            <ToastContainer/>
             <div className="mb-4 dropShadow">
                 <div className="card shadow">
                     <div className="card-header blueBg text-white d-flex justify-content-between align-items-center">

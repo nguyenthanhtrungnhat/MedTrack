@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import API from "../api";
 import './../css/AllDesign.css';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { AxiosError } from "axios";
 export default function RegisterScreen() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
@@ -27,7 +27,7 @@ export default function RegisterScreen() {
 
         setLoading(true);
         try {
-            const response = await axios.post("http://localhost:3000/register", {
+            const response = await API.post("/register", {
                 username,
                 email,
                 password,
@@ -40,14 +40,17 @@ export default function RegisterScreen() {
             setTimeout(() => navigate("/login"), 1500);
         } catch (err: unknown) {
             console.error("Register Error:", err);
-            if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message || "Registration failed.");
+
+            if (err instanceof AxiosError) {
+                setError(
+                    err.response?.data?.message ||
+                    "Registration failed."
+                );
             } else {
                 setError("Unexpected error occurred.");
             }
-            toast.error("Registration failed. Please try again.", { position: "top-right" });
-        } finally {
-            setLoading(false);
+
+            toast.error("Registration failed. Please try again.");
         }
     };
 
@@ -145,7 +148,7 @@ export default function RegisterScreen() {
                 </div>
             </div>
 
-          
+
         </section>
     );
 }

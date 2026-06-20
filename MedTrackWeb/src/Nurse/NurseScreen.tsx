@@ -1,4 +1,4 @@
-import axios from 'axios';
+import API from "../api";
 import Room from '../Room';
 import '../css/AllDesign.css'
 import NurseInformation from '../NurseInformation';
@@ -11,7 +11,7 @@ export default function NurseScreen() {
     const [user, setUser] = useState<NurseProps | null>(null);
     const [rooms, setRooms] = useState<RoomProps[]>([]);
     const userID = getUserIDFromToken();
-    const url = `http://localhost:3000/nurses/by-user/${userID}`;
+    const url = `/nurses/by-user/${userID}`;
 
     const [count, setCount] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ export default function NurseScreen() {
 
     useEffect(() => {
         if (!userID) return;
-        axios.get(url)
+        API.get(url)
             .then(response => {
                 setUser(response.data);
                 console.log("Nurse Data:", response.data);
@@ -42,13 +42,8 @@ export default function NurseScreen() {
         const fetchData = async () => {
             try {
                 // Schedule count
-                const scheduleRes = await axios.get(
-                    `http://localhost:3000/schedules/nurse/${user.nurseID}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                const scheduleRes = await API.get(
+                    `/schedules/nurse/${user.nurseID}`
                 );
 
                 setCount(
@@ -58,13 +53,8 @@ export default function NurseScreen() {
                 );
 
                 // Rooms in same department
-                const roomRes = await axios.get(
-                    `http://localhost:3000/rooms/department/${user.departmentID}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                const roomRes = await API.get(
+                    `/rooms/department/${user.departmentID}`
                 );
 
                 setRooms(roomRes.data);

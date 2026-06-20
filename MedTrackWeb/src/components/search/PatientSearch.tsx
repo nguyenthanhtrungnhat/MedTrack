@@ -1,29 +1,29 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { PatientProps } from "../../interface";
-
+import API from "../../api";
 export default function PatientSearch() {
   const [patients, setPatients] = useState<PatientProps[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPatients, setFilteredPatients] = useState<PatientProps[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const token = sessionStorage.getItem("token");
   var url = '';
   const roleID = sessionStorage.getItem("roleID");
   { roleID == '1' ? (url = "/doctor/bed-details/") : (url = "/home/bed-details/") }
   // Fetch patient data
   useEffect(() => {
-    fetch("http://localhost:3000/patients", { headers: { Authorization: `Bearer ${token}` } })
-      .then((res) => res.json())
-      .then((data) => {
-        // Filter out invalid patients (no ID or fullName)
-        const validPatients = data.filter(
+    API.get("/patients")
+      .then((res) => {
+        const validPatients = res.data.filter(
           (p: any) => p && p.patientID && p.fullName
         );
+
         setPatients(validPatients);
       })
-      .catch((err) => console.error("Error fetching patients:", err));
+      .catch((err) => {
+        console.error("Error fetching patients:", err);
+      });
   }, []);
 
   // Filter patients by name or ID

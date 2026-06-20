@@ -1,4 +1,4 @@
-import axios from 'axios';
+import API from "../api";
 import './../css/AllDesign.css';
 import { useEffect, useState } from 'react';
 import { PatientProps, RecordProps } from '../interface';
@@ -121,9 +121,9 @@ export default function PatientScreen() {
     useEffect(() => {
         if (!userID) return;
         setLoading(true); // start loading
-        axios.get(`http://localhost:3000/appointments/${userID}`).then(res => setAppointments(res.data));
-        axios
-            .get(`http://localhost:3000/patients/patientByUserID/${userID}`)
+        API.get(`/appointments/${userID}`).then(res => setAppointments(res.data));
+        API
+            .get(`/patients/patientByUserID/${userID}`)
             .then(response => {
                 setPatients(response.data);
             })
@@ -139,8 +139,8 @@ export default function PatientScreen() {
             return;
         }
 
-        const url = `http://localhost:3000/medical-records/${patients[0].patientID}`;
-        axios.get(url, {headers: {Authorization: `Bearer ${token}`}})
+        const url = `/medical-records/${patients[0].patientID}`;
+        API.get(url)
             .then(response => {
                 const sorted = [...response.data].sort(
                     (a, b) => new Date(b.timeCreate).getTime() - new Date(a.timeCreate).getTime()
@@ -157,7 +157,7 @@ export default function PatientScreen() {
     }, [patients]);
 
     const handleRecordSelect = (recordID: number) => {
-        axios.get(`http://localhost:3000/medical-records/by-recordId/${recordID}`, {headers: {Authorization: `Bearer ${token}`}})
+        API.get(`/medical-records/by-recordId/${recordID}`)
             .then(response => setRecord(response.data))
             .catch(error => console.error('Error fetching selected record:', error));
     };

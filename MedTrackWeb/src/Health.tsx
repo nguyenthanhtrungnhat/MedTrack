@@ -16,7 +16,6 @@ import API from "./api";
 import HealthDashboard from './components/dashboard/HealthDashboard';
 
 export default function Health() {
-    const token = sessionStorage.getItem("token");
     const [loading, setLoading] = useState(true);
     // 🩺 Dynamic badge generator
     const getHealthBadge = (type: string, value?: number | string | null) => {
@@ -111,7 +110,7 @@ export default function Health() {
     const recordBypatientIdUrl = `/medical-records/${patientID}`;
     useEffect(() => {
         setLoading(true); // start loading
-        API.get(recordBypatientIdUrl, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(recordBypatientIdUrl)
             .then(response => {
                 const sorted = [...response.data].sort(
                     (a, b) => new Date(b.timeCreate).getTime() - new Date(a.timeCreate).getTime()
@@ -128,7 +127,7 @@ export default function Health() {
     }, [recordBypatientIdUrl]);
 
     const handleRecordSelect = (recordID: number) => {
-        API.get(`/medical-records/by-recordId/${recordID}`, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(`/medical-records/by-recordId/${recordID}`)
             .then(response => setRecord(response.data))
             .catch(error => console.error('Error fetching selected record:', error));
     };

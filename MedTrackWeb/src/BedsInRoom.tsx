@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 export default function BedsInRoom() {
     const { roomID } = useParams();
     const [beds, setBeds] = useState<any[]>([]);
-    const token = sessionStorage.getItem("token");
     const url = `/rooms/${roomID}/beds`;
     
     useEffect(() => {
@@ -14,7 +13,7 @@ export default function BedsInRoom() {
     }, [roomID]);
 
     const loadBeds = () => {
-        API.get(url, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(url)
             .then(response => {
                 setBeds(response.data);
                 console.log("Beds Data:", response.data);

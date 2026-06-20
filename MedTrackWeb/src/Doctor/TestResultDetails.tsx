@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../api";
 import { TestResultDetail } from "../interface";
 
 export default function TestResultDetails() {
@@ -16,14 +16,9 @@ export default function TestResultDetails() {
     const token = sessionStorage.getItem("token");
 
     useEffect(() => {
-        axios
+        API
             .get(
-                `http://localhost:3000/testresult/${id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+                `/testresult/${id}`
             )
             .then((res) => {
                 setData(res.data);

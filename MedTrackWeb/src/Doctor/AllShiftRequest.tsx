@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { ScheduleRequest } from "../interface";
 
 export default function AllShiftRequest() {
     const doctorID = Number(sessionStorage.getItem("doctorID"));
-    const token = sessionStorage.getItem("token");
     const [requests, setRequests] = useState<ScheduleRequest[]>([]);
 
     useEffect(() => {
@@ -15,16 +14,16 @@ export default function AllShiftRequest() {
     }, [doctorID]);
 
     const fetchRequests = () => {
-        axios
-            .get<ScheduleRequest[]>(`http://localhost:3000/schedule-requests`, { headers: { Authorization: `Bearer ${token}` } })
+        API
+            .get<ScheduleRequest[]>(`/schedule-requests`)
             .then(res => setRequests(res.data))
             .catch(err => console.error("Failed to load requests:", err));
     };
 
     // Unified function for approve/reject
     const handleStatusChange = (requestID: number, status: 1 | 2) => {
-        axios
-            .patch(`http://localhost:3000/schedule-requests/${requestID}/status`, { status }, { headers: { Authorization: `Bearer ${token}` } })
+        API
+            .patch(`/schedule-requests/${requestID}/status`, { status })
             .then(res => {
                 toast.success(res.data.message);
                 fetchRequests(); // reload table

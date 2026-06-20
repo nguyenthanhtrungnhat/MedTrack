@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../../api";
 import { useNavigate } from "react-router-dom";
 
 type SheetType = {
@@ -16,18 +16,13 @@ type SheetType = {
 export default function TreatmentDashboard() {
     const [sheets, setSheets] = useState<SheetType[]>([]);
     const [loading, setLoading] = useState(false);
-    const token = sessionStorage.getItem("token");
     const navigate = useNavigate();
-
-    const api = axios.create({
-        baseURL: "http://localhost:3000",
-    });
 
     useEffect(() => {
         const fetch = async () => {
             setLoading(true);
             try {
-                const res = await api.get("/treatmenttimeline/all", { headers: { Authorization: `Bearer ${token}` } });
+                const res = await API.get("/treatmenttimeline/all");
                 setSheets(res.data || []);
             } finally {
                 setLoading(false);

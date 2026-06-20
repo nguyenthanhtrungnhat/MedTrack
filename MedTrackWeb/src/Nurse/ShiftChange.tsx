@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/AllDesign.css";
@@ -17,7 +17,7 @@ export default function ShiftChange() {
     useEffect(() => {
         if (!nurseID) return;
 
-        axios.get(`http://localhost:3000/schedules/nurse/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(`/schedules/nurse/${nurseID}`)
             .then(res => setSchedules(res.data))
             .catch(err => console.error(err));
 
@@ -26,7 +26,7 @@ export default function ShiftChange() {
 
 
     const fetchRequests = () => {
-        axios.get(`http://localhost:3000/schedule-requests/status/${nurseID}`, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(`/schedule-requests/status/${nurseID}`)
             .then(res => setRequests(res.data))
             .catch(() => toast.error("Failed to load requests"));
     };
@@ -37,11 +37,11 @@ export default function ShiftChange() {
         if (!selectedScheduleID || !expectedDate || !reason)
             return toast.warn("⚠ Please fill all fields!");
 
-        axios.post("http://localhost:3000/schedule-requests", {
+        API.post("/schedule-requests", {
             scheduleID: Number(selectedScheduleID),
             newDate: expectedDate,
             reason: reason
-        }, { headers: { Authorization: `Bearer ${token}` } })
+        })
             .then(() => {
                 toast.success("✔ Request submitted!");
                 setReason("");

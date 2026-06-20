@@ -1,27 +1,23 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { AppointmentProps } from "../interface";
 
 export default function AllAppointment() {
     const doctorID = Number(sessionStorage.getItem("doctorID"));
     const [appointments, setAppointments] = useState<AppointmentProps[]>([]);
-    const token = sessionStorage.getItem("token");
-
     useEffect(() => {
         if (!doctorID) return;
 
         async function loadAppointments() {
             try {
                 // ✅ NEW API (was check-overdue)
-                await axios.put(
-                    "http://localhost:3000/appointments/check-missed",
-                    {},
-                    { headers: { Authorization: `Bearer ${token}` } }
+                await API.put(
+                    "/appointments/check-missed",
+                    {}
                 );
 
-                const res = await axios.get(
-                    `http://localhost:3000/appointments/all-appointment/doctor/${doctorID}`,
-                    { headers: { Authorization: `Bearer ${token}` } }
+                const res = await API.get(
+                    `/appointments/all-appointment/doctor/${doctorID}`
                 );
 
                 setAppointments(res.data);

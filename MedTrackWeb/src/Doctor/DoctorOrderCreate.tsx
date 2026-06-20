@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function DoctorOrderCreate() {
-    const token = sessionStorage.getItem("token");
     const doctorID = sessionStorage.getItem("doctorID");
 
     const [patients, setPatients] = useState<any[]>([]);
@@ -24,13 +23,8 @@ export default function DoctorOrderCreate() {
 
     const loadPatients = async () => {
         try {
-            const res = await axios.get(
-                "http://localhost:3000/patients",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+            const res = await API.get(
+                "/patients"
             );
 
             setPatients(res.data);
@@ -41,13 +35,8 @@ export default function DoctorOrderCreate() {
 
     const loadTestTypes = async () => {
         try {
-            const res = await axios.get(
-                "http://localhost:3000/testtype",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+            const res = await API.get(
+                "/testtype"
             );
 
             setTestTypes(res.data);
@@ -75,13 +64,8 @@ export default function DoctorOrderCreate() {
         setSearchCIC(patient.CIC);
 
         try {
-            const res = await axios.get(
-                `http://localhost:3000/doctororder/active-admission/${patient.patientID}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+            const res = await API.get(
+                `/doctororder/active-admission/${patient.patientID}`
             );
 
             setActiveAdmission(res.data);
@@ -110,19 +94,14 @@ export default function DoctorOrderCreate() {
 
             const loadingToast = toast.loading("Creating doctor order...");
 
-            await axios.post(
-                "http://localhost:3000/doctororder",
+            await API.post(
+                "/doctororder",
                 {
                     userID: selectedPatient.userID,
                     doctorID,
                     admissionID: activeAdmission.admissionID,
                     testTypeID,
                     diagnosisNote,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                 }
             );
 

@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function CreateTestResult() {
-    const token = sessionStorage.getItem("token");
-
     const [orders, setOrders] = useState<any[]>([]);
     const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
@@ -23,13 +21,8 @@ export default function CreateTestResult() {
 
     const loadOrders = async () => {
         try {
-            const res = await axios.get(
-                "http://localhost:3000/doctororder/pending",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+            const res = await API.get(
+                "/doctororder/pending"
             );
             setOrders(res.data);
         } catch {
@@ -42,13 +35,8 @@ export default function CreateTestResult() {
     // =========================
     const loadTestItems = async (testTypeID: number) => {
         try {
-            const res = await axios.get(
-                `http://localhost:3000/testtype/${testTypeID}/items`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+            const res = await API.get(
+                `/testtype/${testTypeID}/items`
             );
 
             const mapped = res.data.map((p: any) => ({
@@ -193,18 +181,13 @@ export default function CreateTestResult() {
         try {
             const loading = toast.loading("Saving result...");
 
-            await axios.post(
-                "http://localhost:3000/testresult",
+            await API.post(
+                "/testresult",
                 {
                     orderID: selectedOrder.orderID,
                     title,
                     remarks,
                     items,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                 }
             );
 

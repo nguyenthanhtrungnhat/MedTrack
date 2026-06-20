@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import API from "../api";
 
 interface Medicine {
   medicineID: number;
@@ -15,7 +15,6 @@ export default function MedicinesList() {
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     fetchMedicines();
@@ -23,12 +22,8 @@ export default function MedicinesList() {
 
   const fetchMedicines = async () => {
     try {
-      const response = await axios.get<Medicine[]>(
-        "http://localhost:3000/medicines", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
+      const response = await API.get<Medicine[]>(
+        "/medicines"
       );
       setMedicines(response.data);
     } catch (err) {

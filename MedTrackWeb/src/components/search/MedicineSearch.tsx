@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import API from "../../api";
 
 interface Medicine {
   medicineID: number
@@ -29,7 +29,7 @@ export default function MedicineSearch({ addMedicine }: Props) {
         setLoading(true)
         setError(false)
 
-        const res = await axios.get("http://localhost:3000/medicines")
+        const res = await API.get("/medicines")
 
         setMedicines(res.data)
 

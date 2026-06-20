@@ -28,7 +28,7 @@ export default function BedDetails() {
     const loadUser = () => {
         if (!patientID) return;
         setLoading(true);
-        API.get(`/patients/${patientID}`, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(`/patients/${patientID}`)
             .then(response => {
                 console.log("Patient Information",response.data);
                 setUser(response.data);
@@ -39,7 +39,7 @@ export default function BedDetails() {
 
     const loadClinicalExam = () => {
         if (!patientID) return;
-        API.get(`/clinical-exams/patient/${patientID}`, { headers: { Authorization: `Bearer ${token}` } })
+        API.get(`/clinical-exams/patient/${patientID}`)
             .then(response => {
                 if (response.data && response.data.length > 0) {
                     setClinicalExam(response.data[0]); // get latest
@@ -61,8 +61,6 @@ export default function BedDetails() {
                 icdCode,
                 diagnosisText,
                 summary
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
             toast.success("Discharge Order created!");
             setShowDischargeModal(false);

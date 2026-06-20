@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function DischargeManagement() {
@@ -15,9 +15,7 @@ export default function DischargeManagement() {
     const loadPendingDischarges = async () => {
         try {
             setLoading(true);
-            const res = await axios.get("http://localhost:3000/admission/pending-discharge", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await API.get("/admission/pending-discharge");
             setPendingDischarges(res.data);
         } catch (error) {
             toast.error("Failed to load discharge list");
@@ -31,9 +29,7 @@ export default function DischargeManagement() {
 
         try {
             setProcessingId(admissionID);
-            await axios.put(`http://localhost:3000/admission/${admissionID}/discharge-payment`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await API.put(`/admission/${admissionID}/discharge-payment`, {});
             toast.success("Discharge processed successfully!");
             loadPendingDischarges(); // Reload list
         } catch (error: any) {

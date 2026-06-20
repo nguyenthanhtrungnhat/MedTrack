@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../../api";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -43,16 +43,10 @@ export default function TreatmentDetail() {
     const [plan, setPlan] = useState("");
     const [instruction, setInstruction] = useState("");
 
-    const api = axios.create({
-        baseURL: "http://localhost:3000",
-    });
-
-    useEffect(() => {
+     useEffect(() => {
         const fetch = async () => {
             try {
-                const res = await api.get(`/treatmenttimeline/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const res = await API.get(`/treatmenttimeline/${id}`);
                 setData(res.data);
             } finally {
                 setLoading(false);
@@ -68,7 +62,7 @@ export default function TreatmentDetail() {
         if (!doctorID) return toast.error("Missing doctorID");
 
         try {
-            await api.post(
+            await API.post(
                 `/treatmenttimeline/${data.sheetID}/log`,
                 {
                     doctorID,
@@ -79,18 +73,13 @@ export default function TreatmentDetail() {
                         plan,
                         instruction,
                     },
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
                 }
             );
 
             toast.success("Added log");
 
             // reload
-            const res = await api.get(`/treatmenttimeline/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await API.get(`/treatmenttimeline/${id}`);
             setData(res.data);
 
             // reset

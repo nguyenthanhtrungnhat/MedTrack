@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import getUserIDFromToken from "../components/getUserIDFromToken";
@@ -15,10 +15,7 @@ export default function MakeAppointment() {
     const [dateTime, setDateTime] = useState("");
     const [location, setLocation] = useState("");
 
-    const token = sessionStorage.getItem("token");
     const userID = getUserIDFromToken();
-    const role = sessionStorage.getItem("role");
-
     // ======================================================
     // LOAD INITIAL DATA
     // ======================================================
@@ -41,9 +38,7 @@ export default function MakeAppointment() {
     // ======================================================
     const loadDepartments = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/departments", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await API.get("/departments");
             setDepartments(res.data);
         } catch {
             toast.error("Failed to load departments");
@@ -52,9 +47,7 @@ export default function MakeAppointment() {
 
     const loadDoctors = async () => {
         try {
-            const res = await axios.get("http://localhost:3000/doctors", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await API.get("/doctors");
             setDoctors(res.data);
         } catch {
             toast.error("Failed to load doctors");
@@ -63,9 +56,8 @@ export default function MakeAppointment() {
 
     const loadAppointments = async () => {
         try {
-            const res = await axios.get(
-                `http://localhost:3000/appointments/${userID}`,
-                { headers: { Authorization: `Bearer ${token}` } }
+            const res = await API.get(
+                `/appointments/${userID}`
             );
             setAppointments(res.data);
         } catch {
@@ -120,10 +112,9 @@ export default function MakeAppointment() {
         const loading = toast.loading("Booking appointment...");
 
         try {
-            await axios.post(
-                "http://localhost:3000/appointments",
-                { doctorID, userID, dateTime, location },
-                { headers: { Authorization: `Bearer ${token}` } }
+            await API.post(
+                "/appointments",
+                { doctorID, userID, dateTime, location }
             );
 
             toast.dismiss(loading);
@@ -169,6 +160,7 @@ export default function MakeAppointment() {
     // ======================================================
     return (
         <div>
+            <ToastContainer/>
             {/* ================= FORM ================= */}
             <div className="card shadow mb-4">
                 <div className="card-header blueBg text-white">

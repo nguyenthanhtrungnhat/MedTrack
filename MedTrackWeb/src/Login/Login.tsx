@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../api";
 import './../css/AllDesign.css';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -18,7 +18,7 @@ export default function LoginScreen() {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:3000/auth/login", { email, password });
+            const response = await API.post("/auth/login", { email, password });
             const { token, redirect } = response.data;
 
             if (!token || !redirect) {

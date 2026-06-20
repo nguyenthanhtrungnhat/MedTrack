@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import API from "../../api";
 import { toast } from "react-toastify"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -28,8 +28,6 @@ interface PrescriptionItem {
 }
 
 export default function PrescriptionForm() {
-  const token = sessionStorage.getItem("token");
-
   const [patients, setPatients] = useState<Patient[]>([])
   const [medicines, setMedicines] = useState<Medicine[]>([])
 
@@ -60,8 +58,8 @@ export default function PrescriptionForm() {
       try {
 
         const [pRes, mRes] = await Promise.all([
-          axios.get("http://localhost:3000/patients", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://localhost:3000/medicines", { headers: { Authorization: `Bearer ${token}` } })
+          API.get("/patients"),
+          API.get("/medicines")
         ])
 
         setPatients(pRes.data)
@@ -200,10 +198,7 @@ export default function PrescriptionForm() {
 
       setLoading(true)
 
-      await axios.post(
-        "http://localhost:3000/prescriptions",
-        data, { headers: { Authorization: `Bearer ${token}` } }
-      )
+      await API.post("/prescriptions", data)
 
       toast.success("Prescription created successfully")
 

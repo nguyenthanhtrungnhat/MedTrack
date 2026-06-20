@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import axios from "axios";
+import API from "../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FormData } from '../interface';
@@ -39,7 +39,7 @@ export default function DailyCheckingForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-    axios.get<Patient[]>("http://localhost:3000/patients", { headers: { Authorization: `Bearer ${token}` } })
+    API.get<Patient[]>("/patients")
       .then(res => setPatients(res.data))
       .catch(err => toast.error(`Failed to load patients data: ${err}`));
   }, []);
@@ -112,7 +112,7 @@ export default function DailyCheckingForm() {
     if (Object.values(newErrors).some(err => err)) return;
 
     try {
-      await axios.post("http://localhost:3000/medical-records", {
+      await API.post("/medical-records", {
         patientID: parseInt(formData.patientID),
         heartRate: parseFloat(String(formData.heartRate)),
         pulse: parseFloat(String(formData.pulse)),
@@ -126,7 +126,7 @@ export default function DailyCheckingForm() {
         urine: parseFloat(String(formData.urine)),
         oxygenTherapy: parseInt(String(formData.oxygenTherapy)),
         sensorium: parseInt(String(formData.sensorium)),
-      }, { headers: { Authorization: `Bearer ${token}` } });
+      });
 
       toast.success("Dữ liệu đã gửi thành công!");
       setFormData({

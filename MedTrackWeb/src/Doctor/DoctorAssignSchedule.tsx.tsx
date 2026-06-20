@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api";
 
 import {
   Calendar,
@@ -42,8 +42,6 @@ type ScheduleType = {
 };
 
 export default function DoctorAssignSchedule() {
-  const token = sessionStorage.getItem("token");
-
   const [events, setEvents] = useState<any[]>([]);
   const [nurses, setNurses] = useState<NurseType[]>([]);
 
@@ -72,17 +70,11 @@ export default function DoctorAssignSchedule() {
     loadNurses();
   }, []);
 
-  const authHeader = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
 
   const loadNurses = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3000/schedules/nurses",
-        authHeader
+      const res = await API.get(
+        "/schedules/nurses"
       );
 
       setNurses(res.data);
@@ -93,9 +85,8 @@ export default function DoctorAssignSchedule() {
 
   const loadSchedules = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3000/schedules",
-        authHeader
+      const res = await API.get(
+        "/schedules"
       );
 
       const mapped = res.data.map(
@@ -212,20 +203,18 @@ export default function DoctorAssignSchedule() {
       };
 
       if (editingID) {
-        await axios.put(
-          `http://localhost:3000/schedules/${editingID}`,
-          payload,
-          authHeader
+        await API.put(
+          `/schedules/${editingID}`,
+          payload
         );
 
         toast.success(
           "Schedule updated"
         );
       } else {
-        await axios.post(
-          "http://localhost:3000/schedules",
-          payload,
-          authHeader
+        await API.post(
+          "/schedules",
+          payload
         );
 
         toast.success(
@@ -253,9 +242,8 @@ export default function DoctorAssignSchedule() {
       return;
 
     try {
-      await axios.delete(
-        `http://localhost:3000/schedules/${editingID}`,
-        authHeader
+      await API.delete(
+        `/schedules/${editingID}`
       );
 
       toast.success("Deleted");

@@ -12,7 +12,7 @@ import {
   getDay,
 } from "date-fns";
 import { enUS } from "date-fns/locale";
-import axios from "axios";
+import API from "../api";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../css/Schedule.css";
 import {
@@ -21,6 +21,7 @@ import {
   Badge,
 } from "react-bootstrap";
 import ErrorPage from "../ErrorPage";
+
 
 const locales = {
   "en-US": enUS,
@@ -100,13 +101,8 @@ export default function Schedule() {
     }
 
     try {
-      const res = await axios.get(
-        `http://localhost:3000/schedules/nurse/${nurseID}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const res = await API.get(
+        `/schedules/nurse/${nurseID}`
       );
 
       const mapped: ScheduleEvent[] =

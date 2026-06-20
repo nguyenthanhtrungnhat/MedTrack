@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import API from "../../api";
 import { toast, ToastContainer } from "react-toastify";
 
 export default function ManualTreatmentPage() {
@@ -25,11 +25,8 @@ export default function ManualTreatmentPage() {
   useEffect(() => {
     const loadPatients = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/patients/forSearch",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+        const res = await API.get(
+          "/patients/forSearch"
         );
 
         setPatients(res.data || []);
@@ -81,8 +78,8 @@ export default function ManualTreatmentPage() {
     try {
       setLoading(true);
 
-      await axios.post(
-        "http://localhost:3000/treatmenttimeline/manual",
+      await API.post(
+        "/treatmenttimeline/manual",
         {
           cic: selectedPatient.HI,
           diagnosis,
@@ -93,11 +90,6 @@ export default function ManualTreatmentPage() {
             assessment,
             plan,
             instruction,
-          },
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
           },
         }
       );

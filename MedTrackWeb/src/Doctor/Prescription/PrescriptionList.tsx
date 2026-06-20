@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import API from "../../api";
 import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
 
@@ -12,7 +12,6 @@ interface Prescription {
 }
 
 export default function PrescriptionList() {
-  const token = sessionStorage.getItem("token");
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
@@ -25,9 +24,9 @@ export default function PrescriptionList() {
 
     try {
 
-      const res = await axios.get(
-        "http://localhost:3000/prescriptions"
-      , { headers: { Authorization: `Bearer ${token}` } })
+      const res = await API.get(
+        "/prescriptions"
+      )
 
       if (Array.isArray(res.data)) {
         setPrescriptions(res.data)
