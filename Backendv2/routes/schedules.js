@@ -291,12 +291,17 @@ router.get("/nurse/:nurseID/week", verifyToken, (req, res) => {
       roomID
     FROM schedules
     WHERE nurseID = ?
-      AND YEARWEEK(date, 1) = YEARWEEK(CURDATE(), 1)
+      AND date >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+      AND date < DATE_ADD(CURDATE(), INTERVAL (6 - WEEKDAY(CURDATE())) DAY)
     ORDER BY date, start_at
   `;
 
   db.query(sql, [nurseID], (err, rows) => {
-    if (err) return res.status(500).json(err);
+    if (err) {
+      console.error(err);
+      return res.status(500).json(err);
+    }
+
     res.json(rows);
   });
 });

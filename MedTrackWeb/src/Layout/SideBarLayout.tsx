@@ -90,11 +90,11 @@ export default function SideBarLayout() {
                                                 </Link>
                                             </li>
 
-                                            <li>
+                                            {/* <li>
                                                 <Link to="/doctor/allshiftrequest" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Shift Request
                                                 </Link>
-                                            </li>
+                                            </li> */}
 
                                             <li>
                                                 <Link to="/doctor/testresultlist" className="text-decoration-none">
@@ -150,11 +150,11 @@ export default function SideBarLayout() {
                                     {roleID == "2" && (
                                         <ul className='list-unstyled'>
 
-                                            <li>
+                                            {/* <li>
                                                 <Link to="/home/shift-change" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Shift change registration
                                                 </Link>
-                                            </li>
+                                            </li> */}
 
                                             <li>
                                                 <Link to="/home/daily-checking" className="text-decoration-none">
