@@ -40,20 +40,81 @@ router.get('/patientByUserID/:userID', (req, res) => {
 });
 
 // GET /patients/:patientID
-router.get('/:patientID', verifyToken,(req, res) => {
+// router.get('/:patientID', verifyToken,(req, res) => {
+//   const { patientID } = req.params;
+//   const query = `
+//     SELECT p.*, u.*, a.admissionID, a.status as admissionStatus, a.admissionDate, a.hospitalizationsDiagnosis, a.summaryCondition, b.roomID, b.bedNumber, d.diagnosisText as dischargeDiagnosis
+//     FROM patient p
+//     JOIN user u ON p.userID = u.userID
+//     LEFT JOIN admission a ON p.patientID = a.patientID AND a.status IN ('Init', 'In-treatment')
+//     LEFT JOIN bed b ON p.patientID = b.patientID
+//     LEFT JOIN discharge d ON a.dischargeID = d.dischargeID
+//     WHERE p.patientID = ?
+//   `;
+//   db.query(query, [patientID], (err, results) => {
+//     if (err) return res.status(500).json({ error: 'Database error', details: err });
+//     if (results.length === 0) return res.status(404).json({ error: 'Patient not found' });
+//     res.json(results[0]);
+//   });
+// });
+router.get('/:patientID', verifyToken, (req, res) => {
   const { patientID } = req.params;
+
   const query = `
-    SELECT p.*, u.*, a.admissionID, a.status as admissionStatus, a.admissionDate, a.hospitalizationsDiagnosis, a.summaryCondition, b.roomID, b.bedNumber, d.diagnosisText as dischargeDiagnosis
+    SELECT
+      p.*,
+      u.*,
+
+      a.admissionID,
+      a.status AS admissionStatus,
+      a.admissionDate,
+      a.hospitalizationsDiagnosis,
+      a.summaryCondition,
+
+      b.roomID,
+      b.bedNumber,
+
+      d.dischargeID,
+      d.diagnosisType,
+      d.icdCode,
+      d.diagnosisText AS dischargeDiagnosis,
+      d.summary AS dischargeSummary,
+      d.createdAt AS dischargeDate
+
     FROM patient p
-    JOIN user u ON p.userID = u.userID
-    LEFT JOIN admission a ON p.patientID = a.patientID AND a.status IN ('Init', 'In-treatment')
-    LEFT JOIN bed b ON p.patientID = b.patientID
-    LEFT JOIN discharge d ON a.dischargeID = d.dischargeID
+
+    JOIN user u
+      ON p.userID = u.userID
+
+    LEFT JOIN (
+      SELECT a1.*
+      FROM admission a1
+      WHERE a1.patientID = ?
+      ORDER BY a1.admissionDate DESC
+      LIMIT 1
+    ) a
+      ON p.patientID = a.patientID
+
+    LEFT JOIN bed b
+      ON p.patientID = b.patientID
+
+    LEFT JOIN discharge d
+      ON d.dischargeID = a.dischargeID
+
     WHERE p.patientID = ?
   `;
-  db.query(query, [patientID], (err, results) => {
-    if (err) return res.status(500).json({ error: 'Database error', details: err });
-    if (results.length === 0) return res.status(404).json({ error: 'Patient not found' });
+
+  db.query(query, [patientID, patientID], (err, results) => {
+    if (err)
+      return res.status(500).json({
+        error: err.message,
+      });
+
+    if (!results.length)
+      return res.status(404).json({
+        error: "Patient not found",
+      });
+
     res.json(results[0]);
   });
 });
@@ -67,5 +128,7 @@ router.delete('/:patientID',verifyToken, (req, res) => {
     res.status(200).json({ message: 'Patient deleted successfully' });
   });
 });
+
+
 
 module.exports = router;
