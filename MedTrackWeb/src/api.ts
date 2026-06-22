@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-    // baseURL: "https://projectb-medtrack.onrender.com",
-    baseURL: "http://localhost:3000",
+     baseURL: "https://projectb-medtrack.onrender.com",
+   // baseURL: "http://localhost:3000",
     timeout: 15000, // ⬅️ prevents hanging requests
 });
 
