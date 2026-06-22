@@ -1,0 +1,180 @@
+/* Premium Admin Dashboard Styling */
+
+/* Feature Card */
+.admin-feature-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    padding: 24px;
+    border: 1px solid #f1f5f9;
+}
+
+.admin-header-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Premium Table */
+.premium-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+}
+
+.premium-table th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    border-top: 1px solid #e2e8f0;
+}
+
+.premium-table th:first-child {
+    border-top-left-radius: 10px;
+    border-left: 1px solid #e2e8f0;
+}
+
+.premium-table th:last-child {
+    border-top-right-radius: 10px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.premium-table td {
+    padding: 16px;
+    color: #334155;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+}
+
+.premium-table tr:hover td {
+    background-color: #f8fafc;
+    transition: background-color 0.2s ease;
+}
+
+/* Badges */
+.premium-badge {
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.premium-badge-blue { background: #eff6ff; color: #2563eb; }
+.premium-badge-green { background: #f0fdf4; color: #16a34a; }
+.premium-badge-red { background: #fef2f2; color: #dc2626; }
+.premium-badge-orange { background: #fff7ed; color: #ea580c; }
+.premium-badge-purple { background: #faf5ff; color: #9333ea; }
+.premium-badge-gray { background: #f1f5f9; color: #475569; }
+
+/* Buttons */
+.btn-premium-add {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-premium-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+    color: white;
+}
+
+.btn-action-edit {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    margin-right: 8px;
+}
+.btn-action-edit:hover { background: #dbeafe; }
+
+.btn-action-delete {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.btn-action-delete:hover { background: #fee2e2; }
+
+/* Select Inputs */
+.premium-select {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.875rem;
+    color: #334155;
+    background-color: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+.premium-select:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Custom Tabs */
+.premium-tabs {
+    display: flex;
+    gap: 8px;
+    background: #f1f5f9;
+    padding: 8px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+}
+
+.premium-tab-btn {
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.premium-tab-btn:hover {
+    color: #0f172a;
+    background: rgba(255,255,255,0.5);
+}
+
+.premium-tab-btn.active {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}

@@ -117,4 +117,42 @@ router.put("/beds/:bedID/assign", verifyToken, (req, res) => {
   });
 });
 
+// POST /rooms (Admin create room)
+router.post('/', verifyToken, (req, res) => {
+  const { departmentID, location, capacity } = req.body;
+  const sql = `INSERT INTO room (departmentID, location, capacity) VALUES (?, ?, ?)`;
+  db.query(sql, [departmentID, location, capacity || 6], (err, result) => {
+    if (err) return res.status(500).json({ error: "DB Error", details: err });
+    res.json({ message: "Room created successfully", roomID: result.insertId });
+  });
+});
+
+// PUT /rooms/:id (Admin update room)
+router.put('/:id', verifyToken, (req, res) => {
+  const { id } = req.params;
+  const { departmentID, location, capacity } = req.body;
+  const sql = `UPDATE room SET departmentID = ?, location = ?, capacity = ? WHERE roomID = ?`;
+  db.query(sql, [departmentID, location, capacity, id], (err) => {
+    if (err) return res.status(500).json({ error: "DB Error", details: err });
+    res.json({ message: "Room updated successfully" });
+  });
+});
+
+// DELETE /rooms/:id (Admin delete room)
+router.delete('/:id', verifyToken, (req, res) => {
+  const { id } = req.params;
+  // Make sure to delete beds first, or handle foreign keys if necessary.
+  // Actually, we should check if room is empty
+  const sql = `DELETE FROM room WHERE roomID = ?`;
+  db.query(sql, [id], (err) => {
+    if (err) {
+      if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+        return res.status(400).json({ error: "Cannot delete room because it has beds or is referenced elsewhere." });
+      }
+      return res.status(500).json({ error: "DB Error", details: err });
+    }
+    res.json({ message: "Room deleted successfully" });
+  });
+});
+
 module.exports = router;

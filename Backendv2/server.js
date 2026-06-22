@@ -72,6 +72,8 @@ app.use("/doctororder", require("./routes/doctororder"));
 app.use("/testtype", require("./routes/testtype"));
 app.use("/admission", require("./routes/admission"));
 app.use("/clinical-exams", require("./routes/clinicalExams"));
+app.use("/beds", require("./routes/beds"));
+app.use("/testitems", require("./routes/testitems"));
 // Test route
 app.get("/", (req, res) => {
   res.send("Hospital Backend Running");

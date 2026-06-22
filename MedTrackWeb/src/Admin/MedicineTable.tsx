@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-// import "../css/MedicineTable.css";
+import "./AdminFeatures.css";
 
 interface Medicine {
     medicineID: number;
@@ -68,11 +68,11 @@ export default function MedicineTable() {
 
     return (
 
-        <div className="medicineTable">
+        <div className="table-responsive">
 
-            <table className="table table-sm table-bordered table-striped">
+            <table className="premium-table">
 
-                <thead className="table-light">
+                <thead>
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
@@ -98,20 +98,24 @@ export default function MedicineTable() {
 
                             <td>
                                 {m.isActive
-                                    ? <span className="badge bg-success">Active</span>
-                                    : <span className="badge bg-secondary">Inactive</span>
+                                    ? <span className="premium-badge premium-badge-green">Active</span>
+                                    : <span className="premium-badge premium-badge-gray">Inactive</span>
                                 }
                             </td>
 
                             <td>
                                 <button
-                                    className={`btn btn-sm ${m.isActive
-                                        ? "btn-outline-secondary"
-                                        : "btn-outline-success"
-                                        }`}
+                                    className={"btn-action-edit " + (m.isActive ? "" : "opacity-50")}
+                                    style={{ background: m.isActive ? "#f0fdf4" : "", color: m.isActive ? "#16a34a" : "", borderColor: m.isActive ? "#bbf7d0" : "" }}
                                     onClick={() => toggleStatus(m)}
                                 >
-                                    {m.isActive ? "Disable" : "Enable"}
+                                    Active
+                                </button>
+                                <button
+                                    className={"btn-action-delete " + (!m.isActive ? "" : "opacity-50")}
+                                    onClick={() => toggleStatus(m)}
+                                >
+                                    Inactive
                                 </button>
                             </td>
 

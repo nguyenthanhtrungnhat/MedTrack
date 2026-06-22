@@ -7,6 +7,10 @@ import {
   RouterProvider
 } from "react-router-dom";
 import AdminScreen from "./Admin/Admin";
+import AdminRooms from "./Admin/AdminRooms";
+import AdminBeds from "./Admin/AdminBeds";
+import AdminTestTypes from "./Admin/AdminTestTypes";
+import AdminTestItems from "./Admin/AdminTestItems";
 import BedDetails from "./BedDetails";
 import BedsInRoom from "./BedsInRoom";
 import DoctorScreen from "./Doctor/DoctorScreen";
@@ -192,6 +196,10 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
           { index: true, element: <AdminScreen /> },
+          { path: "rooms", element: <AdminRooms /> },
+          { path: "beds", element: <AdminBeds /> },
+          { path: "test-types", element: <AdminTestTypes /> },
+          { path: "test-items", element: <AdminTestItems /> },
         ],
       },
     ],

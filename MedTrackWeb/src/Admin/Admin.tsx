@@ -9,6 +9,11 @@ import DoctorTable from "./DoctorTable";
 import NurseTable from "./NurseTable";
 import PatientTable from "./PatientTable";
 import MedicineTable from "./MedicineTable";
+import AdminRooms from "./AdminRooms";
+import AdminBeds from "./AdminBeds";
+import AdminTestTypes from "./AdminTestTypes";
+import AdminTestItems from "./AdminTestItems";
+import "./AdminFeatures.css";
 
 interface News {
     newID?: number;
@@ -448,113 +453,123 @@ export default function AdminScreen() {
 
 
                     <div className="col-12">
-                        <div className="border whiteBg dropShadow padding">
-                            {/* Tabs */}
-                            <ul className="nav nav-pills mb-3">
-                                <li className="nav-item">
+                        <div className="admin-feature-card mb-4">
+                            {/* Premium Tabs */}
+                            <div className="premium-tabs">
                                     <button
-                                        className={`nav-link ${activeTab === "doctors" ? "active" : ""
-                                            }`}
+                                        className={`premium-tab-btn ${activeTab === "doctors" ? "active" : ""}`}
                                         onClick={() => setActiveTab("doctors")}
                                     >
                                         Doctors
                                     </button>
-                                </li>
-                                <li className="nav-item">
                                     <button
-                                        className={`nav-link ${activeTab === "nurses" ? "active" : ""
-                                            }`}
+                                        className={`premium-tab-btn ${activeTab === "nurses" ? "active" : ""}`}
                                         onClick={() => setActiveTab("nurses")}
                                     >
                                         Nurses
                                     </button>
-                                </li>
-                                <li className="nav-item">
                                     <button
-                                        className={`nav-link ${activeTab === "patients" ? "active" : ""
-                                            }`}
+                                        className={`premium-tab-btn ${activeTab === "patients" ? "active" : ""}`}
                                         onClick={() => setActiveTab("patients")}
                                     >
                                         Patients
                                     </button>
-                                </li>
-                                <li className="nav-item">
                                     <button
-                                        className={`nav-link ${activeTab === "news" ? "active" : ""
-                                            }`}
+                                        className={`premium-tab-btn ${activeTab === "news" ? "active" : ""}`}
                                         onClick={() => setActiveTab("news")}
                                     >
-                                        News Management
+                                        News
                                     </button>
-                                </li>
-                                <li className="nav-item">
                                     <button
-                                        className={`nav-link ${activeTab === "medicines" ? "active" : ""}`}
+                                        className={`premium-tab-btn ${activeTab === "medicines" ? "active" : ""}`}
                                         onClick={() => setActiveTab("medicines")}
                                     >
                                         Medicines
                                     </button>
-                                </li>
-                            </ul>
+                                    <button
+                                        className={`premium-tab-btn ${activeTab === "rooms" ? "active" : ""}`}
+                                        onClick={() => setActiveTab("rooms")}
+                                    >
+                                        Rooms
+                                    </button>
+                                    <button
+                                        className={`premium-tab-btn ${activeTab === "beds" ? "active" : ""}`}
+                                        onClick={() => setActiveTab("beds")}
+                                    >
+                                        Beds
+                                    </button>
+                                    <button
+                                        className={`premium-tab-btn ${activeTab === "testtypes" ? "active" : ""}`}
+                                        onClick={() => setActiveTab("testtypes")}
+                                    >
+                                        Test Types
+                                    </button>
+                                    <button
+                                        className={`premium-tab-btn ${activeTab === "testitems" ? "active" : ""}`}
+                                        onClick={() => setActiveTab("testitems")}
+                                    >
+                                        Test Items
+                                    </button>
+                            </div>
 
                             {/* ========= Doctors Tab ========= */}
                             {activeTab === "doctors" && (
                                 <div className="mt-3">
-                                    <div className="d-flex justify-content-between align-items-center mb-3">
-                                        <h4 className="blueText mb-0">Doctor Account Management</h4>
+                                    <div className="d-flex justify-content-between align-items-center mb-4">
+                                        <h4 className="admin-header-title">Doctor Account Management</h4>
                                         <button
                                             type="button"
-                                            className="btn btn-primary"
+                                            className="btn-premium-add"
                                             onClick={() =>
                                                 setShowDoctorForm((prev) => !prev)
                                             }
                                         >
-                                            {showDoctorForm ? "Close form" : "Create Doctor Account"}
+                                            {showDoctorForm ? <span><i className="fa fa-times"></i> Close</span> : <span><i className="fa fa-plus"></i> Create Doctor</span>}
                                         </button>
                                     </div>
 
                                     {showDoctorForm && (
                                         <form
-                                            className="row g-3 mb-4 border rounded-3 p-3 bg-light"
+                                            className="row g-3 mb-4 admin-feature-card"
                                             onSubmit={handleCreateDoctor}
                                         >
                                             <div className="col-md-3">
-                                                <label className="form-label">Username</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Username</label>
                                                 <input
                                                     name="username"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={doctorForm.username}
                                                     onChange={handleDoctorChange}
                                                     required
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">Password</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Password</label>
                                                 <input
                                                     type="password"
                                                     name="password"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={doctorForm.password}
                                                     onChange={handleDoctorChange}
                                                     required
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">Full Name</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Full Name</label>
                                                 <input
                                                     name="fullName"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={doctorForm.fullName}
                                                     onChange={handleDoctorChange}
                                                     required
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">Email</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Email</label>
                                                 <input
                                                     type="email"
                                                     name="email"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={doctorForm.email}
                                                     onChange={handleDoctorChange}
                                                     required
@@ -562,38 +577,38 @@ export default function AdminScreen() {
                                             </div>
 
                                             <div className="col-md-3">
-                                                <label className="form-label">Phone</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Phone</label>
                                                 <input
                                                     name="phone"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={doctorForm.phone}
                                                     onChange={handleDoctorChange}
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">DOB</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">DOB</label>
                                                 <input
                                                     type="date"
                                                     name="dob"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={doctorForm.dob}
                                                     onChange={handleDoctorChange}
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">CCCD</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">CCCD</label>
                                                 <input
                                                     name="CCCD"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={doctorForm.CCCD}
                                                     onChange={handleDoctorChange}
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">Gender</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Gender</label>
                                                 <select
                                                     name="gender"
-                                                    className="form-select"
+                                                    className="form-select premium-select"
                                                     value={doctorForm.gender}
                                                     onChange={handleDoctorChange}
                                                 >
@@ -602,17 +617,17 @@ export default function AdminScreen() {
                                                 </select>
                                             </div>
                                             <div className="col-12">
-                                                <label className="form-label">Address</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Address</label>
                                                 <input
                                                     name="address"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={doctorForm.address}
                                                     onChange={handleDoctorChange}
                                                 />
                                             </div>
-                                            <div className="col-12">
-                                                <button type="submit" className="btn btn-success">
-                                                    Create Doctor
+                                            <div className="col-12 mt-4 text-end">
+                                                <button type="submit" className="btn-premium-add d-inline-block">
+                                                    Save Doctor
                                                 </button>
                                             </div>
                                         </form>
@@ -626,61 +641,61 @@ export default function AdminScreen() {
                             {/* ========= Nurses Tab ========= */}
                             {activeTab === "nurses" && (
                                 <div className="mt-3">
-                                    <div className="d-flex justify-content-between align-items-center mb-3">
-                                        <h4 className="blueText mb-0">Nurse Account Management</h4>
+                                    <div className="d-flex justify-content-between align-items-center mb-4">
+                                        <h4 className="admin-header-title">Nurse Account Management</h4>
                                         <button
                                             type="button"
-                                            className="btn btn-primary"
+                                            className="btn-premium-add"
                                             onClick={() =>
                                                 setShowNurseForm((prev) => !prev)
                                             }
                                         >
-                                            {showNurseForm ? "Close form" : "Create Nurse Account"}
+                                            {showNurseForm ? <span><i className="fa fa-times"></i> Close</span> : <span><i className="fa fa-plus"></i> Create Nurse</span>}
                                         </button>
                                     </div>
 
                                     {showNurseForm && (
                                         <form
-                                            className="row g-3 mb-4 border rounded-3 p-3 bg-light"
+                                            className="row g-3 mb-4 admin-feature-card"
                                             onSubmit={handleCreateNurse}
                                         >
                                             <div className="col-md-3">
-                                                <label className="form-label">Username</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Username</label>
                                                 <input
                                                     name="username"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.username}
                                                     onChange={handleNurseChange}
                                                     required
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">Password</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Password</label>
                                                 <input
                                                     type="password"
                                                     name="password"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.password}
                                                     onChange={handleNurseChange}
                                                     required
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">Full Name</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Full Name</label>
                                                 <input
                                                     name="fullName"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.fullName}
                                                     onChange={handleNurseChange}
                                                     required
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">Email</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Email</label>
                                                 <input
                                                     type="email"
                                                     name="email"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.email}
                                                     onChange={handleNurseChange}
                                                     required
@@ -688,38 +703,38 @@ export default function AdminScreen() {
                                             </div>
 
                                             <div className="col-md-3">
-                                                <label className="form-label">Phone</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Phone</label>
                                                 <input
                                                     name="phone"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.phone}
                                                     onChange={handleNurseChange}
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">DOB</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">DOB</label>
                                                 <input
                                                     type="date"
                                                     name="dob"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.dob}
                                                     onChange={handleNurseChange}
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">CCCD</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">CCCD</label>
                                                 <input
                                                     name="CCCD"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.CCCD}
                                                     onChange={handleNurseChange}
                                                 />
                                             </div>
                                             <div className="col-md-3">
-                                                <label className="form-label">Gender</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Gender</label>
                                                 <select
                                                     name="gender"
-                                                    className="form-select"
+                                                    className="form-select premium-select"
                                                     value={nurseForm.gender}
                                                     onChange={handleNurseChange}
                                                 >
@@ -728,27 +743,27 @@ export default function AdminScreen() {
                                                 </select>
                                             </div>
                                             <div className="col-9">
-                                                <label className="form-label">Address</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Address</label>
                                                 <input
                                                     name="address"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.address}
                                                     onChange={handleNurseChange}
                                                 />
                                             </div>
                                             <div className="col-3">
-                                                <label className="form-label">Image URL</label>
+                                                <label className="form-label fw-semibold text-secondary small text-uppercase">Image URL</label>
                                                 <input
                                                     name="image"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     value={nurseForm.image}
                                                     onChange={handleNurseChange}
                                                     placeholder="./images/nurse-1.jpg"
                                                 />
                                             </div>
-                                            <div className="col-12">
-                                                <button type="submit" className="btn btn-success">
-                                                    Create Nurse
+                                            <div className="col-12 mt-4 text-end">
+                                                <button type="submit" className="btn-premium-add d-inline-block">
+                                                    Save Nurse
                                                 </button>
                                             </div>
                                         </form>
@@ -762,7 +777,7 @@ export default function AdminScreen() {
                             {/* ========= Patients Tab ========= */}
                             {activeTab === "patients" && (
                                 <div className="mt-3">
-                                    <h4 className="blueText mb-3">Patient List</h4>
+                                    <h4 className="admin-header-title mb-3">Patient List</h4>
                                     <PatientTable />
                                 </div>
                             )}
@@ -770,36 +785,38 @@ export default function AdminScreen() {
                             {/* ========= News Tab ========= */}
                             {activeTab === "news" && (
                                 <div className="mt-3">
-                                    <h4 className="blueText mb-3">News Management</h4>
+                                    <div className="d-flex justify-content-between align-items-center mb-4">
+                                        <h4 className="admin-header-title mb-0">News Management</h4>
+                                    </div>
 
-                                    <form className="row g-3 mb-4" onSubmit={handleCreateNews}>
+                                    <form className="row g-3 mb-4 admin-feature-card" onSubmit={handleCreateNews}>
                                         <div className="col-md-6">
-                                            <label className="form-label">Title</label>
+                                            <label className="form-label fw-semibold text-secondary small text-uppercase">Title</label>
                                             <input
                                                 type="text"
                                                 name="title"
-                                                className="form-control"
+                                                className="form-control premium-select"
                                                 value={newsForm.title}
                                                 onChange={handleNewsFormChange}
                                                 required
                                             />
                                         </div>
                                         <div className="col-md-3">
-                                            <label className="form-label">Date</label>
+                                            <label className="form-label fw-semibold text-secondary small text-uppercase">Date</label>
                                             <input
                                                 type="date"
                                                 name="date"
-                                                className="form-control"
+                                                className="form-control premium-select"
                                                 value={newsForm.date}
                                                 onChange={handleNewsFormChange}
                                             />
                                         </div>
                                         <div className="col-md-3">
-                                            <label className="form-label">Author</label>
+                                            <label className="form-label fw-semibold text-secondary small text-uppercase">Author</label>
                                             <input
                                                 type="text"
                                                 name="author"
-                                                className="form-control"
+                                                className="form-control premium-select"
                                                 value={newsForm.author}
                                                 onChange={handleNewsFormChange}
                                                 placeholder="Admin name"
@@ -807,13 +824,13 @@ export default function AdminScreen() {
                                         </div>
 
                                         <div className="col-12">
-                                            <label className="form-label">
+                                            <label className="form-label fw-semibold text-secondary small text-uppercase">
                                                 Image URL (or upload below)
                                             </label>
                                             <input
                                                 type="text"
                                                 name="image"
-                                                className="form-control mb-2"
+                                                className="form-control premium-select mb-2"
                                                 value={newsForm.image}
                                                 onChange={handleNewsFormChange}
                                                 placeholder="./images/banner1.webp hoặc http://..."
@@ -823,7 +840,7 @@ export default function AdminScreen() {
                                                 <input
                                                     type="file"
                                                     accept="image/*"
-                                                    className="form-control"
+                                                    className="form-control premium-select"
                                                     onChange={handleImageFileChange}
                                                 />
                                                 <button
@@ -838,25 +855,25 @@ export default function AdminScreen() {
                                         </div>
 
                                         <div className="col-12">
-                                            <label className="form-label">Body</label>
+                                            <label className="form-label fw-semibold text-secondary small text-uppercase">Body</label>
                                             <textarea
                                                 name="body"
-                                                className="form-control"
+                                                className="form-control premium-select"
                                                 rows={3}
                                                 value={newsForm.body}
                                                 onChange={handleNewsFormChange}
                                                 placeholder="News content..."
                                             />
                                         </div>
-                                        <div className="col-12">
-                                            <button type="submit" className="btn btn-success">
+                                        <div className="col-12 mt-4 text-end">
+                                            <button type="submit" className="btn-premium-add d-inline-block">
                                                 Publish News
                                             </button>
                                         </div>
                                     </form>
                                     <div className="table-responsive">
-                                        <table className="table table-striped table-bordered ">
-                                            <thead className="table-light">
+                                        <table className="premium-table">
+                                            <thead>
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Title</th>
@@ -890,24 +907,24 @@ export default function AdminScreen() {
 
                                                         <td>
                                                             {n.isActive ? (
-                                                                <span className="badge bg-success">
+                                                                <span className="premium-badge premium-badge-green">
                                                                     Active
                                                                 </span>
                                                             ) : (
-                                                                <span className="badge bg-secondary">
+                                                                <span className="premium-badge premium-badge-gray">
                                                                     Inactive
                                                                 </span>
                                                             )}
                                                         </td>
                                                         <td>
                                                             <button
-                                                                className={`btn btn-sm ${n.isActive
-                                                                    ? "btn-outline-secondary"
-                                                                    : "btn-outline-success"
-                                                                    }`}
+                                                                className={
+                                                                    n.isActive ? "btn-action-delete" : "btn-action-edit"
+                                                                }
+                                                                style={n.isActive ? {} : { background: "#f0fdf4", color: "#16a34a", borderColor: "#bbf7d0" }}
                                                                 onClick={() => handleToggleNewsStatus(n)}
                                                             >
-                                                                {n.isActive ? "Unactive" : "Active"}
+                                                                {n.isActive ? "Inactive" : "Active"}
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -928,7 +945,7 @@ export default function AdminScreen() {
 
                                 <div className="mt-3">
 
-                                    <h4 className="blueText mb-3">
+                                    <h4 className="admin-header-title mb-3">
                                         Medicine Management
                                     </h4>
 
@@ -1002,6 +1019,34 @@ export default function AdminScreen() {
 
                                 </div>
 
+                            )}
+
+                            {/* ========= Rooms Tab ========= */}
+                            {activeTab === "rooms" && (
+                                <div className="mt-3">
+                                    <AdminRooms />
+                                </div>
+                            )}
+
+                            {/* ========= Beds Tab ========= */}
+                            {activeTab === "beds" && (
+                                <div className="mt-3">
+                                    <AdminBeds />
+                                </div>
+                            )}
+
+                            {/* ========= Test Types Tab ========= */}
+                            {activeTab === "testtypes" && (
+                                <div className="mt-3">
+                                    <AdminTestTypes />
+                                </div>
+                            )}
+
+                            {/* ========= Test Items Tab ========= */}
+                            {activeTab === "testitems" && (
+                                <div className="mt-3">
+                                    <AdminTestItems />
+                                </div>
                             )}
                         </div>
                     </div>

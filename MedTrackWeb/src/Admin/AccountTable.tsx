@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import "./AdminFeatures.css";
 
 export interface AccountTableProps {
     roleID: 1 | 2 | 3;    // 1 Doctor, 2 Nurse, 3 Patient
@@ -68,11 +69,13 @@ export default function AccountTable({ roleID, roleName }: AccountTableProps) {
 
     return (
         <div>
-            <h4 className="blueText mb-3">{roleName} Accounts</h4>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h4 className="admin-header-title">{roleName} Accounts</h4>
+            </div>
 
             <div className="table-responsive">
-                <table className="table table-striped table-bordered">
-                    <thead className="table-light">
+                <table className="premium-table">
+                    <thead>
                         <tr>
                             <th>UserID</th>
                             <th>Username</th>
@@ -109,29 +112,30 @@ export default function AccountTable({ roleID, roleName }: AccountTableProps) {
                                 <td>{acc.dob?.toString().split("T")[0]}</td>
                                 <td>
                                     {acc.isActive ? (
-                                        <span className="badge bg-success">Active</span>
+                                        <span className="premium-badge premium-badge-green">Active</span>
                                     ) : (
-                                        <span className="badge bg-secondary">Unactive</span>
+                                        <span className="premium-badge premium-badge-gray">Inactive</span>
                                     )}
                                 </td>
                                 <td>
                                     <button
                                         className={
-                                            "btn btn-sm me-2 " +
-                                            (acc.isActive ? "btn-success" : "btn-outline-success")
+                                            "btn-action-edit " +
+                                            (acc.isActive ? "" : "opacity-50")
                                         }
+                                        style={{ background: acc.isActive ? "#f0fdf4" : "", color: acc.isActive ? "#16a34a" : "", borderColor: acc.isActive ? "#bbf7d0" : "" }}
                                         onClick={() => updateStatus(acc.userID, 1)}
                                     >
                                         Active
                                     </button>
                                     <button
                                         className={
-                                            "btn btn-sm " +
-                                            (!acc.isActive ? "btn-danger" : "btn-outline-danger")
+                                            "btn-action-delete " +
+                                            (!acc.isActive ? "" : "opacity-50")
                                         }
                                         onClick={() => updateStatus(acc.userID, 0)}
                                     >
-                                        Unactive
+                                        Inactive
                                     </button>
                                 </td>
                             </tr>
