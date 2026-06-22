@@ -44,7 +44,7 @@ export default function PrescriptionDetail() {
 
         try {
 
-            const res = await API.get(`http://localhost:3000/prescriptions/${id}`)
+            const res = await API.get(`/prescriptions/${id}`)
 
             const data = res.data
 
