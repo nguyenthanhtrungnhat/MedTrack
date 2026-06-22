@@ -27,7 +27,7 @@ export default function RegisterScreen() {
 
         setLoading(true);
         try {
-            const response = await API.post("/register", {
+            const response = await API.post("/auth/register", {
                 username,
                 email,
                 password,
