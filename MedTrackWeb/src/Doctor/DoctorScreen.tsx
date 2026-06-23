@@ -158,7 +158,7 @@ export default function DoctorScreen() {
                                     ></i>
                                 </div>
 
-                                <Link to="/doctor/allshiftrequest" className="greenText text-decoration-none">
+                                <Link to="/doctor/admission-order" className="greenText text-decoration-none">
                                     More detail
                                 </Link>
                             </div>
