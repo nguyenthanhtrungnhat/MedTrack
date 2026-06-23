@@ -62,14 +62,19 @@ export default function DoctorScreen() {
         }
     }, [doctorID]);
 
-    const [pendingShiftRequestCount, setPendingShiftRequestCount] = useState<number>(0);
-
+    const [pendingExams, setPendingExams] = useState(0);
     useEffect(() => {
-        API.get("/schedule-requests/pending/count")
-            .then(res => setPendingShiftRequestCount(res.data.count))
-            .catch(err => console.error("Error fetching pending shift request count:", err));
-    }, []);
+        if (!doctorID) return;
 
+        API.get(`/clinical-exams/pending-count/${doctorID}`)
+            .then(res => {
+                setPendingExams(res.data.count);
+            })
+            .catch(err => {
+                console.error(err);
+                setPendingExams(0);
+            });
+    }, [doctorID]);
     if (!userID) {
         return <p>Please log in to view your nurse profile.</p>;
     }
@@ -143,9 +148,9 @@ export default function DoctorScreen() {
                         </div>
                         <div className="col-lg-6 col-sm-6 d-flex justify-content-center ">
                             <div className="border border-info square170-250 padding20 d-flex flex-column justify-content-between">
-                                <h5 className="medSche blueText mb-3">Nurse's requirements</h5>
+                                <h5 className="medSche blueText mb-3">Pending Clinical Exams</h5>
                                 <div className="d-flex align-items-center mb-3">
-                                    <p className="size25 blueText mb-0 me-auto">{pendingShiftRequestCount}</p>
+                                    <p className="size25 blueText mb-0 me-auto"> {pendingExams}</p>
                                     <i
                                         className="fa fa-calendar size25 blueText"
                                         aria-hidden="true"
