@@ -52,5 +52,28 @@ router.post('/', verifyToken, (req, res) => {
     res.status(201).json({ message: 'Clinical examination created', examID: result.insertId });
   });
 });
+// GET pending clinical exam count by doctor
+router.get("/pending-count/:doctorID", verifyToken, (req, res) => {
+    const { doctorID } = req.params;
 
+    const sql = `
+        SELECT COUNT(*) AS total
+        FROM clinical_exams
+        WHERE doctorID = ?
+          AND status = 'Pending'
+    `;
+
+    db.query(sql, [doctorID], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({
+                message: "Database error"
+            });
+        }
+
+        res.json({
+            count: result[0].total
+        });
+    });
+});
 module.exports = router;
