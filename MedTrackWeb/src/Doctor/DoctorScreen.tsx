@@ -64,9 +64,9 @@ export default function DoctorScreen() {
 
     const [pendingExams, setPendingExams] = useState(0);
     useEffect(() => {
-        if (!doctorID) return;
+        if (!userID) return;
 
-        API.get(`/clinical-exams/pending-count/${doctorID}`)
+        API.get(`/clinical-exams/pending-count`)
             .then(res => {
                 setPendingExams(res.data.count);
             })
@@ -74,7 +74,7 @@ export default function DoctorScreen() {
                 console.error(err);
                 setPendingExams(0);
             });
-    }, [doctorID]);
+    }, [userID]);
     if (!userID) {
         return <p>Please log in to view your nurse profile.</p>;
     }

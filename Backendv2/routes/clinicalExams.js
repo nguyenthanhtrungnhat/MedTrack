@@ -35,35 +35,75 @@ router.get('/patient/:patientID', verifyToken, (req, res) => {
 // POST /clinical-exams
 router.post('/', verifyToken, (req, res) => {
   const {
-    patientID, height, weight, bloodPressure, heartRate, temperature,
-    generalCondition, symptoms, diagnosis
+    patientID,
+    height,
+    weight,
+    bloodPressure,
+    heartRate,
+    temperature,
+    generalCondition,
+    symptoms,
+    diagnosis
   } = req.body;
-  const doctorID = req.user.userID; // Assuming whoever logged in (nurse/doctor) is the creator
+
+  const createdBy = req.user.userID;
 
   const sql = `
-    INSERT INTO clinical_examinations 
-    (patientID, doctorID, height, weight, bloodPressure, heartRate, temperature, generalCondition, symptoms, diagnosis) 
+    INSERT INTO clinical_examinations
+    (
+      patientID,
+      createdBy,
+      height,
+      weight,
+      bloodPressure,
+      heartRate,
+      temperature,
+      generalCondition,
+      symptoms,
+      diagnosis
+    )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  db.query(sql, [
-    patientID, doctorID, height, weight, bloodPressure, heartRate, temperature, generalCondition, symptoms, diagnosis
-  ], (err, result) => {
-    if (err) return res.status(500).json({ error: 'DB Error', details: err.message });
-    res.status(201).json({ message: 'Clinical examination created', examID: result.insertId });
-  });
+
+  db.query(
+    sql,
+    [
+      patientID,
+      createdBy,
+      height,
+      weight,
+      bloodPressure,
+      heartRate,
+      temperature,
+      generalCondition,
+      symptoms,
+      diagnosis
+    ],
+    (err, result) => {
+      if (err)
+        return res.status(500).json({
+          error: "DB Error",
+          details: err.message,
+        });
+
+      res.status(201).json({
+        message: "Clinical examination created",
+        examID: result.insertId,
+      });
+    }
+  );
 });
 // GET pending clinical exam count by doctor
-router.get("/pending-count/:doctorID", verifyToken, (req, res) => {
-    const { doctorID } = req.params;
+router.get("/pending-count", verifyToken, (req, res) => {
+    const { createdBy } = req.params;
 
     const sql = `
         SELECT COUNT(*) AS total
         FROM clinical_examinations
-        WHERE doctorID = ?
-          AND admissionID is null
+        WHERE admissionID is null
     `;
 
-    db.query(sql, [doctorID], (err, result) => {
+    db.query(sql, [createdBy], (err, result) => {
         if (err) {
             console.error(err);
             return res.status(500).json({

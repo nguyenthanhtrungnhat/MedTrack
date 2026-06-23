@@ -425,3 +425,14 @@ ADD CONSTRAINT fk_treatment_logs_sheet
 ADD CONSTRAINT fk_treatment_logs_doctor
     FOREIGN KEY (doctorID)
     REFERENCES doctor(doctorID);
+
+ALTER TABLE clinical_examinations
+DROP FOREIGN KEY fk_clinical_doctor;
+
+ALTER TABLE clinical_examinations
+CHANGE COLUMN doctorID createdBy INT NOT NULL;
+
+ALTER TABLE clinical_examinations
+ADD CONSTRAINT fk_clinical_created_by
+FOREIGN KEY (createdBy)
+REFERENCES user(userID);
