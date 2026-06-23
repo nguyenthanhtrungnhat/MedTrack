@@ -62,22 +62,34 @@ router.post('/', verifyToken, (req, res) => {
   const userID = req.user.userID;
   const roleID = req.user.roleID;
 
-  const sql = `
-    INSERT INTO medicalrecords 
-    (patientID, admissionID, heartRate, pulse, hurtScale, temperature,
-     currentCondition, SP02, healthStatus, respiratoryRate, bloodPressure,
-     urine, oxygenTherapy, sensorium) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  const insertRecord = (admID) => {
+    const sql = `
+      INSERT INTO medicalrecords 
+      (patientID, admissionID, heartRate, pulse, hurtScale, temperature,
+       currentCondition, SP02, healthStatus, respiratoryRate, bloodPressure,
+       urine, oxygenTherapy, sensorium) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-  db.query(sql, [
-    patientID, admissionID, heartRate, pulse, hurtScale, temperature,
-    currentCondition, SP02, healthStatus, respiratoryRate, bloodPressure,
-    urine, oxygenTherapy, sensorium,
-  ], (err, result) => {
-    if (err) return res.status(500).json({ message: 'Server error', error: err });
-    res.status(201).json({ message: 'Medical record added successfully', recordID: result.insertId, addedBy: userID, roleID });
-  });
+    db.query(sql, [
+      patientID, admID, heartRate, pulse, hurtScale, temperature,
+      currentCondition, SP02, healthStatus, respiratoryRate, bloodPressure,
+      urine, oxygenTherapy, sensorium,
+    ], (err, result) => {
+      if (err) return res.status(500).json({ message: 'Server error', error: err });
+      res.status(201).json({ message: 'Medical record added successfully', recordID: result.insertId, addedBy: userID, roleID });
+    });
+  };
+
+  if (!admissionID) {
+    db.query('SELECT admissionID FROM admission WHERE patientID = ? ORDER BY admissionDate DESC LIMIT 1', [patientID], (err, results) => {
+      if (err) return res.status(500).json({ message: 'Server error fetching admission', error: err });
+      const latestAdmID = results.length > 0 ? results[0].admissionID : null;
+      insertRecord(latestAdmID);
+    });
+  } else {
+    insertRecord(admissionID);
+  }
 });
 
 module.exports = router;
