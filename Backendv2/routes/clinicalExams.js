@@ -58,9 +58,9 @@ router.get("/pending-count/:doctorID", verifyToken, (req, res) => {
 
     const sql = `
         SELECT COUNT(*) AS total
-        FROM clinical_exams
+        FROM clinical_examinations
         WHERE doctorID = ?
-          AND status = 'Pending'
+          AND admissionID is null
     `;
 
     db.query(sql, [doctorID], (err, result) => {
