@@ -115,7 +115,7 @@ export default function HomePage() {
                                     </div>
                                     <div className="col-md-8">
                                         <div className="card-body">
-                                            <h3 className="card-title">Card title</h3>
+                                            <h3 className="card-title">International Healthcare Services</h3>
                                             <p className="card-text">
                                                 Our international, high-quality healthcare facilities and services, such as Example International Hospital and Example General Hospital serve the healthcare and wellness needs of the communities in our industrial parks and townships.
                                             </p>
