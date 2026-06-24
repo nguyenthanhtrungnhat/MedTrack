@@ -1691,7 +1691,7 @@ INSERT INTO doctor (doctorID, departmentID, userID, office, image) VALUES
 
 -- CLINICAL EXAMINATIONS
 INSERT INTO `clinical_examinations` (
-  `patientID`, `admissionID`, `doctorID`, `examDate`, `height`, `weight`, `bloodPressure`, `heartRate`, `temperature`, `generalCondition`, `symptoms`, `diagnosis`
+  `patientID`, `admissionID`, `createdBy`, `examDate`, `height`, `weight`, `bloodPressure`, `heartRate`, `temperature`, `generalCondition`, `symptoms`, `diagnosis`
 ) VALUES
 (1, 1, 1, '2026-03-01 08:30:00', 168.00, 70.00, '120/80', 80, 37.0, 'Patient looks exhausted', 'Headache, fatigue', 'Hypertension'),
 (2, 2, 1, '2026-03-02 10:30:00', 170.00, 85.00, '130/85', 85, 37.2, 'Patient is sweating and dizzy', 'Dizziness, high blood sugar', 'Type 2 Diabetes'),
@@ -1730,3 +1730,82 @@ INSERT INTO bed (roomID, bedNumber, status, patientID) VALUES
 
 (15, 'Bed 1', 'Empty', NULL), (15, 'Bed 2', 'Empty', NULL), (15, 'Bed 3', 'Empty', NULL),
 (15, 'Bed 4', 'Empty', NULL), (15, 'Bed 5', 'Empty', NULL), (15, 'Bed 6', 'Empty', NULL);
+
+INSERT INTO treatment_sheet
+(patientID, admissionID, admissionNumber, patientCode, diagnosis)
+VALUES
+(1, 1, 'ADM-0001', 'PAT-0001', 'Hypertension'),
+(2, 2, 'ADM-0002', 'PAT-0002', 'Type 2 Diabetes'),
+(3, 3, 'ADM-0003', 'PAT-0003', 'Acute Bronchitis'),
+(4, 4, 'ADM-0004', 'PAT-0004', 'Pneumonia'),
+(5, 5, 'ADM-0005', 'PAT-0005', 'Migraine'),
+(6, 6, 'ADM-0006', 'PAT-0006', 'Gastritis'),
+(7, 7, 'ADM-0007', 'PAT-0007', 'Urinary Tract Infection'),
+(8, 8, 'ADM-0008', 'PAT-0008', 'Dengue Fever'),
+(9, 9, 'ADM-0009', 'PAT-0009', 'Asthma'),
+(10, 10, 'ADM-0010', 'PAT-0010', 'COVID-19');
+
+INSERT INTO treatment_logs
+(sheetID, doctorID, logTime, subjective, objective, assessment, plan, instruction)
+VALUES
+(1,1,'08:00:00','Headache reported','BP 150/95','Hypertension uncontrolled','Continue medication','Monitor BP every 4 hours'),
+
+(1,1,'14:00:00','Patient feels better','BP 140/90','Improving','Continue observation','Low salt diet'),
+
+(2,2,'09:00:00','Dizziness','Blood sugar 220 mg/dL','Hyperglycemia','Adjust insulin','Check glucose before meals'),
+
+(2,2,'17:00:00','No dizziness','Blood sugar 180 mg/dL','Improving','Continue treatment','Diet control'),
+
+(3,3,'08:30:00','Persistent cough','Mild wheezing','Bronchitis','Antibiotics prescribed','Increase fluids'),
+
+(4,3,'09:15:00','Shortness of breath','Temp 38.7°C','Pneumonia','IV antibiotics','Bed rest'),
+
+(5,1,'10:00:00','Severe headache','Stable vitals','Migraine attack','Pain management','Avoid bright lights'),
+
+(6,4,'11:00:00','Abdominal pain','Tender epigastric area','Gastritis','PPI medication','Avoid spicy food'),
+
+(7,5,'08:45:00','Painful urination','Urinalysis positive','UTI','Start antibiotics','Increase water intake'),
+
+(8,4,'07:50:00','Fever persists','Platelets decreased','Dengue fever','Close monitoring','Report bleeding signs'),
+
+(9,2,'15:30:00','Wheezing improved','SpO2 97%','Asthma controlled','Continue inhaler','Avoid allergens'),
+
+(10,1,'13:00:00','Mild cough','Temp 37.8°C','COVID recovery','Continue isolation','Wear mask');
+
+INSERT INTO prescriptions
+(patientID, doctorID, diagnosis, notes)
+VALUES
+(1,1,'Hypertension','Monitor blood pressure daily'),
+(2,2,'Type 2 Diabetes','Reduce sugar intake'),
+(3,3,'Acute Bronchitis','Complete antibiotic course'),
+(4,3,'Pneumonia','Rest and hydration'),
+(5,1,'Migraine','Avoid migraine triggers'),
+(6,4,'Gastritis','Eat small frequent meals'),
+(7,5,'Urinary Tract Infection','Increase water intake'),
+(8,4,'Dengue Fever','Monitor platelet count'),
+(9,2,'Asthma','Carry inhaler at all times'),
+(10,1,'COVID-19','Follow isolation guidelines');
+
+INSERT INTO prescription_items
+(prescriptionID, medicineID, dosage, frequency, durationDays, quantity, instructions)
+VALUES
+(2,1,'1 tablet','Once daily',30,30,'Take in the morning'),
+
+(3,2,'1 tablet','Twice daily',30,60,'After meals'),
+(3,3,'10 units','Once daily',30,1,'Inject before bedtime'),
+
+(4,4,'1 capsule','Three times daily',7,21,'Complete full course'),
+
+(5,5,'1 tablet','Twice daily',10,20,'After meals'),
+
+(6,6,'1 tablet','As needed',7,10,'For headache'),
+
+(7,7,'1 tablet','Twice daily',14,28,'Before meals'),
+
+(8,8,'1 capsule','Three times daily',7,21,'Complete antibiotic course'),
+
+(9,9,'2 tablets','Every 6 hours',5,40,'For fever'),
+
+(10,10,'2 puffs','Four times daily',30,1,'Use inhaler correctly'),
+
+(11,11,'1 tablet','Twice daily',7,14,'After meals');
