@@ -1601,23 +1601,37 @@ VALUES
 (16,'HI-2026-016','Relative N','0900000014',19,'https://i.pravatar.cc/300?img=34'),
 (17,'HI-2026-017','Relative O','0900000015',20,'https://i.pravatar.cc/300?img=35');
 
-INSERT INTO admission (patientID, admissionDate, hospitalizationsDiagnosis, summaryCondition, dischargeID, status)
+INSERT INTO admission
+(
+    patientID,
+    doctorID,
+    departmentID,
+    admissionRecordCode,
+    priority,
+    advanceFee,
+    advanceFeeStatus,
+    admissionDate,
+    hospitalizationsDiagnosis,
+    summaryCondition,
+    dischargeID,
+    status
+)
 VALUES
-(3,'2026-03-10','Flu','Recovering',NULL,'Archived'),
-(4,'2026-03-11','Asthma','Under control',NULL,'Archived'),
-(5,'2026-03-12','Hypertension','Improving',NULL,'Archived'),
-(6,'2026-03-13','Diabetes','Stable',NULL,'Archived'),
-(7,'2026-03-14','Infection','Recovering',NULL,'Archived'),
-(8,'2026-03-15','Fracture','Healing',NULL,'Archived'),
-(9,'2026-03-16','Migraine','Improving',NULL,'Archived'),
-(10,'2026-03-17','Allergy','Stable',NULL,'Archived'),
-(11,'2026-03-18','Gastritis','Recovering',NULL,'Archived'),
-(12,'2026-03-19','Pneumonia','Improving',NULL,'Archived'),
-(13,'2026-03-20','Kidney issue','Stable',NULL,'Archived'),
-(14,'2026-03-21','Back pain','Improving',NULL,'Archived'),
-(15,'2026-03-22','Heart check','Stable',NULL,'Archived'),
-(16,'2026-03-23','Diabetes','Stable',NULL,'Archived'),
-(17,'2026-03-24','Flu','Recovering',NULL,'Archived');
+
+(4,1,2,'ADM-0004','Normal',500000,'Paid','2026-03-11','Asthma Exacerbation','Breathing under control',NULL,'Archived'),
+(5,1,1,'ADM-0005','Normal',500000,'Paid','2026-03-12','Hypertension','Blood pressure improving',NULL,'Archived'),
+(6,1,3,'ADM-0006','Normal',500000,'Paid','2026-03-13','Type 2 Diabetes','Blood glucose stable',NULL,'Archived'),
+(7,1,2,'ADM-0007','Urgent',700000,'Paid','2026-03-14','Bacterial Infection','Responding to antibiotics',NULL,'Archived'),
+(8,1,4,'ADM-0008','Normal',1000000,'Paid','2026-03-15','Closed Fracture','Bone healing properly',NULL,'Archived'),
+(9,1,1,'ADM-0009','Normal',300000,'Paid','2026-03-16','Migraine','Symptoms improving',NULL,'Archived'),
+(10,1,2,'ADM-0010','Normal',300000,'Paid','2026-03-17','Allergic Reaction','Stable condition',NULL,'Archived'),
+(11,1,3,'ADM-0011','Normal',400000,'Paid','2026-03-18','Gastritis','Recovering with medication',NULL,'Archived'),
+(12,1,2,'ADM-0012','Urgent',800000,'Paid','2026-03-19','Pneumonia','Respiratory status improving',NULL,'Archived'),
+(13,1,5,'ADM-0013','Normal',600000,'Paid','2026-03-20','Kidney Disorder','Renal function stable',NULL,'Archived'),
+(14,1,4,'ADM-0014','Normal',300000,'Paid','2026-03-21','Chronic Back Pain','Pain reduced',NULL,'Archived'),
+(15,1,1,'ADM-0015','Normal',400000,'Paid','2026-03-22','Cardiac Evaluation','No acute findings',NULL,'Archived'),
+(16,1,3,'ADM-0016','Normal',500000,'Paid','2026-03-23','Type 2 Diabetes','Condition stable',NULL,'Archived'),
+(17,1,1,'ADM-0017','Normal',300000,'Paid','2026-03-24','Influenza','Recovered and discharged',NULL,'Archived');
 
 INSERT INTO `user`
 (`userID`,`username`,`password`,`fullName`,`dob`,`phone`,`email`,`CIC`,`address`,`gender`) VALUES
