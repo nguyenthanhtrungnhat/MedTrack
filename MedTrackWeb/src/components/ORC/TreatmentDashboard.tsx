@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import API from "../../api";
 import { useNavigate } from "react-router-dom";
-
 type SheetType = {
     sheetID: number;
     admissionNumber: string;
@@ -31,9 +30,21 @@ export default function TreatmentDashboard() {
 
         fetch();
     }, []);
+    const [search, setSearch] = useState("");
+    const filteredSheets = useMemo(() => {
+        if (!search.trim()) return sheets;
 
+        return sheets.filter(
+            (s) =>
+                s.patientName?.toLowerCase().includes(search.toLowerCase()) ||
+                s.HI?.toLowerCase().includes(search.toLowerCase()) ||
+                s.patientCode?.toLowerCase().includes(search.toLowerCase()) ||
+                s.admissionNumber?.toLowerCase().includes(search.toLowerCase()) ||
+                s.diagnosis?.toLowerCase().includes(search.toLowerCase())
+        );
+    }, [sheets, search]);
     return (
-        <>
+        <div className="mb-4">
             {/* HEADER */}
             <div className="card shadow-sm dropShadow  mb-3 border-0">
                 <div className="card-header blueBg text-white">
@@ -43,6 +54,15 @@ export default function TreatmentDashboard() {
                     <p className="mb-0 text-muted">
                         Monitor all patient treatment timelines
                     </p>
+                </div>
+                <div className="p-3">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search patient, HI, diagnosis, admission..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
                 </div>
             </div>
 
@@ -62,16 +82,16 @@ export default function TreatmentDashboard() {
             )}
 
             {/* EMPTY */}
-            {!loading && sheets.length === 0 && (
+            {!loading && filteredSheets.length === 0 && (
                 <div className="alert alert-warning text-center">
                     <h5 className="mb-1">No treatment records</h5>
-                    <small>Start by scanning or creating a treatment sheet</small>
+                    <small>Start by creating a treatment sheet</small>
                 </div>
             )}
 
             {/* GRID */}
             <div className="row g-3">
-                {sheets.map((s) => (
+                {filteredSheets.map((s) => (
                     <div className="col-md-4 dropShadow" key={s.sheetID}>
                         <div
                             className="card shadow-sm border-0 h-100"
@@ -141,6 +161,6 @@ export default function TreatmentDashboard() {
                     </div>
                 ))}
             </div>
-        </>
+        </div>
     );
 }
