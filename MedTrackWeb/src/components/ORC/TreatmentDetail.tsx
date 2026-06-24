@@ -25,7 +25,6 @@ type SheetType = {
 };
 
 export default function TreatmentDetail() {
-    const token = sessionStorage.getItem("token");
     const doctorID = sessionStorage.getItem("doctorID");
 
     const { id } = useParams();
@@ -43,7 +42,7 @@ export default function TreatmentDetail() {
     const [plan, setPlan] = useState("");
     const [instruction, setInstruction] = useState("");
 
-     useEffect(() => {
+    useEffect(() => {
         const fetch = async () => {
             try {
                 const res = await API.get(`/treatmenttimeline/${id}`);
@@ -127,12 +126,14 @@ export default function TreatmentDetail() {
                     <h5 className="mb-0">Treatment Timeline Detail</h5>
 
                     <div className="d-flex gap-2">
-                        <button
-                            className="btn btn-success btn-sm"
-                            onClick={() => setShowModal(true)}
-                        >
-                            + Add
-                        </button>
+                        {doctorID && (
+                            <button
+                                className="btn btn-success btn-sm"
+                                onClick={() => setShowModal(true)}
+                            >
+                                + Add
+                            </button>
+                        )}
 
                         <button
                             className="btn btn-primary btn-sm"

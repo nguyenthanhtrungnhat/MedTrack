@@ -27,7 +27,35 @@ router.get("/all", verifyToken, (req, res) => {
     }
   );
 });
+router.get("/all/:patientID", verifyToken, (req, res) => {
+  const { patientID } = req.params;
 
+  db.query(
+    `
+    SELECT 
+        ts.sheetID,
+        ts.admissionNumber,
+        ts.patientCode,
+        ts.diagnosis,
+        ts.createdAt,
+        u.fullName AS patientName,
+        p.HI
+    FROM treatment_sheet ts
+    LEFT JOIN patient p ON ts.patientID = p.patientID
+    LEFT JOIN user u ON p.userID = u.userID
+    WHERE ts.patientID = ?
+    ORDER BY ts.createdAt DESC
+    `,
+    [patientID],
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      res.json(rows);
+    }
+  );
+});
 /* ================= GET LOGS ================= */
 router.get("/logs/:sheetID", verifyToken, (req, res) => {
   db.query(

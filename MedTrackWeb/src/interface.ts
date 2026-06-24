@@ -16,7 +16,7 @@ export interface RoomProps {
     roomID: string
 }
 export interface PatientProps {
-    patientID: string | undefined
+    patientID: string  | number
     image?: string;
     fullName: string;
     gender: string;

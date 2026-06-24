@@ -54,6 +54,7 @@ import AdmissionManagement from './Nurse/AdmissionManagement';
 import DischargeManagement from './Nurse/DischargeManagement';
 import ClinicalExam from './Nurse/ClinicalExam';
 import ManualTreatmentPage from './components/ORC/ManualTreatmentPage.tsx';
+import TreatMentList from './components/ORC/TreatMentList.tsx';
 
 const router = createBrowserRouter([
 
@@ -181,7 +182,8 @@ const router = createBrowserRouter([
         element: <SideBarLayout />,
         children: [
           { path: "make-appointment", element: <MakeAppointment /> },
-
+          { path: "patient-treatment-list", element: <TreatMentList /> },
+          { path: "treatment/:id", element: <TreatmentDetail /> },
           // { path: "completedata", element: <CompletePatientForm /> },
         ]
       },

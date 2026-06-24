@@ -209,6 +209,12 @@ export default function SideBarLayout() {
                                                 <Link to="/patient/make-appointment" className="text-decoration-none">
                                                     <i className="fa fa-caret-right"></i> Make appointment
                                                 </Link>
+
+                                            </li>
+                                            <li>
+                                                <Link to="/patient/patient-treatment-list" className="text-decoration-none">
+                                                    <i className="fa fa-caret-right"></i> All treatment
+                                                </Link>
                                             </li>
                                         </ul>
                                     )}
@@ -219,7 +225,7 @@ export default function SideBarLayout() {
 
                     </div>
                 </div>
-            </div>
+            </div >
 
             <Footer />
         </>
