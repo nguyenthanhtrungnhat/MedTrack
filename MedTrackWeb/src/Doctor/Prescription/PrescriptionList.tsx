@@ -74,7 +74,7 @@ export default function PrescriptionList() {
 
   return (
 
-    <div className="card shadow">
+    <div className="card shadow mb-4">
 
       <div className="card-header blueBg text-white">
         <h5 className="mb-0">Prescription List</h5>
