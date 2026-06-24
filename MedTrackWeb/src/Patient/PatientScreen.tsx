@@ -30,7 +30,6 @@ export default function PatientScreen() {
     const userID = getUserIDFromToken();
     const [showMore, setShowMore] = useState(false);
     const [loading, setLoading] = useState(true);
-    const token = sessionStorage.getItem("token");
     // 🩺 Dynamic badge generator
     const getHealthBadge = (type: string, value?: number | string | null) => {
         if (value === null || value === undefined) return { color: "text-bg-secondary", label: "N/A" };
