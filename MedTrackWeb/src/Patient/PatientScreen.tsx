@@ -291,7 +291,7 @@ export default function PatientScreen() {
                                             </div>
                                             <div className="col-6 d-flex justify-content-center">
                                                 <div className="border border-info square170-250 padding20">
-                                                    <h5 className='medSche blueText'>Requirements</h5>
+                                                    <h5 className='medSche blueText'>My Documents</h5>
                                                     <div className="d-flex bd-highlight mb-3">
                                                         <p className='p-2 bd-highlight size25'>0</p>
                                                         <i className="ml-auto p-2 bd-highlight fa fa-calendar blueText size25" />
